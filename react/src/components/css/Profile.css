@@ -1,0 +1,22 @@
+.profile {
+  display: flex;
+  flex-direction: row;
+  padding: 1em;
+  margin: 1em;
+}
+
+.image {
+  align-self: center;
+  justify-self: center;
+  margin-right: 1vw;
+}
+
+.edit {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.information {
+  flex-grow: 1;
+}

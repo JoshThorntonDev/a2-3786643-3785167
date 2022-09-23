@@ -1,0 +1,12 @@
+.headerNav button {
+  margin-right: 5px;
+  margin-left: 5px;
+  min-width: 7em;
+}
+nav {
+  margin-bottom: 1em;
+}
+
+.headerLogo {
+  cursor: pointer;
+}

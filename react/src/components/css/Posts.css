@@ -1,0 +1,20 @@
+.card {
+  margin-top: 2vh;
+  margin-bottom: 2vh;
+  min-height: 10vh;
+}
+
+.card img {
+  /* i think these two values strike a good balance between being able to see the images clearly 
+  while preventing them from hiding other posts off-screen*/
+  max-width: 50vh;
+
+  max-height: 30vh;
+
+  /* this forces the images to always keep their aspect ratio regardless of how their sizes are changed */
+  object-fit: contain;
+}
+
+.postButton button {
+  min-width: 5rem;
+}

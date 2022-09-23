@@ -1,0 +1,20 @@
+.carousel-caption {
+  border-radius: 1em;
+  background: rgba(74, 74, 74, 0.75) 0%;
+}
+
+.carousel {
+  width: 50%; /* the size of images used changes what this value needs to be */
+}
+
+.landing {
+  flex-grow: 1;
+}
+
+.landingButton button {
+
+  margin-right: 5px;
+  margin-left: 5px;
+  min-width: 7em;
+}
+
