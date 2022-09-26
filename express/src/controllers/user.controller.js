@@ -1,3 +1,6 @@
+//Controller for calling methods on users
+//Adapted from week 8 Lab user.controller.js
+
 const db = require("../database");
 const argon2 = require("argon2");
 
