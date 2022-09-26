@@ -102,3 +102,6 @@ dist
 
 # TernJS port file
 .tern-port
+
+# prevent committing db credentials
+express/src/database/config.js
