@@ -1,12 +1,12 @@
 const express = require("express");
 const cors = require("cors");
-//const db = require("./src/database");
+const db = require("./src/database");
 
 //Code adapted from Week 8 Lab Material
 //(some stuff commented out for now so it can run)
 
 // Database will be sync'ed in the background.
-//db.sync();
+db.sync();
 
 const app = express();
 
