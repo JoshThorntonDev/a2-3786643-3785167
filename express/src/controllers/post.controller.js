@@ -12,9 +12,9 @@ exports.all = async (req, res) => {
 // Create a post in the database.
 exports.create = async (req, res) => {
   const post = await db.post.create({
-    content: req.body.text,
+    content: req.body.content,
     image: req.body.image,
-    user_id: req.body.user_id
+    user_id: req.body.user_id // set foreign key
   });
 
   res.json(post);
