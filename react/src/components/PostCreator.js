@@ -5,7 +5,10 @@ import { CheckCircleFill } from "react-bootstrap-icons";
 import Button from "react-bootstrap/Button";
 import AnimatedAlert from "./AnimatedAlert";
 import { insertPost } from "../data/PostRepository";
+import { createPost } from "../data/dbrepository";
 import UserContext from "../contexts/UserContext";
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 // this component can create and edit posts. By default, it will only create, but setting the prop 'editing' to true
 // will put it in editing mode
@@ -14,6 +17,8 @@ function PostCreator(props) {
   const inputRef = useRef(null);
   const imageRef = useRef(null);
 
+  const [post, setPost] = useState('');
+
   const handleInputChange = (event) => {
     props.setFields({
       ...props.fields,
@@ -21,15 +26,26 @@ function PostCreator(props) {
     });
   };
 
+  const handleTest = (event) => {
+
+    props.setFields({
+      ...props.fields,
+      content: event
+    });
+  }
+
   const [error, setError] = useState(false);
   const [message, setMessage] = useState("");
 
-  const attemptSave = (event) => {
+  const attemptSave = async (event) => {
     const imageRegex = new RegExp("(.png|.jpg|.jpeg|.gif|.bmp)$");
 
     setMessage(""); // clear error message
     setError(false); // reset error state
     event.preventDefault(); // prevent form from submitting
+
+    const newPost = { content: props.fields.content, image: props.fields.image, user_id: props.fields.userId}
+    await createPost(newPost)
 
     var imageOK = false;
     if (props.fields.image === "") {
@@ -84,22 +100,9 @@ function PostCreator(props) {
             <Form.Label>
               {props.editing ? "Update your" : "Enter your"} post here
             </Form.Label>
-            <Form.Control
-              name="content"
-              as="textarea"
-              rows={6} /* 6 fits all 250 chars in the box at once */
-              placeholder="Your thoughts?"
-              autoFocus
-              maxLength={250}
-              value={props.fields.content}
-              onChange={handleInputChange}
-              required
-              ref={inputRef}
-            />
-            <Form.Text muted className="float-end">
-              {props.fields.content.trim().length} / 250
-              {/* .trim() prevents the counter increasing when the post starts and ends with whitespace */}
-            </Form.Text>
+
+            <ReactQuill theme="snow" autoFocus value={props.fields.content} ref={inputRef} onChange={handleTest} />
+
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Image URL (Optional)</Form.Label>
