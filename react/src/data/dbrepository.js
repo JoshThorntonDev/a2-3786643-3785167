@@ -34,6 +34,11 @@ async function createUser(user) {
     return response.data;
 }
 
+async function createPost(post) {
+    const response = await axios.post(API_HOST + "/posts", post)
+    return response.data
+}
+
 export {
-    verifyUser, findUser, createUser
+    verifyUser, findUser, createUser, createPost
   }
