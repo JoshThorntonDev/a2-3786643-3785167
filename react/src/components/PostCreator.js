@@ -111,9 +111,16 @@ function PostCreator(props) {
               ref={inputRef}
               onChange={handleContentUpdate}
             />
-            <Form.Text muted className="float-end">
-              {getContentLength()} / {MAX_LENGTH}
-            </Form.Text>
+
+            {getContentLength() <= MAX_LENGTH ? ( // change indicator text to red when exceeded
+              <Form.Text muted className="float-end">
+                {getContentLength()} / {MAX_LENGTH}
+              </Form.Text>
+            ) : (
+              <Form.Text muted className="float-end">
+                <span className="fw-bold">{getContentLength()}</span> / {MAX_LENGTH}
+              </Form.Text>
+            )}
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Image URL (Optional)</Form.Label>
