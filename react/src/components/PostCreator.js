@@ -11,8 +11,14 @@ import "react-quill/dist/quill.snow.css";
 // this component can create and edit posts. By default, it will only create, but setting the prop 'editing' to true
 // will put it in editing mode
 function PostCreator(props) {
+  const MAX_LENGTH = 600; // maximum length of posts
+
   const inputRef = useRef(null);
   const imageRef = useRef(null);
+
+  const getContentLength = () => {
+    return props.fields.content.replace(/<(.|\n)*?>/g, "").trim().length;
+  };
 
   const handleInputChange = (event) => {
     props.setFields({
@@ -32,8 +38,6 @@ function PostCreator(props) {
   const [message, setMessage] = useState("");
 
   const attemptSave = async (event) => {
-    const MAX_LENGTH = 600; // maximum length of postsF
-
     const imageRegex = new RegExp("(.png|.jpg|.jpeg|.gif|.bmp)$");
 
     setMessage(""); // clear error message
@@ -53,14 +57,10 @@ function PostCreator(props) {
       imageOK = true;
     }
 
-    const contentLength = props.fields.content
-      .replace(/<(.|\n)*?>/g, "")
-      .trim().length; // get length of the post, not including html
-
     if (
       // ensure content isnt just whitespace, isnt too large, and that the image url is valid
-      contentLength !== 0 &&
-      contentLength <= MAX_LENGTH &&
+      getContentLength() !== 0 &&
+      getContentLength() <= MAX_LENGTH &&
       imageOK
     ) {
       const newPost = {
@@ -73,7 +73,6 @@ function PostCreator(props) {
       props.toggle(); // close modal
       setMessage("");
     } else {
-
       setError(true);
       if (imageOK) {
         inputRef.current.focus(); // focus on post entry field
@@ -112,6 +111,9 @@ function PostCreator(props) {
               ref={inputRef}
               onChange={handleContentUpdate}
             />
+            <Form.Text muted className="float-end">
+              {getContentLength()} / {MAX_LENGTH}
+            </Form.Text>
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Image URL (Optional)</Form.Label>
