@@ -15,6 +15,8 @@ const db = {
 
   //Models
   db.user = require("./models/user.js")(db.sequelize, DataTypes);
+  db.post = require("./models/post.js")(db.sequelize, DataTypes);
+
 
 // Relate post and user.
 //Commented out for now until posts are integrated
@@ -31,7 +33,7 @@ db.sync = async () => {
 //Seed database with initial users
 async function seedData() {
     const count = await db.user.count();
-  
+    const postCount = await db.post.count();
     //Return if database isn't empty
     if(count > 0)
       return;
@@ -43,6 +45,18 @@ async function seedData() {
   
     hash = await argon2.hash("password1!", { type: argon2.argon2id });
     await db.user.create({ id: 2, email: "second@email.com", password_hash: hash, username: "Second User" });
+
+
+
+
+    //Return if database isn't empty
+    if(postCount > 0)
+      return;
+    
+    await db.post.create({ content: "this is the first post, which does not have an image" });
+    await db.post.create({ content: "this is the second post, which has an image" , image: "https://media.discordapp.net/attachments/552276917559099418/826662994230116362/53u0wr.jpg"});
+    
+
 }
   
   module.exports = db;
