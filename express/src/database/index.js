@@ -26,6 +26,9 @@ db.sync = async () => {
   // Sync schema.
   await db.sequelize.sync();
 
+  // force it to sync, will delete everything
+  // await db.sequelize.sync({ force: true });
+
   await seedData();
 };
 
