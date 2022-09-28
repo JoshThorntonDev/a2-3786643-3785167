@@ -19,7 +19,7 @@ db.post = require("./models/post.js")(db.sequelize, DataTypes);
 
 // Relate post and user.
 //Commented out for now until posts are integrated
-//db.post.belongsTo(db.user, { foreignKey: { name: "username", allowNull: false } });
+db.post.belongsTo(db.user, { foreignKey: { name: "user_id", allowNull: false } });
 
 //Sync schema and seed initial data
 db.sync = async () => {
@@ -31,16 +31,20 @@ db.sync = async () => {
 
 //Seed database with initial users
 async function seedData() {
+
+  const userId1 = 837;
+  const userId2 = 2843;
+
   const userCount = await db.user.count();
   const postCount = await db.post.count();
-  
+
   //Only seed table when it's empty
   if (userCount === 0) {
     const argon2 = require("argon2");
 
     let hash = await argon2.hash("password1!", { type: argon2.argon2id });
     await db.user.create({
-      id: 1,
+      id: userId1,
       email: "first@email.com",
       password_hash: hash,
       username: "First User",
@@ -48,7 +52,7 @@ async function seedData() {
 
     hash = await argon2.hash("password1!", { type: argon2.argon2id });
     await db.user.create({
-      id: 2,
+      id: userId2,
       email: "second@email.com",
       password_hash: hash,
       username: "Second User",
@@ -59,11 +63,13 @@ async function seedData() {
   if (postCount === 0) {
     await db.post.create({
       content: "this is the first post, which does not have an image",
+      user_id: userId1
     });
     await db.post.create({
       content: "this is the second post, which has an image",
       image:
         "https://media.discordapp.net/attachments/552276917559099418/826662994230116362/53u0wr.jpg",
+      user_id: userId2
     });
   }
 }
