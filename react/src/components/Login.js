@@ -8,7 +8,7 @@ import Card from "react-bootstrap/Card";
 
 import AnimatedAlert from "./AnimatedAlert";
 
-import { getUsers } from "../data/Repository";
+import { verifyUser } from "../data/dbrepository";
 
 // react components for functionality
 import { useContext, useRef, useState } from "react";
@@ -18,36 +18,38 @@ import UserContext from "../contexts/UserContext";
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
   const [error, setError] = useState(false);
   const [show, setShow] = useState(false);
   const navigate = useNavigate();
-  const users = getUsers();
 
   const { login } = useContext(UserContext);
 
   const passwordRef = useRef(null);
   const emailRef = useRef(null);
 
-  const attemptLogin = (e) => {
+  const attemptLogin = async (e) => {
     setError(false); // clear error in case user has set it already
     e.preventDefault(); // prevent form from submitting automatically
 
-    if (email in users) {
-      if (password === users[email]["password"]) {
-        setShow(true);
+    const user = await verifyUser(email, password);
 
-        setTimeout(() => {
-          navigate("/profile", { replace: true });
-          login(email); // user successfully logged in
-        }, 1500);
-      } else {
-        setError(true); // password is wrong
-        passwordRef.current.focus(); // focus on password input
-      }
-    } else {
-      setError(true); // email is wrong/doesnt exist
-      emailRef.current.focus(); // focus on email input
+    if(user === null) {
+      //Invalid details, set error to true and return
+      setError(true);
+      return;
     }
+
+    //If login is valid
+    //Show welcome message
+    setShow(true);
+    setUsername(user.username);
+
+    //Redirect user and set them as logged in
+    setTimeout(() => {
+      navigate("/profile", { replace: true });
+      login(user.id); // user successfully logged in
+    }, 1500);
   };
 
   return (
@@ -65,7 +67,7 @@ function Login() {
 
       <AnimatedAlert
         variant="success"
-        message="Welcome back! We're redirecting you now"
+        message={"Welcome back" + username + "! We're redirecting you now"}
         display={show}
         setDisplay={setShow}
       />

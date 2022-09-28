@@ -5,6 +5,7 @@
 //to not break the app, but can replace
 //it with this one once we've fully moved from
 //local storage to db
+import axios from "axios";
 
 const API_HOST = "http://localhost:4000/api";
 const USER_KEY = "user";
@@ -32,3 +33,7 @@ async function createUser(user) {
   
     return response.data;
 }
+
+export {
+    verifyUser, findUser, createUser
+  }
