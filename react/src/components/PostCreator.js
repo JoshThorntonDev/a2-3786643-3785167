@@ -1,23 +1,18 @@
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
-import { useContext, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { CheckCircleFill } from "react-bootstrap-icons";
 import Button from "react-bootstrap/Button";
 import AnimatedAlert from "./AnimatedAlert";
-import { insertPost } from "../data/PostRepository";
 import { createPost } from "../data/dbrepository";
-import UserContext from "../contexts/UserContext";
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 // this component can create and edit posts. By default, it will only create, but setting the prop 'editing' to true
 // will put it in editing mode
 function PostCreator(props) {
-  const { currentUser } = useContext(UserContext);
   const inputRef = useRef(null);
   const imageRef = useRef(null);
-
-  const [post, setPost] = useState('');
 
   const handleInputChange = (event) => {
     props.setFields({
@@ -26,26 +21,24 @@ function PostCreator(props) {
     });
   };
 
-  const handleTest = (event) => {
-
+  const handleContentUpdate = (event) => {
     props.setFields({
       ...props.fields,
-      content: event
+      content: event,
     });
-  }
+  };
 
   const [error, setError] = useState(false);
   const [message, setMessage] = useState("");
 
   const attemptSave = async (event) => {
+    const MAX_LENGTH = 600; // maximum length of postsF
+
     const imageRegex = new RegExp("(.png|.jpg|.jpeg|.gif|.bmp)$");
 
     setMessage(""); // clear error message
     setError(false); // reset error state
     event.preventDefault(); // prevent form from submitting
-
-    const newPost = { content: props.fields.content, image: props.fields.image, user_id: props.fields.userId}
-    await createPost(newPost)
 
     var imageOK = false;
     if (props.fields.image === "") {
@@ -60,20 +53,31 @@ function PostCreator(props) {
       imageOK = true;
     }
 
+    const contentLength = props.fields.content
+      .replace(/<(.|\n)*?>/g, "")
+      .trim().length; // get length of the post, not including html
+
     if (
-      // ensure content exists, isnt just whitespace, isnt too large, and that the image url is valid
-      props.fields.content.trim() !== "" &&
-      props.fields.content.length <= 250 &&
+      // ensure content isnt just whitespace, isnt too large, and that the image url is valid
+      contentLength !== 0 &&
+      contentLength <= MAX_LENGTH &&
       imageOK
     ) {
-      insertPost(props.fields, currentUser); // function will determine if its being edited or not based on if it already has an id
+      const newPost = {
+        content: props.fields.content,
+        image: props.fields.image,
+        user_id: props.fields.userId,
+      };
+      await createPost(newPost);
+
       props.toggle(); // close modal
       setMessage("");
     } else {
+
       setError(true);
       if (imageOK) {
         inputRef.current.focus(); // focus on post entry field
-        setMessage("Posts must be between 1 and 250 characters");
+        setMessage(`Posts must be between 1 and ${MAX_LENGTH} characters`);
       } else {
         imageRef.current.focus(); // focus on image entry field
         setMessage(
@@ -101,8 +105,13 @@ function PostCreator(props) {
               {props.editing ? "Update your" : "Enter your"} post here
             </Form.Label>
 
-            <ReactQuill theme="snow" autoFocus value={props.fields.content} ref={inputRef} onChange={handleTest} />
-
+            <ReactQuill
+              theme="snow"
+              autoFocus
+              value={props.fields.content}
+              ref={inputRef}
+              onChange={handleContentUpdate}
+            />
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Image URL (Optional)</Form.Label>
