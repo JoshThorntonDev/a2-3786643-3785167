@@ -2,20 +2,28 @@ import "./css/Profile.css";
 import Button from "react-bootstrap/Button";
 
 import { PencilSquare, PersonCircle, Trash } from "react-bootstrap-icons";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import ProfileEditor from "./ProfileEditor";
 import ProfileDeleter from "./ProfileDeleter";
 import PostCard from "./PostCard";
-import Card from "react-bootstrap/Card"
+import Card from "react-bootstrap/Card";
 import { useParams } from "react-router-dom";
 import { findUser } from "../data/dbrepository";
-
-
+import UserContext from "../contexts/UserContext";
 
 function Profile() {
-  const {id} = useParams();
+  const { id } = useParams();
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { currentUser } = useContext(UserContext);
+
+  const isThisMyAccount = () => {
+    var value = false;
+    if (id === currentUser) {
+      value = true;
+    }
+    return value;
+  };
 
   useEffect(() => {
     async function loadUser() {
@@ -25,9 +33,7 @@ function Profile() {
       setIsLoading(false);
     }
     loadUser();
-  }, [])
-
- 
+  }, []);
 
   //const posts = getAllPostsByUser(currentUser);
   // this is used to get all the posts and display them on this profile page
@@ -39,7 +45,7 @@ function Profile() {
     email: "",
     password: "",
     date: "",
-    posts:[]
+    posts: [],
   });
   // the field is stored here to make it easier to clear the values when the modal is closed,
   // either by closing it manually or when an update is successful
@@ -68,55 +74,59 @@ function Profile() {
   }, [altered]);
 
   const getDate = () => {
-    var date = new Date(user.updatedAt)
-    return date.toLocaleDateString()
-  }
+    var date = new Date(user.updatedAt);
+    return date.toLocaleDateString();
+  };
 
   return (
     <div>
       {isLoading ? (
-      <span></span>
-      ):<div>
-      
-      <Card border="secondary" className="profile">
-        {/* <ProfileEditor
+        <span></span>
+      ) : (
+        <div>
+          <Card border="secondary" className="profile">
+            {/* <ProfileEditor
           show={showEdit}
           toggle={toggleEdit}
           fields={fields}
           setFields={setFields}
         /> */}
 
-        {/* <ProfileDeleter
-          show={showDelete}
-          toggle={toggleDelete}
-          fields={fields}
-          setFields={setFields}
-        /> */}
-        <PersonCircle size={"10vh"} className="image"></PersonCircle>
+            {
+              <ProfileDeleter
+                show={showDelete}
+                toggle={toggleDelete}
+                fields={fields}
+                setFields={setFields}
+              />
+            }
+            <PersonCircle size={"10vh"} className="image"></PersonCircle>
 
-        <div className="information">
-          <h1>{user.username}'s Profile</h1>
-          <p>{user.email}</p>
+            <div className="information">
+              <h1>{user.username}'s Profile</h1>
+              <p>{user.email}</p>
+              <hr />
+              <p>Joined: {getDate()}</p>
+            </div>
+
+            {isThisMyAccount() && ( // only show edit and delete when its the logged in account
+              <div className="edit">
+                <Button onClick={toggleEdit} variant="primary" type="submit">
+                  <PencilSquare size={"2vh"}></PencilSquare> Edit
+                </Button>
+
+                <Button onClick={toggleDelete} variant="danger" type="submit">
+                  <Trash size={"2vh"}></Trash> Delete
+                </Button>
+              </div>
+            )}
+          </Card>
+
           <hr />
-          <p>Joined: {getDate()}</p>
-        </div>
 
-        <div className="edit">
-          <Button onClick={toggleEdit} variant="primary" type="submit">
-            <PencilSquare size={"2vh"}></PencilSquare> Edit
-          </Button>
+          <h3>All posts by {user.username}</h3>
 
-          <Button onClick={toggleDelete} variant="danger" type="submit">
-            <Trash size={"2vh"}></Trash> Delete
-          </Button>
-        </div>
-      </Card>
-
-      <hr />
-
-      <h3>All posts by {user.username}</h3>
-
-      {/* {posts.length === 0 ? (
+          {/* {posts.length === 0 ? (
         <div className="d-flex justify-content-center">
           <h5 className="text-muted">This user has no existing posts</h5>
         </div>
@@ -136,7 +146,8 @@ function Profile() {
           );
         })
       )} */}
-      </div>}
+        </div>
+      )}
     </div>
   );
 }
