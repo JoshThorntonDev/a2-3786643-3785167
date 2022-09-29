@@ -7,11 +7,13 @@ import AnimatedAlert from "./AnimatedAlert";
 import { createPost } from "../data/dbrepository";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import Spinner from "react-bootstrap/Spinner";
 
 // this component can create and edit posts. By default, it will only create, but setting the prop 'editing' to true
 // will put it in editing mode
 function PostCreator(props) {
   const MAX_LENGTH = 600; // maximum length of posts
+  const MIN_SAVE_TIME = 500; // minimum save time so the save animation can play, should always be less than 1000, and greater than 300
 
   const inputRef = useRef(null);
   const imageRef = useRef(null);
@@ -36,6 +38,7 @@ function PostCreator(props) {
 
   const [error, setError] = useState(false);
   const [message, setMessage] = useState("");
+  const [saving, setSaving] = useState(false);
 
   const attemptSave = async (event) => {
     const imageRegex = new RegExp("(.png|.jpg|.jpeg|.gif|.bmp)$");
@@ -68,9 +71,19 @@ function PostCreator(props) {
         image: props.fields.image,
         user_id: props.fields.userId,
       };
+
+      setSaving(true); // changes save button to show save animation
+
       await createPost(newPost);
 
-      props.toggle(); // close modal
+      setTimeout(() => {
+        // force saving to always take a minimum amount of time to let user see saving animation
+        props.toggle();
+        setTimeout(() => {
+          setSaving(false);
+        }, MIN_SAVE_TIME - 300); // this prevents the button changing back to normal while still visible
+      }, MIN_SAVE_TIME);
+
       setMessage("");
     } else {
       setError(true);
@@ -118,7 +131,8 @@ function PostCreator(props) {
               </Form.Text>
             ) : (
               <Form.Text muted className="float-end">
-                <span className="fw-bold">{getContentLength()}</span> / {MAX_LENGTH}
+                <span className="fw-bold">{getContentLength()}</span> /{" "}
+                {MAX_LENGTH}
               </Form.Text>
             )}
           </Form.Group>
@@ -141,8 +155,28 @@ function PostCreator(props) {
           <Button variant="secondary" onClick={props.toggle}>
             Close
           </Button>
-          <Button onClick={attemptSave} variant="success" type="submit">
-            <CheckCircleFill></CheckCircleFill> Save
+          <Button
+            className="saveButton"
+            onClick={attemptSave}
+            variant="success"
+            type="submit"
+          >
+            {saving ? (
+              <div>
+                <Spinner
+                  as="span"
+                  animation="border"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                />{" "}
+                Saving
+              </div>
+            ) : (
+              <div>
+                <CheckCircleFill></CheckCircleFill> Save
+              </div>
+            )}
           </Button>
         </Modal.Footer>
       </Form>
