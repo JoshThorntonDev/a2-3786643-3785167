@@ -11,6 +11,8 @@ import UserContext from "../contexts/UserContext";
 import Spinner from "react-bootstrap/Spinner";
 
 import ReactPaginate from "react-paginate";
+import PlaceholderPost from "./PlaceholderPost";
+
 
 function Posts() {
   const [posts, setPosts] = useState([]);
@@ -82,7 +84,14 @@ function Posts() {
               <Spinner animation="border" role="status">
                 <span className="visually-hidden">Loading...</span>
               </Spinner>
+              <br></br>
+              <PlaceholderPost />
+              <br></br>
+              <PlaceholderPost />
+              <br></br>
+              <PlaceholderPost />
             </div>
+            
           </div>
         ) : posts.length === 0 ? (
           <span className="text-muted">No posts have been submitted.</span>
