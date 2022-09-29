@@ -52,11 +52,11 @@ function Posts() {
         setFields={setPost}
       />
 
-      {/* {Object.keys(posts).map((id) => {
+      {Object.keys(posts).map((id) => {
         const post = posts[id];
 
         return <PostCard key={id} id={id} post={post} allowDelete={false} />;
-      })} */}
+      })}
     </div>
   );
 }

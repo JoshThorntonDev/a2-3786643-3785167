@@ -8,14 +8,15 @@ import { useState } from "react";
 import PostCreator from "./PostCreator";
 
 function PostCard(props) {
-  var name = "";
+  var name = "ToBeImpl'd";
   const [post, setPost] = useState(props.post);
-  // deal with some posts not being linked with an existing profile, and provide a placeholder name
-  if (props.post.userId === "[deleted]") {
-    name = "[deleted]";
-  } else {
-    name = getUser(props.post.userId).name;
-  }
+
+  // ===Used to show user info on posts===
+    // if (props.post.userId === "[deleted]") {
+  //   name = "[deleted]";
+  // } else {
+  //   name = getUser(props.post.userId).name;
+  // }
 
   const [showEdit, setShowEdit] = useState(false);
 
