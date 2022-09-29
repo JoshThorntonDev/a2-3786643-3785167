@@ -33,7 +33,7 @@ function Profile() {
       setIsLoading(false);
     }
     loadUser();
-  }, []);
+  }, [id]);
 
   //const posts = getAllPostsByUser(currentUser);
   // this is used to get all the posts and display them on this profile page
