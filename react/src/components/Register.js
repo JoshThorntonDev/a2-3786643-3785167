@@ -4,7 +4,7 @@ import Button from "react-bootstrap/Button";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Card from "react-bootstrap/Card";
 import AnimatedAlert from "./AnimatedAlert";
-import { insertUser } from "../data/Repository.js";
+import { createUser } from "../data/dbrepository.js";
 import { validate } from "./RegisterValidation.js";
 
 //react components
@@ -16,11 +16,9 @@ function Register() {
   const { login } = useContext(UserContext);
   const { NAME_LENGTH } = useContext(UserContext);
   const [user, setUser] = useState({
-    name: "",
+    username: "",
     email: "",
     password: "",
-    date: "",
-    posts: [],
   });
   const [error, setError] = useState(false);
   const [show, setShow] = useState(false);
@@ -31,7 +29,7 @@ function Register() {
     setUser({ ...user, [event.target.name]: event.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     setError(false); //clear error
     setMessage(""); //clear message
 
@@ -48,22 +46,17 @@ function Register() {
       return;
     }
 
-    //Save todays date as a string
-    const date = new Date().toDateString();
+    //Add user to db
+    const newUser = await createUser(user);
 
-    //Store user's registration date along with their details
-    user.date = date;
-
-    //After passing validation, insert user into local storage
-    insertUser(user);
-
-    //Log the user in and redirect them
-
+    //Show welcome message
     setShow(true);
+
+    //Redirect user and set them as logged in
     setTimeout(() => {
-      // this timeout is just to pretend that we have to wait for a db response
-      login(user.email);
-      navigate("/profile", { replace: true });
+      login(newUser.id);
+      //TODO: change navigate to profile when its working again
+      navigate("/", { replace: true });
     }, 1500);
   };
 
@@ -88,14 +81,14 @@ function Register() {
         <FloatingLabel label="Name" className="mb-3">
           <Form.Control
             type="text"
-            name="name"
+            name="username"
             placeholder="name"
-            value={user.name}
+            value={user.username}
             onChange={handleInputChange}
             maxLength={NAME_LENGTH}
           />
           <Form.Text muted className="float-end">
-            {user.name.trim().length} / {NAME_LENGTH}
+            {user.username.trim().length} / {NAME_LENGTH}
             {/* .trim() prevents the counter increasing when the text starts and ends with whitespace */}
           </Form.Text>
         </FloatingLabel>
