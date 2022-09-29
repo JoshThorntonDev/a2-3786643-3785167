@@ -47,7 +47,8 @@ function Login() {
 
     //Redirect user and set them as logged in
     setTimeout(() => {
-      navigate("/profile", { replace: true });
+      //TODO: change navigate to profile once its working again
+      navigate("/", { replace: true });
       login(user.id); // user successfully logged in
     }, 1500);
   };
