@@ -50,7 +50,6 @@ function Posts() {
     setShowModal((current) => !current);
   };
 
-
   const handlePageClick = (data) => {
     setPage(data.selected);
   };
@@ -80,35 +79,37 @@ function Posts() {
         {isLoading ? (
           <div className="d-flex justify-content-center">
             <div>
-            <Spinner animation="border" role="status">
-              <span className="visually-hidden">Loading...</span>
-            </Spinner>
+              <Spinner animation="border" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </Spinner>
             </div>
           </div>
         ) : posts.length === 0 ? (
           <span className="text-muted">No posts have been submitted.</span>
         ) : (
-          postsToDisplay.map((x) => <PostCard key={x.id} post={x} allowDelete={false} />)
+          <div>
+            {postsToDisplay.map((x) => (
+              <PostCard key={x.id} post={x} allowDelete={false} />
+            ))}
+            <ReactPaginate
+              onPageChange={handlePageClick}
+              pageCount={pageCount}
+              marginPagesDisplayed={2}
+              pageRangeDisplayed={5}
+              previousLabel="Previous"
+              nextLabel="Next"
+              breakLabel="..."
+              containerClassName="pagination"
+              pageClassName="page-item"
+              pageLinkClassName="page-link"
+              previousLinkClassName="page-link"
+              nextLinkClassName="page-link"
+              breakClassName="page-link"
+              activeClassName="active"
+            />
+          </div>
         )}
-
-
       </div>
-      <ReactPaginate
-          onPageChange={handlePageClick}
-          pageCount={pageCount}
-          marginPagesDisplayed={2}
-          pageRangeDisplayed={5}
-          previousLabel="Previous"
-          nextLabel="Next"
-          breakLabel="..."
-          containerClassName="pagination"
-          pageClassName="page-item"
-          pageLinkClassName="page-link"
-          previousLinkClassName="page-link"
-          nextLinkClassName="page-link"
-          breakClassName="page-link"
-          activeClassName="active"
-        />
     </div>
   );
 }
