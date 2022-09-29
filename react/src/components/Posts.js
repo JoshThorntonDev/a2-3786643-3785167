@@ -54,10 +54,10 @@ function Posts() {
     setPage(data.selected);
   };
 
-  const pageSize = 4;
-  const pageCount = Math.ceil(posts.length / pageSize);
-  const offset = page * pageSize;
-  const postsToDisplay = posts.slice(offset, offset + pageSize);
+  const pageSize = 8; // number of posts to display per page
+  const pageCount = Math.ceil(posts.length / pageSize); // finds the number of pages needed to fit all posts
+  const offset = page * pageSize; // keeps track of where the first post of each page is
+  const postsToDisplay = posts.slice(offset, offset + pageSize); // selects only the posts on the current page
 
   return (
     <div>
