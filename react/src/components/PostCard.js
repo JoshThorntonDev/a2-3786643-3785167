@@ -11,13 +11,7 @@ function PostCard(props) {
   
   const [post, setPost] = useState(props.post);
   var name = post.user_id;
-  console.log(post)
-  // ===Used to show user info on posts===
-    // if (props.post.userId === "[deleted]") {
-  //   name = "[deleted]";
-  // } else {
-  //   name = getUser(props.post.userId).name;
-  // }
+
 
   const [showEdit, setShowEdit] = useState(false);
 
