@@ -6,6 +6,7 @@ import Button from "react-bootstrap/Button";
 import AnimatedAlert from "./AnimatedAlert";
 import { useNavigate } from "react-router-dom";
 import UserContext from "../contexts/UserContext";
+import { deleteUser } from "../data/dbrepository";
 
 //renders a modal that allows the user to delete their account
 // similar to the ProfileEditor function, but only takes an input of confirmation password
@@ -36,12 +37,14 @@ function ProfileDeleter(props) {
   };
 
   const attemptSave = (event) => {
+    deleteUser(props.user);
+    logout()
+    navigate("/", { replace: true });
+
     setMessage(""); // clear error message
     setError(false); // reset error state
     event.preventDefault(); // prevent form from submitting
 
-    console.log(currentUser);
-    console.log(users[currentUser])
     //check if password is correct
     if (props.fields.password === users[currentUser].password) {
       //if password is correct, delete the user from local storage,

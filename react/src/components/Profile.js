@@ -98,6 +98,7 @@ function Profile() {
                 toggle={toggleDelete}
                 fields={fields}
                 setFields={setFields}
+                user={user}
               />
             }
             <PersonCircle size={"10vh"} className="image"></PersonCircle>
