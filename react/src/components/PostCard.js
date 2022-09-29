@@ -4,13 +4,14 @@ import "./css/Posts.css";
 import { PencilSquare, Trash } from "react-bootstrap-icons";
 import { deletePost } from "../data/PostRepository";
 import { getUser } from "../data/Repository";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PostCreator from "./PostCreator";
+import { findUser } from "../data/dbrepository";
 
 function PostCard(props) {
   
   const [post, setPost] = useState(props.post);
-  var name = post.user_id;
+  const [name, setName] = useState('')
 
 
   const [showEdit, setShowEdit] = useState(false);
@@ -30,6 +31,14 @@ function PostCard(props) {
     var time = new Date(post.updatedAt)
     return time.toLocaleTimeString()
   }
+
+  useEffect(() => {
+    async function assignNameToPost() {
+      const user = await findUser(post.user_id)
+      setName(user.username)
+    }
+    assignNameToPost()
+  },[])
 
   return (
     <Card>
