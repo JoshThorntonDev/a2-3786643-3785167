@@ -18,7 +18,7 @@ function PlaceholderPost() {
               </Card.Body>
               <Card.Footer>
                 <Placeholder className="d-flex justify-content-between" as={Card.Text} animation="glow">
-                  <Placeholder xs={4} /><Placeholder xs={1} />
+                  <Placeholder xs={2} /><Placeholder xs={1} />
                 </Placeholder>
               </Card.Footer>
             </Card>
