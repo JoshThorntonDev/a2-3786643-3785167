@@ -65,7 +65,7 @@ async function seedData() {
   //Only seed table when it's empty
   if (postCount === 0) {
     await db.post.create({
-      content: "this is the first post, which does not have an image",
+      content: "this is the first post, <h1>which does not have an image</h1>",
       user_id: userId1
     });
     await db.post.create({
