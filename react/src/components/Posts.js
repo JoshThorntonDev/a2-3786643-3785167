@@ -8,6 +8,7 @@ import { PlusCircleFill } from "react-bootstrap-icons";
 
 import PostCard from "./PostCard";
 import UserContext from "../contexts/UserContext";
+import Spinner from "react-bootstrap/Spinner";
 
 function Posts() {
   const [posts, setPosts] = useState([]);
@@ -55,7 +56,7 @@ function Posts() {
           <PlusCircleFill /> Create a post
         </Button>
       </div>
-
+      <br></br>
       <PostCreator
         show={showModal}
         toggle={toggleModal}
@@ -65,7 +66,13 @@ function Posts() {
 
       <div>
         {isLoading ? (
-          <div>Loading posts...</div>
+          <div className="d-flex justify-content-center">
+            <div>
+            <Spinner animation="border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </Spinner>
+            </div>
+          </div>
         ) : posts.length === 0 ? (
           <span className="text-muted">No posts have been submitted.</span>
         ) : (
