@@ -2,12 +2,12 @@ function validate(user, NAME_LENGTH) {
   //Check that username is present
   let error = "";
 
-  if (user.name.trim() === "") {
+  if (user.username.trim() === "") {
     error = "Name is a required field";
     return error;
   }
 
-  if (user.name.trim().length > NAME_LENGTH) {
+  if (user.username.trim().length > NAME_LENGTH) {
     error = "User names cannot exceed " + NAME_LENGTH + " characters";
     return error;
   }
