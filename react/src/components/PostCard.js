@@ -3,7 +3,6 @@ import Card from "react-bootstrap/Card";
 import "./css/Posts.css";
 import { PencilSquare, Trash } from "react-bootstrap-icons";
 import { deletePost } from "../data/PostRepository";
-import { getUser } from "../data/Repository";
 import { useEffect, useState } from "react";
 import PostCreator from "./PostCreator";
 import { findUser } from "../data/dbrepository";
@@ -38,7 +37,7 @@ function PostCard(props) {
       setName(user.username)
     }
     assignNameToPost()
-  },[])
+  },[post.user_id])
 
   return (
     <Card>
