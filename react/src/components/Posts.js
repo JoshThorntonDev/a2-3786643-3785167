@@ -13,7 +13,6 @@ import Spinner from "react-bootstrap/Spinner";
 import ReactPaginate from "react-paginate";
 import PlaceholderPost from "./PlaceholderPost";
 
-
 function Posts() {
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -26,7 +25,10 @@ function Posts() {
       const currentPosts = await getPosts();
 
       setPosts(currentPosts);
-      setIsLoading(false);
+
+      setTimeout(() => { // in case the db responds extremely quickly, prevent loading animation from looking bad
+        setIsLoading(false);
+      }, 300);
     }
 
     loadPosts();
@@ -83,7 +85,7 @@ function Posts() {
             <div>
               <Spinner animation="border" role="status">
                 <span className="visually-hidden">Loading...</span>
-              </Spinner>
+              </Spinner> Loading posts
               <br></br>
               <PlaceholderPost />
               <br></br>
@@ -91,7 +93,6 @@ function Posts() {
               <br></br>
               <PlaceholderPost />
             </div>
-            
           </div>
         ) : posts.length === 0 ? (
           <span className="text-muted">No posts have been submitted.</span>
