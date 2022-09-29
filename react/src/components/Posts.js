@@ -88,9 +88,6 @@ function Posts() {
           <span className="text-muted">No posts have been submitted.</span>
         ) : (
           <div>
-            {postsToDisplay.map((x) => (
-              <PostCard key={x.id} post={x} allowDelete={false} />
-            ))}
             <ReactPaginate
               onPageChange={handlePageClick}
               pageCount={pageCount}
@@ -107,6 +104,9 @@ function Posts() {
               breakClassName="page-link"
               activeClassName="active"
             />
+            {postsToDisplay.map((x) => (
+              <PostCard key={x.id} post={x} allowDelete={false} />
+            ))}
           </div>
         )}
       </div>
