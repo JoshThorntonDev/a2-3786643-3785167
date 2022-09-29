@@ -10,7 +10,7 @@ import PostCreator from "./PostCreator";
 function PostCard(props) {
   var name = "ToBeImpl'd";
   const [post, setPost] = useState(props.post);
-
+  
   // ===Used to show user info on posts===
     // if (props.post.userId === "[deleted]") {
   //   name = "[deleted]";
@@ -28,7 +28,7 @@ function PostCard(props) {
 
   return (
     <Card>
-      <Card.Body>{props.post.content}</Card.Body>
+      <Card.Body><div dangerouslySetInnerHTML={{ __html: props.post.content }} /></Card.Body>
       {props.post.image && ( // only render <hr> and <img> if the post actually has an image
         <Card.Body>
           <hr />

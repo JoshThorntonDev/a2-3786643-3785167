@@ -39,6 +39,12 @@ async function createPost(post) {
     return response.data
 }
 
+async function getPosts() {
+    const response = await axios.get(API_HOST + "/posts");
+
+    return response.data;
+}
+
 export {
-    verifyUser, findUser, createUser, createPost
+    verifyUser, findUser, createUser, createPost, getPosts
   }

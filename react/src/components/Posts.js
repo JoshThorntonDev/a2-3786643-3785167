@@ -1,6 +1,6 @@
-import { getPosts } from "../data/PostRepository";
+import { getPosts } from "../data/dbrepository";
 import Button from "react-bootstrap/Button";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "./css/Posts.css";
 
 import PostCreator from "./PostCreator";
@@ -10,9 +10,22 @@ import PostCard from "./PostCard";
 import UserContext from "../contexts/UserContext";
 
 function Posts() {
-  const { currentUser } = useContext(UserContext);
+  const [posts, setPosts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const posts = getPosts();
+  const { currentUser } = useContext(UserContext);
+  const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    async function loadPosts() {
+      const currentPosts = await getPosts();
+
+      setPosts(currentPosts);
+      setIsLoading(false);
+    }
+
+    loadPosts();
+  }, [showModal]); // if modal gets toggled, reload the posts
 
   const [post, setPost] = useState({
     userId: currentUser,
@@ -24,13 +37,11 @@ function Posts() {
     postId: "",
   });
 
-  const [showModal, setShowModal] = useState(false);
-
   const toggleModal = () => {
     // toggle the edit state
 
     post.content = "";
-    post.postId = ""
+    post.postId = "";
     post.image = "";
 
     setShowModal((current) => !current);
@@ -52,11 +63,15 @@ function Posts() {
         setFields={setPost}
       />
 
-      {Object.keys(posts).map((id) => {
-        const post = posts[id];
-
-        return <PostCard key={id} id={id} post={post} allowDelete={false} />;
-      })}
+      <div>
+        {isLoading ? (
+          <div>Loading posts...</div>
+        ) : posts.length === 0 ? (
+          <span className="text-muted">No posts have been submitted.</span>
+        ) : (
+          posts.map((x) => <PostCard key={x.id} post={x} allowDelete={false} />)
+        )}
+      </div>
     </div>
   );
 }
