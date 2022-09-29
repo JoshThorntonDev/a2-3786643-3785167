@@ -1,29 +1,44 @@
 import "./css/Profile.css";
 import Button from "react-bootstrap/Button";
-import { getUsers } from "../data/Repository";
+
 import { PencilSquare, PersonCircle, Trash } from "react-bootstrap-icons";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ProfileEditor from "./ProfileEditor";
 import ProfileDeleter from "./ProfileDeleter";
-import { getAllPostsByUser } from "../data/PostRepository";
 import PostCard from "./PostCard";
-import UserContext from "../contexts/UserContext";
 import Card from "react-bootstrap/Card"
+import { useParams } from "react-router-dom";
+import { findUser } from "../data/dbrepository";
+
+
 
 function Profile() {
-  const users = getUsers();
-  const { currentUser } = useContext(UserContext);
+  const {id} = useParams();
+  const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const posts = getAllPostsByUser(currentUser);
+  useEffect(() => {
+    async function loadUser() {
+      const current = await findUser(id);
+
+      setUser(current);
+      setIsLoading(false);
+    }
+    loadUser();
+  }, [])
+
+ 
+
+  //const posts = getAllPostsByUser(currentUser);
   // this is used to get all the posts and display them on this profile page
   // currentUser could be changed to display posts of other users if accessing other profiles becomes a requirement
 
   const [fields, setFields] = useState({
     // a field storing all possible user data, currently only name is editable
     name: "",
-    email: users[currentUser].email,
+    email: "",
     password: "",
-    date: users[currentUser].date,
+    date: "",
     posts:[]
   });
   // the field is stored here to make it easier to clear the values when the modal is closed,
@@ -52,30 +67,38 @@ function Profile() {
     setAltered(false);
   }, [altered]);
 
+  const getDate = () => {
+    var date = new Date(user.updatedAt)
+    return date.toLocaleDateString()
+  }
+
   return (
     <div>
+      {isLoading ? (
+      <span></span>
+      ):<div>
       
       <Card border="secondary" className="profile">
-        <ProfileEditor
+        {/* <ProfileEditor
           show={showEdit}
           toggle={toggleEdit}
           fields={fields}
           setFields={setFields}
-        />
+        /> */}
 
-        <ProfileDeleter
+        {/* <ProfileDeleter
           show={showDelete}
           toggle={toggleDelete}
           fields={fields}
           setFields={setFields}
-        />
+        /> */}
         <PersonCircle size={"10vh"} className="image"></PersonCircle>
 
         <div className="information">
-          <h1>{users[currentUser].name}'s Profile</h1>
-          <p>{users[currentUser].email}</p>
+          <h1>{user.username}'s Profile</h1>
+          <p>{user.email}</p>
           <hr />
-          <p>Joined: {users[currentUser].date}</p>
+          <p>Joined: {getDate()}</p>
         </div>
 
         <div className="edit">
@@ -91,9 +114,9 @@ function Profile() {
 
       <hr />
 
-      <h3>All posts by {users[currentUser].name}</h3>
+      <h3>All posts by {user.username}</h3>
 
-      {posts.length === 0 ? (
+      {/* {posts.length === 0 ? (
         <div className="d-flex justify-content-center">
           <h5 className="text-muted">This user has no existing posts</h5>
         </div>
@@ -112,7 +135,8 @@ function Profile() {
             />
           );
         })
-      )}
+      )} */}
+      </div>}
     </div>
   );
 }
