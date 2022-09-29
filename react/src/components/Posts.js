@@ -10,10 +10,13 @@ import PostCard from "./PostCard";
 import UserContext from "../contexts/UserContext";
 import Spinner from "react-bootstrap/Spinner";
 
+import ReactPaginate from "react-paginate";
+import PlaceholderPost from "./PlaceholderPost";
+
 function Posts() {
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-
+  const [page, setPage] = useState(0);
   const { currentUser } = useContext(UserContext);
   const [showModal, setShowModal] = useState(false);
 
@@ -22,7 +25,10 @@ function Posts() {
       const currentPosts = await getPosts();
 
       setPosts(currentPosts);
-      setIsLoading(false);
+
+      setTimeout(() => { // in case the db responds extremely quickly, prevent loading animation from looking bad
+        setIsLoading(false);
+      }, 300);
     }
 
     loadPosts();
@@ -48,6 +54,15 @@ function Posts() {
     setShowModal((current) => !current);
   };
 
+  const handlePageClick = (data) => {
+    setPage(data.selected);
+  };
+
+  const pageSize = 8; // number of posts to display per page
+  const pageCount = Math.ceil(posts.length / pageSize); // finds the number of pages needed to fit all posts
+  const offset = page * pageSize; // keeps track of where the first post of each page is
+  const postsToDisplay = posts.slice(offset, offset + pageSize); // selects only the posts on the current page
+
   return (
     <div>
       <h1>All Posts</h1>
@@ -68,15 +83,41 @@ function Posts() {
         {isLoading ? (
           <div className="d-flex justify-content-center">
             <div>
-            <Spinner animation="border" role="status">
-              <span className="visually-hidden">Loading...</span>
-            </Spinner>
+              <Spinner animation="border" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </Spinner> Loading posts
+              <br></br>
+              <PlaceholderPost />
+              <br></br>
+              <PlaceholderPost />
+              <br></br>
+              <PlaceholderPost />
             </div>
           </div>
         ) : posts.length === 0 ? (
           <span className="text-muted">No posts have been submitted.</span>
         ) : (
-          posts.map((x) => <PostCard key={x.id} post={x} allowDelete={false} />)
+          <div>
+            <ReactPaginate
+              onPageChange={handlePageClick}
+              pageCount={pageCount}
+              marginPagesDisplayed={2}
+              pageRangeDisplayed={5}
+              previousLabel="Previous"
+              nextLabel="Next"
+              breakLabel="..."
+              containerClassName="pagination"
+              pageClassName="page-item"
+              pageLinkClassName="page-link"
+              previousLinkClassName="page-link"
+              nextLinkClassName="page-link"
+              breakClassName="page-link"
+              activeClassName="active"
+            />
+            {postsToDisplay.map((x) => (
+              <PostCard key={x.id} post={x} allowDelete={false} />
+            ))}
+          </div>
         )}
       </div>
     </div>
