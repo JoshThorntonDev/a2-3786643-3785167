@@ -8,9 +8,10 @@ import { useState } from "react";
 import PostCreator from "./PostCreator";
 
 function PostCard(props) {
-  var name = "ToBeImpl'd";
-  const [post, setPost] = useState(props.post);
   
+  const [post, setPost] = useState(props.post);
+  var name = post.user_id;
+  console.log(post)
   // ===Used to show user info on posts===
     // if (props.post.userId === "[deleted]") {
   //   name = "[deleted]";
@@ -25,6 +26,16 @@ function PostCard(props) {
     setShowEdit((current) => !current);
     props.setAltered(true);
   };
+
+  const getDate = () => {
+    var date = new Date(post.updatedAt)
+    return date.toLocaleDateString()
+  }
+
+  const getTime = () => {
+    var time = new Date(post.updatedAt)
+    return time.toLocaleTimeString()
+  }
 
   return (
     <Card>
@@ -78,7 +89,7 @@ function PostCard(props) {
               </Button>
             </span>
           )}{" "}
-          {props.post.date} | {props.post.time}
+          {getDate()} | {getTime()}
         </div>
       </Card.Footer>
     </Card>
