@@ -14,8 +14,18 @@ exports.create = async (req, res) => {
   const post = await db.post.create({
     content: req.body.content,
     image: req.body.image,
-    user_id: req.body.user_id // set foreign key
+    userId: req.body.userId // set foreign key
   });
 
   res.json(post);
 };
+
+// delete a post
+exports.delete = async (req, res) => {
+  const id = req.params.id;
+  
+  await db.post.destroy({where: {id: id}})
+  res.send({
+    message: `Deleted post ${id}`
+  });
+}

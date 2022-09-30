@@ -69,7 +69,7 @@ function PostCreator(props) {
       const newPost = {
         content: props.fields.content,
         image: props.fields.image,
-        user_id: props.fields.userId,
+        userId: props.fields.userId,
       };
 
       setSaving(true); // changes save button to show save animation

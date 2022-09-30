@@ -47,9 +47,8 @@ function Login() {
 
     //Redirect user and set them as logged in
     setTimeout(() => {
-      //TODO: change navigate to profile once its working again
-      navigate("/", { replace: true });
       login(user.id); // user successfully logged in
+      navigate(`/profile/${user.id}`, { replace: true });
     }, 1500);
   };
 
@@ -68,7 +67,7 @@ function Login() {
 
       <AnimatedAlert
         variant="success"
-        message={"Welcome back" + username + "! We're redirecting you now"}
+        message={"Welcome back " + username + "! We're redirecting you now"}
         display={show}
         setDisplay={setShow}
       />

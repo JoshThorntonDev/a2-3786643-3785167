@@ -41,3 +41,13 @@ exports.create = async (req, res) => {
 
   res.json(user);
 };
+
+// delete a user
+exports.delete = async (req, res) => {
+  const id = req.params.id;
+  
+  await db.user.destroy({where: {id: id}})
+  res.send({
+    message: `Deleted user ${id}`
+  });
+}
