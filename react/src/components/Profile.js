@@ -10,13 +10,18 @@ import Card from "react-bootstrap/Card";
 import { useParams } from "react-router-dom";
 import { findUser, getPostsByUser } from "../data/dbrepository";
 import UserContext from "../contexts/UserContext";
+import PlaceholderPost from "./PlaceholderPost";
+import Spinner from "react-bootstrap/Spinner";
+
+import ReactPaginate from "react-paginate";
 
 function Profile() {
   const { id } = useParams();
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const { currentUser } = useContext(UserContext);
-  const [posts, setPosts] = useState([])
+  const [posts, setPosts] = useState([]);
+  const [page, setPage] = useState(0);
 
   const isThisMyAccount = async () => {
     var value = false;
@@ -35,17 +40,13 @@ function Profile() {
     }
 
     async function loadPosts() {
-      const current = await getPostsByUser(id)
+      const current = await getPostsByUser(id);
 
-      setPosts(current)
+      setPosts(current);
     }
     loadUser();
     loadPosts();
   }, [isLoading]);
-
-
-  
-  
 
   const [fields, setFields] = useState({
     // a field storing all possible user data, currently only name is editable
@@ -80,10 +81,32 @@ function Profile() {
     return date.toLocaleDateString();
   };
 
+  const handlePageClick = (data) => {
+    setPage(data.selected);
+  };
+
+  const pageSize = 3; // number of posts to display per page
+  const pageCount = Math.ceil(posts.length / pageSize); // finds the number of pages needed to fit all posts
+  const offset = page * pageSize; // keeps track of where the first post of each page is
+  const postsToDisplay = posts.slice(offset, offset + pageSize); // selects only the posts on the current page
+
   return (
     <div>
       {isLoading ? (
-        <span></span>
+        <div className="d-flex justify-content-center">
+          <div>
+            <Spinner animation="border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </Spinner>{" "}
+            Loading profile
+            <br></br>
+            <PlaceholderPost />
+            <br></br>
+            <PlaceholderPost />
+            <br></br>
+            <PlaceholderPost />
+          </div>
+        </div>
       ) : (
         <div>
           <Card border="secondary" className="profile">
@@ -127,27 +150,35 @@ function Profile() {
 
           <hr />
 
-          <h3>All posts by {user.username}</h3>
+          <h3>Posts by {user.username}</h3>
 
           {posts.length === 0 ? (
-        <div className="d-flex justify-content-center">
-          <h5 className="text-muted">This user has no existing posts</h5>
-        </div>
-      ) : (
-        Object.keys(posts).map((id) => {
-          const post = posts[id];
-
-          return (
-            <PostCard
-              className="smallCards"
-              key={id}
-              id={id}
-              post={post}
-              allowDelete={true}
-            />
-          );
-        })
-      )}
+            <div className="d-flex justify-content-center">
+              <h5 className="text-muted">No posts found</h5>
+            </div>
+          ) : (
+            <div>
+              <ReactPaginate
+                onPageChange={handlePageClick}
+                pageCount={pageCount}
+                marginPagesDisplayed={2}
+                pageRangeDisplayed={5}
+                previousLabel="Previous"
+                nextLabel="Next"
+                breakLabel="..."
+                containerClassName="pagination"
+                pageClassName="page-item"
+                pageLinkClassName="page-link"
+                previousLinkClassName="page-link"
+                nextLinkClassName="page-link"
+                breakClassName="page-link"
+                activeClassName="active"
+              />
+              {postsToDisplay.map((x) => (
+                <PostCard key={x.id} post={x} allowDelete={false} />
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>
