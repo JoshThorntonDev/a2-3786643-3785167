@@ -38,6 +38,12 @@ async function deleteUser(user) {
     return response.data;
 }
 
+async function editUser(user) {
+    const response = await axios.patch(API_HOST + `/users/${user.id}`);
+
+    return response.data;
+}
+
 // --- Post Methods ---------------------------------------------------------------------------------------
 async function createPost(post) {
     const response = await axios.post(API_HOST + "/posts", post)
