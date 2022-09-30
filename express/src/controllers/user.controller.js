@@ -18,6 +18,12 @@ exports.one = async (req, res) => {
   res.json(user);
 };
 
+exports.findByEmail = async (req, res) => {
+  const user = await db.user.findOne({ where: {email: req.params.email } });
+
+  res.json(user);
+}
+
 //Select one user from the database if username and password are a match.
 exports.login = async (req, res) => {
   const user = await db.user.findOne({ where: {email: req.query.email } });

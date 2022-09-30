@@ -15,10 +15,6 @@ async function verifyUser(email, password) {
     const response = await axios.get(API_HOST + "/users/login", { params: { email, password } });
     const user = response.data;
     
-    // NOTE: In this example the login is also persistent as it is stored in local storage.
-    //if(user !== null)
-      //setUser(user);
-  
     return user;
 }
 
@@ -31,6 +27,12 @@ async function findUser(id) {
 async function createUser(user) {
     const response = await axios.post(API_HOST + "/users", user);
   
+    return response.data;
+}
+
+async function findUserByEmail(email) {
+    const response = await axios.get(API_HOST + `/users/selectemail/${email}`);
+    
     return response.data;
 }
 
@@ -58,5 +60,5 @@ async function getPostsByUser(id) {
 }
 
 export {
-    verifyUser, findUser, createUser, deleteUser, createPost, getPosts, getPostsByUser
+    verifyUser, findUser, createUser, findUserByEmail, deleteUser, createPost, getPosts, getPostsByUser
   }
