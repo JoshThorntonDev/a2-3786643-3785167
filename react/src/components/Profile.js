@@ -59,8 +59,6 @@ function Profile() {
     name: "",
     email: "",
     password: "",
-    date: "",
-    posts: [],
   });
   // the field is stored here to make it easier to clear the values when the modal is closed,
   // either by closing it manually or when an update is successful

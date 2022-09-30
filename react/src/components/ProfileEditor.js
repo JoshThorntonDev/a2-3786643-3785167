@@ -7,14 +7,13 @@ import AnimatedAlert from "./AnimatedAlert";
 import UserContext from "../contexts/UserContext";
 import { editUser, verifyUser } from "../data/dbrepository";
 
-
 // this function renders a modal containing a form that can edit user information
 // currently, it supports changing the name, and can be updated to also edit email and password if required
 
 // required props are:
 // show (boolean)
 // toggle (function, preferably one that clears `fields` and changes `show`)
-// fields (containing email, name, date and password)
+// fields (containing email, name and password)
 // setFields
 function ProfileEditor(props) {
   const { NAME_LENGTH } = useContext(UserContext);
@@ -31,17 +30,26 @@ function ProfileEditor(props) {
   const nameRef = useRef(null);
 
   const [error, setError] = useState(false);
+  const [show, setShow] = useState(false);
   const [message, setMessage] = useState("");
 
   const attemptSave = async (event) => {
-
     setMessage(""); // clear error message
     setError(false); // reset error state
     event.preventDefault(); // prevent form from submitting
 
-    const editTarget = await verifyUser(props.user.email, props.fields.password)
+    if (props.fields.name === "") {
+      setMessage("Sorry, blank names are not permitted");
+      setError(true);
+      nameRef.current.focus();
+      return;
+    }
 
-    
+    const editTarget = await verifyUser(
+      props.user.email,
+      props.fields.password
+    );
+
     if (editTarget === null) {
       setMessage("Sorry, your password was incorrect");
       setError(true);
@@ -52,10 +60,14 @@ function ProfileEditor(props) {
       editTarget.username = props.fields.name;
 
       editUser(editTarget);
-      setMessage("");
-      
-    }
+      setMessage("Profile update successful");
+      setShow(true);
 
+      setTimeout(() => {
+        setShow(false);
+        props.toggle();
+      }, 800);
+    }
   };
 
   return (
@@ -68,6 +80,12 @@ function ProfileEditor(props) {
         message={message}
         display={error}
         setDisplay={setError}
+      />
+      <AnimatedAlert
+        variant="success"
+        message={message}
+        display={show}
+        setDisplay={setShow}
       />
       <Form onSubmit={attemptSave}>
         <Modal.Body>
