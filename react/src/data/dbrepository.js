@@ -30,6 +30,13 @@ async function createUser(user) {
     return response.data;
 }
 
+async function findUserByEmail(email) {
+    const response = await axios.get(API_HOST + `/users/selectemail/${email}`);
+
+    return response.data;
+}
+
 export {
-    verifyUser, findUser, createUser
+    verifyUser, findUser, createUser,
+    findUserByEmail
   }

@@ -19,7 +19,7 @@ exports.one = async (req, res) => {
 };
 
 exports.findByEmail = async (req, res) => {
-  const user = await db.user.findOne({ where: {email: req.query.email } });
+  const user = await db.user.findOne({ where: {email: req.params.email } });
 
   res.json(user);
 }

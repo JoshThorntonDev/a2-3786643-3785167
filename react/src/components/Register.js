@@ -4,7 +4,7 @@ import Button from "react-bootstrap/Button";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Card from "react-bootstrap/Card";
 import AnimatedAlert from "./AnimatedAlert";
-import { createUser } from "../data/dbrepository.js";
+import { findUserByEmail, createUser } from "../data/dbrepository.js";
 import { validate } from "./RegisterValidation.js";
 
 //react components
@@ -34,6 +34,13 @@ function Register() {
     setMessage(""); //clear message
 
     e.preventDefault(); //prevent form from submitting automatically
+
+    //Ensure email is unique
+    if (await findUserByEmail(user.email) !== null) {
+      setError(true);
+      setMessage("Sorry, that email is already in use");
+      return;
+    }
 
     //Call validate function, store error message as string, give it NAME_LENGTH because we can't use context in it
     let validateMessage = validate(user, NAME_LENGTH);
