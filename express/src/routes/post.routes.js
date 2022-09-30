@@ -8,6 +8,9 @@ module.exports = (express, app) => {
   // Select all posts.
   router.get("/", controller.all);
 
+  // Select all posts.
+  router.get("/user/:id", controller.allByUser);
+
   // Create a new post.
   router.post("/", controller.create);
 

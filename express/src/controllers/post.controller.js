@@ -9,6 +9,17 @@ exports.all = async (req, res) => {
   res.json(posts);
 };
 
+// Select all posts made by specified user
+exports.allByUser = async (req, res) => {
+  const posts = await db.post.findAll({
+    where: {
+      userId: req.params.id
+    }
+  });
+  res.json(posts);
+};
+
+
 // Create a post in the database.
 exports.create = async (req, res) => {
   const post = await db.post.create({

@@ -8,7 +8,7 @@ import ProfileDeleter from "./ProfileDeleter";
 import PostCard from "./PostCard";
 import Card from "react-bootstrap/Card";
 import { useParams } from "react-router-dom";
-import { findUser } from "../data/dbrepository";
+import { findUser, getPostsByUser } from "../data/dbrepository";
 import UserContext from "../contexts/UserContext";
 
 function Profile() {
@@ -16,6 +16,7 @@ function Profile() {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const { currentUser } = useContext(UserContext);
+  const [posts, setPosts] = useState([])
 
   const isThisMyAccount = async () => {
     var value = false;
@@ -32,18 +33,19 @@ function Profile() {
       setUser(current);
       setIsLoading(false);
     }
-    loadUser();
-  }, [id]);
 
-  useEffect(() => {
-    async function loadUser() {
-      const current = await findUser(id);
+    async function loadPosts() {
+      const current = await getPostsByUser(id)
 
-      setUser(current);
-      setIsLoading(false);
+      setPosts(current)
     }
     loadUser();
+    loadPosts();
   }, [isLoading]);
+
+
+  
+  
 
   const [fields, setFields] = useState({
     // a field storing all possible user data, currently only name is editable
@@ -127,7 +129,7 @@ function Profile() {
 
           <h3>All posts by {user.username}</h3>
 
-          {/* {posts.length === 0 ? (
+          {posts.length === 0 ? (
         <div className="d-flex justify-content-center">
           <h5 className="text-muted">This user has no existing posts</h5>
         </div>
@@ -141,12 +143,11 @@ function Profile() {
               key={id}
               id={id}
               post={post}
-              setAltered={setAltered}
               allowDelete={true}
             />
           );
         })
-      )} */}
+      )}
         </div>
       )}
     </div>
