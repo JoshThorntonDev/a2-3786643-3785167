@@ -39,7 +39,7 @@ async function deleteUser(user) {
 }
 
 async function editUser(user) {
-    const response = await axios.patch(API_HOST + `/users/${user.id}`);
+    const response = await axios.put(API_HOST + `/users`, user);
 
     return response.data;
 }
@@ -64,6 +64,6 @@ async function getPostsByUser(id) {
 
 export {
     verifyUser, findUser, createUser,
-    findUserByEmail, deleteUser, createPost,
+    findUserByEmail, deleteUser, editUser, createPost,
     getPosts, getPostsByUser
   }
