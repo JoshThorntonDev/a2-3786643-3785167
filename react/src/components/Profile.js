@@ -128,7 +128,7 @@ function Profile() {
                 user={user}
               />
             }
-            <PersonCircle size={"10vh"} className="image"></PersonCircle>
+            <PersonCircle size={"100"} className="image"></PersonCircle>
 
             <div className="information">
               <h1>{user.username}'s Profile</h1>
@@ -140,11 +140,11 @@ function Profile() {
             {isThisMyAccount && ( // only show edit and delete when its the logged in account
               <div className="edit">
                 <Button onClick={toggleEdit} variant="primary" type="submit">
-                  <PencilSquare size={"2vh"}></PencilSquare> Edit
+                  <PencilSquare size={"20"}></PencilSquare> Edit
                 </Button>
 
                 <Button onClick={toggleDelete} variant="danger" type="submit">
-                  <Trash size={"2vh"}></Trash> Delete
+                  <Trash size={"20"}></Trash> Delete
                 </Button>
               </div>
             )}
