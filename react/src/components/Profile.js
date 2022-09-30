@@ -22,20 +22,21 @@ function Profile() {
   const { currentUser } = useContext(UserContext);
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(0);
+  const [isThisMyAccount, setIsThisMyAccount] = useState(false);
 
-  const isThisMyAccount = async () => {
-    var value = false;
-    if (id === currentUser) {
-      value = true;
-    }
-    return value;
-  };
 
   useEffect(() => {
+    setIsThisMyAccount(false) // make sure theres no way to trick react into leaving this as true when changing page
+
     async function loadUser() {
       const current = await findUser(id);
-
+      
       setUser(current);
+
+      if (id === currentUser) { // flag for showing edit and delete buttons
+        setIsThisMyAccount(true)
+      }
+
       setIsLoading(false);
     }
 
@@ -44,9 +45,10 @@ function Profile() {
 
       setPosts(current);
     }
+    
     loadUser();
     loadPosts();
-  }, [isLoading]);
+  }, [id]);
 
   const [fields, setFields] = useState({
     // a field storing all possible user data, currently only name is editable
@@ -135,7 +137,7 @@ function Profile() {
               <p>Joined: {getDate()}</p>
             </div>
 
-            {isThisMyAccount() && ( // only show edit and delete when its the logged in account
+            {isThisMyAccount && ( // only show edit and delete when its the logged in account
               <div className="edit">
                 <Button onClick={toggleEdit} variant="primary" type="submit">
                   <PencilSquare size={"2vh"}></PencilSquare> Edit
