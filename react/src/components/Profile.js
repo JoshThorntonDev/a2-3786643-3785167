@@ -12,7 +12,7 @@ import { findUser, getPostsByUser } from "../data/dbrepository";
 import UserContext from "../contexts/UserContext";
 import PlaceholderPost from "./PlaceholderPost";
 import Spinner from "react-bootstrap/Spinner";
-
+import { useNavigate } from "react-router-dom";
 import ReactPaginate from "react-paginate";
 
 function Profile() {
@@ -23,7 +23,7 @@ function Profile() {
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(0);
   const [isThisMyAccount, setIsThisMyAccount] = useState(false);
-
+  const navigate = useNavigate();
 
   useEffect(() => {
     setIsThisMyAccount(false) // make sure theres no way to trick react into leaving this as true when changing page
@@ -31,6 +31,10 @@ function Profile() {
     async function loadUser() {
       const current = await findUser(id);
       
+      if(current === null) {
+        navigate(`/`, { replace: true });
+      }
+
       setUser(current);
 
       if (id === currentUser) { // flag for showing edit and delete buttons
@@ -112,12 +116,13 @@ function Profile() {
       ) : (
         <div>
           <Card border="secondary" className="profile">
-            {/* <ProfileEditor
+            <ProfileEditor
           show={showEdit}
           toggle={toggleEdit}
           fields={fields}
           setFields={setFields}
-        /> */}
+          user={user}
+        />
 
             {
               <ProfileDeleter
