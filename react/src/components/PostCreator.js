@@ -1,18 +1,26 @@
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
-import { useContext, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { CheckCircleFill } from "react-bootstrap-icons";
 import Button from "react-bootstrap/Button";
 import AnimatedAlert from "./AnimatedAlert";
-import { insertPost } from "../data/PostRepository";
-import UserContext from "../contexts/UserContext";
+import { createPost } from "../data/dbrepository";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import Spinner from "react-bootstrap/Spinner";
 
 // this component can create and edit posts. By default, it will only create, but setting the prop 'editing' to true
 // will put it in editing mode
 function PostCreator(props) {
-  const { currentUser } = useContext(UserContext);
+  const MAX_LENGTH = 600; // maximum length of posts
+  const MIN_SAVE_TIME = 500; // minimum save time so the save animation can play, should always be less than 1000, and greater than 300
+
   const inputRef = useRef(null);
   const imageRef = useRef(null);
+
+  const getContentLength = () => {
+    return props.fields.content.replace(/<(.|\n)*?>/g, "").trim().length;
+  };
 
   const handleInputChange = (event) => {
     props.setFields({
@@ -21,10 +29,18 @@ function PostCreator(props) {
     });
   };
 
+  const handleContentUpdate = (event) => {
+    props.setFields({
+      ...props.fields,
+      content: event,
+    });
+  };
+
   const [error, setError] = useState(false);
   const [message, setMessage] = useState("");
+  const [saving, setSaving] = useState(false);
 
-  const attemptSave = (event) => {
+  const attemptSave = async (event) => {
     const imageRegex = new RegExp("(.png|.jpg|.jpeg|.gif|.bmp)$");
 
     setMessage(""); // clear error message
@@ -45,19 +61,35 @@ function PostCreator(props) {
     }
 
     if (
-      // ensure content exists, isnt just whitespace, isnt too large, and that the image url is valid
-      props.fields.content.trim() !== "" &&
-      props.fields.content.length <= 250 &&
+      // ensure content isnt just whitespace, isnt too large, and that the image url is valid
+      getContentLength() !== 0 &&
+      getContentLength() <= MAX_LENGTH &&
       imageOK
     ) {
-      insertPost(props.fields, currentUser); // function will determine if its being edited or not based on if it already has an id
-      props.toggle(); // close modal
+      const newPost = {
+        content: props.fields.content,
+        image: props.fields.image,
+        userId: props.fields.userId,
+      };
+
+      setSaving(true); // changes save button to show save animation
+
+      await createPost(newPost);
+
+      setTimeout(() => {
+        // force saving to always take a minimum amount of time to let user see saving animation
+        props.toggle();
+        setTimeout(() => {
+          setSaving(false);
+        }, MIN_SAVE_TIME - 300); // this prevents the button changing back to normal while still visible
+      }, MIN_SAVE_TIME);
+
       setMessage("");
     } else {
       setError(true);
       if (imageOK) {
         inputRef.current.focus(); // focus on post entry field
-        setMessage("Posts must be between 1 and 250 characters");
+        setMessage(`Posts must be between 1 and ${MAX_LENGTH} characters`);
       } else {
         imageRef.current.focus(); // focus on image entry field
         setMessage(
@@ -84,22 +116,25 @@ function PostCreator(props) {
             <Form.Label>
               {props.editing ? "Update your" : "Enter your"} post here
             </Form.Label>
-            <Form.Control
-              name="content"
-              as="textarea"
-              rows={6} /* 6 fits all 250 chars in the box at once */
-              placeholder="Your thoughts?"
+
+            <ReactQuill
+              theme="snow"
               autoFocus
-              maxLength={250}
               value={props.fields.content}
-              onChange={handleInputChange}
-              required
               ref={inputRef}
+              onChange={handleContentUpdate}
             />
-            <Form.Text muted className="float-end">
-              {props.fields.content.trim().length} / 250
-              {/* .trim() prevents the counter increasing when the post starts and ends with whitespace */}
-            </Form.Text>
+
+            {getContentLength() <= MAX_LENGTH ? ( // change indicator text to red when exceeded
+              <Form.Text muted className="float-end">
+                {getContentLength()} / {MAX_LENGTH}
+              </Form.Text>
+            ) : (
+              <Form.Text muted className="float-end">
+                <span className="fw-bold">{getContentLength()}</span> /{" "}
+                {MAX_LENGTH}
+              </Form.Text>
+            )}
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Image URL (Optional)</Form.Label>
@@ -120,8 +155,28 @@ function PostCreator(props) {
           <Button variant="secondary" onClick={props.toggle}>
             Close
           </Button>
-          <Button onClick={attemptSave} variant="success" type="submit">
-            <CheckCircleFill></CheckCircleFill> Save
+          <Button
+            className="saveButton"
+            onClick={attemptSave}
+            variant="success"
+            type="submit"
+          >
+            {saving ? (
+              <div>
+                <Spinner
+                  as="span"
+                  animation="border"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                />{" "}
+                Saving
+              </div>
+            ) : (
+              <div>
+                <CheckCircleFill></CheckCircleFill> Save
+              </div>
+            )}
           </Button>
         </Modal.Footer>
       </Form>

@@ -32,11 +32,33 @@ async function createUser(user) {
 
 async function findUserByEmail(email) {
     const response = await axios.get(API_HOST + `/users/selectemail/${email}`);
+    
+    return response.data;
+}
+
+async function deleteUser(user) {
+    const response = await axios.delete(API_HOST + `/users/${user.id}`);
+
+    return response.data;
+}
+
+async function createPost(post) {
+    const response = await axios.post(API_HOST + "/posts", post)
+    return response.data
+}
+
+async function getPosts() {
+    const response = await axios.get(API_HOST + "/posts");
+
+    return response.data;
+}
+
+async function getPostsByUser(id) {
+    const response = await axios.get(API_HOST + `/posts/user/${id}`);
 
     return response.data;
 }
 
 export {
-    verifyUser, findUser, createUser,
-    findUserByEmail
+    verifyUser, findUser, createUser, findUserByEmail, deleteUser, createPost, getPosts, getPostsByUser
   }

@@ -3,19 +3,15 @@ import Card from "react-bootstrap/Card";
 import "./css/Posts.css";
 import { PencilSquare, Trash } from "react-bootstrap-icons";
 import { deletePost } from "../data/PostRepository";
-import { getUser } from "../data/Repository";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PostCreator from "./PostCreator";
+import { findUser } from "../data/dbrepository";
+import { useNavigate } from "react-router-dom";
 
 function PostCard(props) {
-  var name = "";
+  const navigate = useNavigate();
   const [post, setPost] = useState(props.post);
-  // deal with some posts not being linked with an existing profile, and provide a placeholder name
-  if (props.post.userId === "[deleted]") {
-    name = "[deleted]";
-  } else {
-    name = getUser(props.post.userId).name;
-  }
+  const [name, setName] = useState("");
 
   const [showEdit, setShowEdit] = useState(false);
 
@@ -25,9 +21,29 @@ function PostCard(props) {
     props.setAltered(true);
   };
 
+  const getDate = () => {
+    var date = new Date(post.updatedAt);
+    return date.toLocaleDateString();
+  };
+
+  const getTime = () => {
+    var time = new Date(post.updatedAt);
+    return time.toLocaleTimeString();
+  };
+
+  useEffect(() => {
+    async function assignNameToPost() {
+      const user = await findUser(post.userId);
+      setName(user.username);
+    }
+    assignNameToPost();
+  }, [post.userId]);
+
   return (
     <Card>
-      <Card.Body>{props.post.content}</Card.Body>
+      <Card.Body>
+        <div dangerouslySetInnerHTML={{ __html: props.post.content }} />
+      </Card.Body>
       {props.post.image && ( // only render <hr> and <img> if the post actually has an image
         <Card.Body>
           <hr />
@@ -45,7 +61,15 @@ function PostCard(props) {
       )}
 
       <Card.Footer className="d-flex justify-content-between">
-        <div>Posted by: {name}</div>{" "}
+        <div
+          onClick={() => {
+            navigate(`/profile/${post.userId}`, {
+              replace: false,
+            });
+          }}
+        >
+          Posted by: <Button size="sm" variant="outline-secondary" >{name} </Button> 
+        </div>{" "}
         <div>
           {props.allowDelete && (
             <span className="postButton">
@@ -77,7 +101,7 @@ function PostCard(props) {
               </Button>
             </span>
           )}{" "}
-          {props.post.date} | {props.post.time}
+          {getDate()} | {getTime()}
         </div>
       </Card.Footer>
     </Card>

@@ -63,7 +63,7 @@ function Register() {
     setTimeout(() => {
       login(newUser.id);
       //TODO: change navigate to profile when its working again
-      navigate("/", { replace: true });
+      navigate(`/profile/${newUser.id}`, { replace: true });
     }, 1500);
   };
 

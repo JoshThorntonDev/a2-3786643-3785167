@@ -18,3 +18,7 @@
 .postButton button {
   min-width: 5rem;
 }
+
+.saveButton {
+  min-width: 7rem;
+}

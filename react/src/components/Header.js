@@ -40,7 +40,7 @@ function Header() {
               <Button
                 variant="primary"
                 onClick={() => {
-                  navigate("/profile", {
+                  navigate(`/profile/${currentUser}`, {
                     replace: false,
                   });
                 }}
