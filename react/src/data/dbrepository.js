@@ -51,6 +51,12 @@ async function getPosts() {
     return response.data;
 }
 
+async function getPostsByUser(id) {
+    const response = await axios.get(API_HOST + `/posts/user/${id}`);
+
+    return response.data;
+}
+
 export {
-    verifyUser, findUser, createUser, deleteUser, createPost, getPosts
+    verifyUser, findUser, createUser, deleteUser, createPost, getPosts, getPostsByUser
   }
