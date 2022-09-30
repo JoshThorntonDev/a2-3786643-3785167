@@ -23,22 +23,25 @@ function Profile() {
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(0);
   const [isThisMyAccount, setIsThisMyAccount] = useState(false);
+  const [updated, setUpdated] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    setIsThisMyAccount(false) // make sure theres no way to trick react into leaving this as true when changing page
+    setIsThisMyAccount(false); // make sure theres no way to trick react into leaving this as true when changing page
+    setUpdated(false); // reset update state if it was set
 
     async function loadUser() {
       const current = await findUser(id);
-      
-      if(current === null) {
+
+      if (current === null) {
         navigate(`/`, { replace: true });
       }
 
       setUser(current);
 
-      if (id === currentUser) { // flag for showing edit and delete buttons
-        setIsThisMyAccount(true)
+      if (id === currentUser) {
+        // flag for showing edit and delete buttons
+        setIsThisMyAccount(true);
       }
 
       setIsLoading(false);
@@ -49,10 +52,11 @@ function Profile() {
 
       setPosts(current);
     }
-    
+
     loadUser();
     loadPosts();
-  }, [id]);
+  }, [id, updated]);
+
 
   const [fields, setFields] = useState({
     // a field storing all possible user data, currently only name is editable
@@ -115,12 +119,13 @@ function Profile() {
         <div>
           <Card border="secondary" className="profile">
             <ProfileEditor
-          show={showEdit}
-          toggle={toggleEdit}
-          fields={fields}
-          setFields={setFields}
-          user={user}
-        />
+              show={showEdit}
+              toggle={toggleEdit}
+              fields={fields}
+              setFields={setFields}
+              user={user}
+              setUpdated={setUpdated}
+            />
 
             {
               <ProfileDeleter

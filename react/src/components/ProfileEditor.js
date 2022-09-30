@@ -62,10 +62,11 @@ function ProfileEditor(props) {
       editUser(editTarget);
       setMessage("Profile update successful");
       setShow(true);
-
+      
       setTimeout(() => {
-        setShow(false);
-        props.toggle();
+        setShow(false); // hide success message so it isnt there when opening modal again
+        props.toggle(); // close modal
+        props.setUpdated(true) // tell Profile it was updated and needs to rerender
       }, 800);
     }
   };
