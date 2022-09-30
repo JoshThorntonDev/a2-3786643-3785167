@@ -28,6 +28,11 @@ function Profile() {
 
   useEffect(() => {
     setIsThisMyAccount(false); // make sure theres no way to trick react into leaving this as true when changing page
+
+    if(updated) { // forces name displayed on posts to reset
+      setPosts([])
+    }
+
     setUpdated(false); // reset update state if it was set
 
     async function loadUser() {
