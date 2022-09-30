@@ -19,7 +19,14 @@ db.post = require("./models/post.js")(db.sequelize, DataTypes);
 
 // Relate post and user.
 //Commented out for now until posts are integrated
-db.post.belongsTo(db.user, { foreignKey: { name: "user_id", allowNull: false } });
+db.user.hasMany(db.post, {
+  foreignKey: {
+    allowNull: false
+  }
+})
+
+db.post.belongsTo(db.user);
+
 
 //Sync schema and seed initial data
 db.sync = async () => {
@@ -66,13 +73,13 @@ async function seedData() {
   if (postCount === 0) {
     await db.post.create({
       content: "this is the first post, <h1>which does not have an image</h1>",
-      user_id: userId1
+      userId: userId1
     });
     await db.post.create({
       content: "this is the second post, which has an image",
       image:
         "https://media.discordapp.net/attachments/552276917559099418/826662994230116362/53u0wr.jpg",
-      user_id: userId2
+      userId: userId2
     });
   }
 }

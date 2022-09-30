@@ -33,11 +33,11 @@ function PostCard(props) {
 
   useEffect(() => {
     async function assignNameToPost() {
-      const user = await findUser(post.user_id);
+      const user = await findUser(post.userId);
       setName(user.username);
     }
     assignNameToPost();
-  }, [post.user_id]);
+  }, [post.userId]);
 
   return (
     <Card>
@@ -63,7 +63,7 @@ function PostCard(props) {
       <Card.Footer className="d-flex justify-content-between">
         <div
           onClick={() => {
-            navigate(`/profile/${post.user_id}`, {
+            navigate(`/profile/${post.userId}`, {
               replace: false,
             });
           }}
