@@ -17,7 +17,7 @@ function Profile() {
   const [isLoading, setIsLoading] = useState(true);
   const { currentUser } = useContext(UserContext);
 
-  const isThisMyAccount = () => {
+  const isThisMyAccount = async () => {
     var value = false;
     if (id === currentUser) {
       value = true;
@@ -35,9 +35,15 @@ function Profile() {
     loadUser();
   }, [id]);
 
-  //const posts = getAllPostsByUser(currentUser);
-  // this is used to get all the posts and display them on this profile page
-  // currentUser could be changed to display posts of other users if accessing other profiles becomes a requirement
+  useEffect(() => {
+    async function loadUser() {
+      const current = await findUser(id);
+
+      setUser(current);
+      setIsLoading(false);
+    }
+    loadUser();
+  }, [isLoading]);
 
   const [fields, setFields] = useState({
     // a field storing all possible user data, currently only name is editable
@@ -66,12 +72,6 @@ function Profile() {
     fields.password = "";
     setShowDelete((current) => !current);
   };
-
-  const [altered, setAltered] = useState(false);
-
-  useEffect(() => {
-    setAltered(false);
-  }, [altered]);
 
   const getDate = () => {
     var date = new Date(user.updatedAt);
