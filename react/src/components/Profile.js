@@ -29,8 +29,9 @@ function Profile() {
   useEffect(() => {
     setIsThisMyAccount(false); // make sure theres no way to trick react into leaving this as true when changing page
 
-    if(updated) { // forces name displayed on posts to reset
-      setPosts([])
+    if (updated) {
+      // forces name displayed on posts to reset
+      setPosts([]);
     }
 
     setUpdated(false); // reset update state if it was set
@@ -61,7 +62,6 @@ function Profile() {
     loadUser();
     loadPosts();
   }, [id, updated]);
-
 
   const [fields, setFields] = useState({
     // a field storing all possible user data, currently only name is editable
@@ -173,22 +173,25 @@ function Profile() {
             </div>
           ) : (
             <div>
-              <ReactPaginate
-                onPageChange={handlePageClick}
-                pageCount={pageCount}
-                marginPagesDisplayed={2}
-                pageRangeDisplayed={5}
-                previousLabel="Previous"
-                nextLabel="Next"
-                breakLabel="..."
-                containerClassName="pagination"
-                pageClassName="page-item"
-                pageLinkClassName="page-link"
-                previousLinkClassName="page-link"
-                nextLinkClassName="page-link"
-                breakClassName="page-link"
-                activeClassName="active"
-              />
+              {posts.length > pageSize && ( // only show page indicator when required
+                <ReactPaginate
+                  onPageChange={handlePageClick}
+                  pageCount={pageCount}
+                  marginPagesDisplayed={2}
+                  pageRangeDisplayed={5}
+                  previousLabel="Previous"
+                  nextLabel="Next"
+                  breakLabel="..."
+                  containerClassName="pagination"
+                  pageClassName="page-item"
+                  pageLinkClassName="page-link"
+                  previousLinkClassName="page-link"
+                  nextLinkClassName="page-link"
+                  breakClassName="page-link"
+                  activeClassName="active"
+                />
+              )}
+
               {postsToDisplay.map((x) => (
                 <PostCard key={x.id} post={x} allowDelete={false} />
               ))}
