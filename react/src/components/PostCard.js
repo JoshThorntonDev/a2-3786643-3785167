@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 function PostCard(props) {
   const navigate = useNavigate();
   const [post, setPost] = useState(props.post);
-  const [name, setName] = useState("");
+  const [name, setName] = useState(props.name);
 
   const [showEdit, setShowEdit] = useState(false);
 
@@ -36,7 +36,11 @@ function PostCard(props) {
       const user = await findUser(post.userId);
       setName(user.username);
     }
-    assignNameToPost();
+
+    if(name === undefined) { // only query db when name isnt set
+      assignNameToPost();
+    }
+
   }, [post.userId]);
 
   return (
