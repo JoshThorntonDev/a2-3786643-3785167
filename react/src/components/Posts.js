@@ -5,7 +5,7 @@ import "./css/Posts.css";
 
 import PostCreator from "./PostCreator";
 import { PlusCircleFill } from "react-bootstrap-icons";
-
+import Form from "react-bootstrap/Form";
 import PostCard from "./PostCard";
 import UserContext from "../contexts/UserContext";
 import Spinner from "react-bootstrap/Spinner";
@@ -19,20 +19,26 @@ function Posts() {
   const [page, setPage] = useState(0);
   const { currentUser } = useContext(UserContext);
   const [showModal, setShowModal] = useState(false);
+  const [sortNewest, setSortNewest] = useState(false);
 
   useEffect(() => {
     async function loadPosts() {
       const currentPosts = await getPosts();
 
-      setPosts(currentPosts);
+      if (sortNewest) {
+        setPosts(currentPosts.reverse());
+      } else {
+        setPosts(currentPosts);
+      }
 
-      setTimeout(() => { // in case the db responds extremely quickly, prevent loading animation from looking bad
+      setTimeout(() => {
+        // in case the db responds extremely quickly, prevent loading animation from looking bad
         setIsLoading(false);
       }, 300);
     }
 
     loadPosts();
-  }, [showModal]); // if modal gets toggled, reload the posts
+  }, [showModal, sortNewest]); // if modal or sort order gets toggled, reload the posts
 
   const [post, setPost] = useState({
     userId: currentUser,
@@ -85,7 +91,8 @@ function Posts() {
             <div>
               <Spinner animation="border" role="status">
                 <span className="visually-hidden">Loading...</span>
-              </Spinner> Loading posts
+              </Spinner>{" "}
+              Loading posts
               <br></br>
               <PlaceholderPost />
               <br></br>
@@ -98,22 +105,39 @@ function Posts() {
           <span className="text-muted">No posts have been submitted.</span>
         ) : (
           <div>
-            <ReactPaginate
-              onPageChange={handlePageClick}
-              pageCount={pageCount}
-              marginPagesDisplayed={2}
-              pageRangeDisplayed={5}
-              previousLabel="Previous"
-              nextLabel="Next"
-              breakLabel="..."
-              containerClassName="pagination"
-              pageClassName="page-item"
-              pageLinkClassName="page-link"
-              previousLinkClassName="page-link"
-              nextLinkClassName="page-link"
-              breakClassName="page-link"
-              activeClassName="active"
-            />
+            <div className="d-flex justify-content-between">
+              <ReactPaginate
+                onPageChange={handlePageClick}
+                pageCount={pageCount}
+                marginPagesDisplayed={2}
+                pageRangeDisplayed={5}
+                previousLabel="Previous"
+                nextLabel="Next"
+                breakLabel="..."
+                containerClassName="pagination"
+                pageClassName="page-item"
+                pageLinkClassName="page-link"
+                previousLinkClassName="page-link"
+                nextLinkClassName="page-link"
+                breakClassName="page-link"
+                activeClassName="active"
+              />
+              <div>
+                <Form>
+                  <Form.Group>
+                    <Form.Label>
+                      <strong>Sort by:</strong>
+                    </Form.Label>
+                    <Form.Select
+                      onChange={(e) => setSortNewest((current) => !current)}
+                    >
+                      <option>Oldest First</option>
+                      <option>Newest First</option>
+                    </Form.Select>
+                  </Form.Group>
+                </Form>
+              </div>
+            </div>
             {postsToDisplay.map((x) => (
               <PostCard key={x.id} post={x} allowDelete={false} />
             ))}

@@ -38,6 +38,12 @@ async function deleteUser(user) {
     return response.data;
 }
 
+async function editUser(user) {
+    const response = await axios.put(API_HOST + `/users`, user);
+
+    return response.data;
+}
+
 // --- Post Methods ---------------------------------------------------------------------------------------
 async function createPost(post) {
     const response = await axios.post(API_HOST + "/posts", post)
@@ -58,6 +64,6 @@ async function getPostsByUser(id) {
 
 export {
     verifyUser, findUser, createUser,
-    findUserByEmail, deleteUser, createPost,
+    findUserByEmail, deleteUser, editUser, createPost,
     getPosts, getPostsByUser
   }

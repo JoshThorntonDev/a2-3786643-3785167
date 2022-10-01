@@ -68,7 +68,16 @@ function PostCard(props) {
             });
           }}
         >
-          Posted by: <Button size="sm" variant="outline-secondary" >{name} </Button> 
+          Posted by:{" "}
+          {name ? (
+            <Button size="sm" variant="outline-secondary">
+              {name}
+            </Button>
+          ) : (
+            <Button size="sm" variant="outline-secondary">
+              &nbsp; {/* fixes the button changing size when name loads */}
+            </Button>
+          )}
         </div>{" "}
         <div>
           {props.allowDelete && (
