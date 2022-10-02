@@ -5,7 +5,7 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Card from "react-bootstrap/Card";
-
+import Spinner from "react-bootstrap/Spinner";
 import AnimatedAlert from "./AnimatedAlert";
 
 import { verifyUser } from "../data/dbrepository";
@@ -21,24 +21,29 @@ function Login() {
   const [username, setUsername] = useState("");
   const [error, setError] = useState(false);
   const [show, setShow] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
 
   const { login } = useContext(UserContext);
 
-  const passwordRef = useRef(null);
   const emailRef = useRef(null);
 
   const attemptLogin = async (e) => {
+    setLoading(true);
     setError(false); // clear error in case user has set it already
     e.preventDefault(); // prevent form from submitting automatically
 
     const user = await verifyUser(email, password);
 
-    if(user === null) {
+    if (user === null) {
       //Invalid details, set error to true and return
       setError(true);
+      setLoading(false)
+      emailRef.current.focus()
       return;
     }
+
 
     //If login is valid
     //Show welcome message
@@ -55,57 +60,65 @@ function Login() {
   return (
     <Card>
       <Card.Header><h2 className="mb-1 d-flex justify-content-center">Sign In</h2></Card.Header>
-    <Form className="mb-3 loginForm" onSubmit={attemptLogin}>
-      
+      <Form className="mb-3 loginForm" onSubmit={attemptLogin}>
 
-      <AnimatedAlert
-        variant="danger"
-        message="Sorry, your email and/or password did not match our records"
-        display={error}
-        setDisplay={setError}
-      />
 
-      <AnimatedAlert
-        variant="success"
-        message={"Welcome back " + username + "! We're redirecting you now"}
-        display={show}
-        setDisplay={setShow}
-      />
-
-      <FloatingLabel label="Email address" className="mb-3">
-        <Form.Control
-          type="email"
-          name="email"
-          placeholder="email@example.com"
-          value={email}
-          ref={emailRef}
-          required
-          onChange={(event) => {
-            setEmail(event.target.value);
-          }}
+        <AnimatedAlert
+          variant="danger"
+          message="Sorry, your email and/or password did not match our records"
+          display={error}
+          setDisplay={setError}
         />
-      </FloatingLabel>
 
-      <FloatingLabel label="Password" className="mb-3">
-        <Form.Control
-          type="password"
-          name="password"
-          placeholder="Password here"
-          value={password}
-          ref={passwordRef}
-          required
-          onChange={(event) => {
-            setPassword(event.target.value);
-          }}
+        <AnimatedAlert
+          variant="success"
+          message={"Welcome back " + username + "! We're redirecting you now"}
+          display={show}
+          setDisplay={setShow}
         />
-      </FloatingLabel>
 
-      <div className="d-flex justify-content-center">
-        <Button variant="primary" type="submit">
-          Login
-        </Button>
-      </div>
-    </Form>
+        <FloatingLabel label="Email address" className="mb-3">
+          <Form.Control
+            type="email"
+            name="email"
+            placeholder="email@example.com"
+            value={email}
+            ref={emailRef}
+            required
+            onChange={(event) => {
+              setEmail(event.target.value);
+            }}
+          />
+        </FloatingLabel>
+
+        <FloatingLabel label="Password" className="mb-3">
+          <Form.Control
+            type="password"
+            name="password"
+            placeholder="Password here"
+            value={password}
+            required
+            onChange={(event) => {
+              setPassword(event.target.value);
+            }}
+          />
+        </FloatingLabel>
+
+        <div className="d-flex justify-content-center">
+          {loading ? (<div><Button variant="primary" disabled>
+            <Spinner
+              as="span"
+              animation="border"
+              size="sm"
+              role="status"
+              aria-hidden="true"
+            />{" "}Loading
+          </Button></div>) : (<Button variant="primary" type="submit">
+            Login
+          </Button>)}
+
+        </div>
+      </Form>
     </Card>
   );
 }
