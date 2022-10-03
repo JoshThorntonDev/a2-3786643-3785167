@@ -22,7 +22,7 @@ function Posts() {
   const [sortNewest, setSortNewest] = useState(false);
   const [showReply, setShowReply] = useState(false);
 
-  
+  const [checkNewReplies, setCheckNewReplies] = useState(true)
 
   const [post, setPost] = useState({
     userId: currentUser,
@@ -45,7 +45,12 @@ function Posts() {
       setTimeout(() => {
         // in case the db responds extremely quickly, prevent loading animation from looking bad
         setIsLoading(false);
-      }, 0);
+      }, 300);
+
+      setTimeout(() => {
+
+        setCheckNewReplies(false)
+      }, 3000);
     }
 
     loadPosts();
@@ -106,6 +111,7 @@ function Posts() {
         setFields={setPost}
         type="REPLY"
         replyId={post.replyId}
+        setCheckNewReplies={setCheckNewReplies}
       />
 
       <div>
@@ -163,7 +169,7 @@ function Posts() {
             </div>
             {postsToDisplay.map((x) => (
 
-              <PostCard key={x.id} post={x} allowDelete={false} toggleReply={toggleReply} />
+              <PostCard key={x.id} post={x} allowDelete={false} toggleReply={toggleReply} checkNewReplies={checkNewReplies} />
 
             ))}
           </div>

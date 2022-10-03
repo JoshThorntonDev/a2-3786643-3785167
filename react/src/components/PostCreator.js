@@ -101,6 +101,9 @@ function PostCreator(props) {
         // force saving to always take a minimum amount of time to let user see saving animation
         props.toggle();
         setTimeout(() => {
+          if(props.type === "REPLY") {
+            props.setCheckNewReplies(true)
+          }
           setSaving(false);
         }, MIN_SAVE_TIME - 300); // this prevents the button changing back to normal while still visible
       }, MIN_SAVE_TIME);

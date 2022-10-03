@@ -37,17 +37,23 @@ function PostCard(props) {
       const user = await findUser(post.userId);
       setName(user.username);
     }
-    async function getReplies() {
-      const temp = await getRepliesTo(Number(post.id));
-      setReplies(temp);
-    }
 
-    getReplies();
     if (name === undefined) {
       // only query db when name isnt set
       assignNameToPost();
     }
   }, [post.userId]);
+
+  useEffect(() => {
+    async function getReplies() {
+      const temp = await getRepliesTo(Number(post.id));
+      setReplies(temp);
+    }
+
+    if (props.checkNewReplies) {
+      getReplies();
+    }
+  }, [props.checkNewReplies])
 
   return (
     <div className="top">
@@ -145,6 +151,7 @@ function PostCard(props) {
             post={x}
             allowDelete={false}
             toggleReply={props.toggleReply}
+            checkNewReplies={props.checkNewReplies}
           />
         </div>
         </div>
