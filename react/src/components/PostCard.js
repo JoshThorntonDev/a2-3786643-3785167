@@ -5,15 +5,16 @@ import { PencilSquare, Trash } from "react-bootstrap-icons";
 import { deletePost } from "../data/PostRepository";
 import { useEffect, useState } from "react";
 import PostCreator from "./PostCreator";
-import { findUser } from "../data/dbrepository";
+import { findUser, getRepliesTo } from "../data/dbrepository";
 import { useNavigate } from "react-router-dom";
 
 function PostCard(props) {
   const navigate = useNavigate();
   const [post, setPost] = useState(props.post);
   const [name, setName] = useState(props.name);
-
   const [showEdit, setShowEdit] = useState(false);
+
+  const [replies, setReplies] = useState([]);
 
   const toggleEdit = () => {
     // toggle the edit state
@@ -36,7 +37,12 @@ function PostCard(props) {
       const user = await findUser(post.userId);
       setName(user.username);
     }
+    async function getReplies() {
+      const temp = await getRepliesTo(Number(post.id));
+      setReplies(temp);
+    }
 
+    getReplies();
     if (name === undefined) {
       // only query db when name isnt set
       assignNameToPost();
@@ -44,6 +50,7 @@ function PostCard(props) {
   }, [post.userId]);
 
   return (
+    <div className="top">
       <Card>
         <Card.Body>
           <div dangerouslySetInnerHTML={{ __html: props.post.content }} />
@@ -101,7 +108,6 @@ function PostCard(props) {
               <span className="postButton">
                 <PostCreator
                   show={showEdit}
-                  
                   fields={post}
                   setFields={setPost}
                   editing={true}
@@ -131,6 +137,19 @@ function PostCard(props) {
           </div>
         </Card.Footer>
       </Card>
+      {replies.map((x) => (
+        <div className="d-flex justify-content-end reply">
+        <div className="test">
+          <PostCard
+            key={x.id}
+            post={x}
+            allowDelete={false}
+            toggleReply={props.toggleReply}
+          />
+        </div>
+        </div>
+      ))}
+    </div>
   );
 }
 

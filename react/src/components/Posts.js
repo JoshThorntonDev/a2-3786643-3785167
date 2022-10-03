@@ -22,6 +22,16 @@ function Posts() {
   const [sortNewest, setSortNewest] = useState(false);
   const [showReply, setShowReply] = useState(false);
 
+  
+
+  const [post, setPost] = useState({
+    userId: currentUser,
+    content: "",
+    image: "",
+    replyId: null,
+    depth: 0
+  });
+
   useEffect(() => {
     async function loadPosts() {
       const currentPosts = await getPosts();
@@ -35,19 +45,13 @@ function Posts() {
       setTimeout(() => {
         // in case the db responds extremely quickly, prevent loading animation from looking bad
         setIsLoading(false);
-      }, 300);
+      }, 0);
     }
 
     loadPosts();
-  }, [showModal, sortNewest]); // if modal or sort order gets toggled, reload the posts
+  }, [showModal, sortNewest, showReply]); // if modal or sort order gets toggled, reload the posts
 
-  const [post, setPost] = useState({
-    userId: currentUser,
-    content: "",
-    image: "",
-    replyId: null,
-    depth: 0
-  });
+
 
 
   const toggleModal = () => {
@@ -67,6 +71,7 @@ function Posts() {
     post.depth = depth;
 
     setShowReply((current) => !current);
+
   };
 
   const handlePageClick = (data) => {
@@ -157,7 +162,9 @@ function Posts() {
               </div>
             </div>
             {postsToDisplay.map((x) => (
+
               <PostCard key={x.id} post={x} allowDelete={false} toggleReply={toggleReply} />
+
             ))}
           </div>
         )}

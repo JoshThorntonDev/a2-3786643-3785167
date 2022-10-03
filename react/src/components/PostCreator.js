@@ -123,7 +123,7 @@ function PostCreator(props) {
   return (
     <Modal show={props.show} onHide={props.toggle}>
       <Modal.Header closeButton>
-        <Modal.Title>{title}{props.fields.replyId}</Modal.Title>
+        <Modal.Title>{title}</Modal.Title>
       </Modal.Header>
       <AnimatedAlert
         variant="danger"

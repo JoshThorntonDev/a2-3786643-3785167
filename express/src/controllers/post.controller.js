@@ -5,7 +5,11 @@ const db = require("../database");
 
 // Select all posts from the database.
 exports.all = async (req, res) => {
-  const posts = await db.post.findAll();
+  const posts = await db.post.findAll({
+    where: {
+      depth: 0
+    }
+  });
   res.json(posts);
 };
 
@@ -19,6 +23,15 @@ exports.allByUser = async (req, res) => {
   res.json(posts);
 };
 
+// Select all posts made by specified user
+exports.repliesTo = async (req, res) => {
+  const posts = await db.post.findAll({
+    where: {
+      replyId: req.params.id
+    }
+  });
+  res.json(posts);
+};
 
 // Create a post in the database.
 exports.create = async (req, res) => {
