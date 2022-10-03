@@ -1,11 +1,11 @@
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import { useContext, useRef, useState } from "react";
-import { updateUser, getUsers } from "../data/Repository";
 import { CheckCircleFill } from "react-bootstrap-icons";
 import Button from "react-bootstrap/Button";
 import AnimatedAlert from "./AnimatedAlert";
 import UserContext from "../contexts/UserContext";
+import { editUser, verifyUser } from "../data/dbrepository";
 
 // this function renders a modal containing a form that can edit user information
 // currently, it supports changing the name, and can be updated to also edit email and password if required
@@ -13,11 +13,10 @@ import UserContext from "../contexts/UserContext";
 // required props are:
 // show (boolean)
 // toggle (function, preferably one that clears `fields` and changes `show`)
-// fields (containing email, name, date and password)
+// fields (containing email, name and password)
 // setFields
 function ProfileEditor(props) {
-  const users = getUsers();
-  const { currentUser, NAME_LENGTH } = useContext(UserContext);
+  const { NAME_LENGTH } = useContext(UserContext);
   // get users and current users so we dont have to have ugly things like props.users[props.currentUser].password
 
   const handleInputChange = (event) => {
@@ -31,30 +30,44 @@ function ProfileEditor(props) {
   const nameRef = useRef(null);
 
   const [error, setError] = useState(false);
+  const [show, setShow] = useState(false);
   const [message, setMessage] = useState("");
 
-  const attemptSave = (event) => {
+  const attemptSave = async (event) => {
     setMessage(""); // clear error message
     setError(false); // reset error state
     event.preventDefault(); // prevent form from submitting
 
-    if (props.fields.name.trim() !== "" && props.fields.name.length <= NAME_LENGTH) {
-      //check if password is correct
-      if (props.fields.password === users[currentUser].password) {
-        // ensure name is valid
-        const newInfo = { ...props.fields }; // update fields
-        updateUser(newInfo); // store changes in localStorage
-        props.toggle(); // close modal
-        setMessage("");
-      } else {
-        setMessage("Sorry, your password was incorrect");
-        setError(true);
-        passwordRef.current.focus(); // focus on password field
-      }
-    } else {
-      setMessage("Sorry, that name is invalid");
+    if (props.fields.name === "") {
+      setMessage("Sorry, blank names are not permitted");
       setError(true);
-      nameRef.current.focus(); // focus on name entry field
+      nameRef.current.focus();
+      return;
+    }
+
+    const editTarget = await verifyUser(
+      props.user.email,
+      props.fields.password
+    );
+
+    if (editTarget === null) {
+      setMessage("Sorry, your password was incorrect");
+      setError(true);
+      passwordRef.current.focus(); // focus on password field
+    } else {
+      //show confirmation message before redirecting
+
+      editTarget.username = props.fields.name;
+
+      editUser(editTarget);
+      setMessage("Profile update successful");
+      setShow(true);
+      
+      setTimeout(() => {
+        setShow(false); // hide success message so it isnt there when opening modal again
+        props.toggle(); // close modal
+        props.setUpdated(true) // tell Profile it was updated and needs to rerender
+      }, 800);
     }
   };
 
@@ -69,6 +82,12 @@ function ProfileEditor(props) {
         display={error}
         setDisplay={setError}
       />
+      <AnimatedAlert
+        variant="success"
+        message={message}
+        display={show}
+        setDisplay={setShow}
+      />
       <Form onSubmit={attemptSave}>
         <Modal.Body>
           <Form.Group className="mb-3">
@@ -76,7 +95,7 @@ function ProfileEditor(props) {
             <Form.Control
               name="name"
               type="text"
-              placeholder={users[currentUser].name}
+              placeholder={props.user.username}
               autoFocus
               maxLength={NAME_LENGTH}
               value={props.fields.name}

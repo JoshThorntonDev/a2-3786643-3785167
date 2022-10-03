@@ -12,7 +12,7 @@ import { findUser, getPostsByUser } from "../data/dbrepository";
 import UserContext from "../contexts/UserContext";
 import PlaceholderPost from "./PlaceholderPost";
 import Spinner from "react-bootstrap/Spinner";
-
+import { useNavigate } from "react-router-dom";
 import ReactPaginate from "react-paginate";
 
 function Profile() {
@@ -23,18 +23,31 @@ function Profile() {
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(0);
   const [isThisMyAccount, setIsThisMyAccount] = useState(false);
-
+  const [updated, setUpdated] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    setIsThisMyAccount(false) // make sure theres no way to trick react into leaving this as true when changing page
+    setIsThisMyAccount(false); // make sure theres no way to trick react into leaving this as true when changing page
+
+    if (updated) {
+      // forces name displayed on posts to reset
+      setPosts([]);
+    }
+
+    setUpdated(false); // reset update state if it was set
 
     async function loadUser() {
       const current = await findUser(id);
-      
+
+      if (current === null) {
+        navigate(`/`, { replace: true });
+      }
+
       setUser(current);
 
-      if (id === currentUser) { // flag for showing edit and delete buttons
-        setIsThisMyAccount(true)
+      if (id === currentUser) {
+        // flag for showing edit and delete buttons
+        setIsThisMyAccount(true);
       }
 
       setIsLoading(false);
@@ -45,18 +58,16 @@ function Profile() {
 
       setPosts(current);
     }
-    
+
     loadUser();
     loadPosts();
-  }, [id]);
+  }, [id, updated]);
 
   const [fields, setFields] = useState({
     // a field storing all possible user data, currently only name is editable
     name: "",
     email: "",
     password: "",
-    date: "",
-    posts: [],
   });
   // the field is stored here to make it easier to clear the values when the modal is closed,
   // either by closing it manually or when an update is successful
@@ -112,12 +123,14 @@ function Profile() {
       ) : (
         <div>
           <Card border="secondary" className="profile">
-            {/* <ProfileEditor
-          show={showEdit}
-          toggle={toggleEdit}
-          fields={fields}
-          setFields={setFields}
-        /> */}
+            <ProfileEditor
+              show={showEdit}
+              toggle={toggleEdit}
+              fields={fields}
+              setFields={setFields}
+              user={user}
+              setUpdated={setUpdated}
+            />
 
             {
               <ProfileDeleter
@@ -160,24 +173,27 @@ function Profile() {
             </div>
           ) : (
             <div>
-              <ReactPaginate
-                onPageChange={handlePageClick}
-                pageCount={pageCount}
-                marginPagesDisplayed={2}
-                pageRangeDisplayed={5}
-                previousLabel="Previous"
-                nextLabel="Next"
-                breakLabel="..."
-                containerClassName="pagination"
-                pageClassName="page-item"
-                pageLinkClassName="page-link"
-                previousLinkClassName="page-link"
-                nextLinkClassName="page-link"
-                breakClassName="page-link"
-                activeClassName="active"
-              />
+              {posts.length > pageSize && ( // only show page indicator when required
+                <ReactPaginate
+                  onPageChange={handlePageClick}
+                  pageCount={pageCount}
+                  marginPagesDisplayed={2}
+                  pageRangeDisplayed={5}
+                  previousLabel="Previous"
+                  nextLabel="Next"
+                  breakLabel="..."
+                  containerClassName="pagination"
+                  pageClassName="page-item"
+                  pageLinkClassName="page-link"
+                  previousLinkClassName="page-link"
+                  nextLinkClassName="page-link"
+                  breakClassName="page-link"
+                  activeClassName="active"
+                />
+              )}
+
               {postsToDisplay.map((x) => (
-                <PostCard key={x.id} post={x} allowDelete={false} />
+                <PostCard key={x.id} post={x} allowDelete={false} name={user.username} /> // setting name means the db doesnt need to be queried for the name
               ))}
             </div>
           )}

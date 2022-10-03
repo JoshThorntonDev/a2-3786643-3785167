@@ -17,7 +17,7 @@ function App() {
   );
 
   const login = (id) => {
-    setCurrentUser(id);
+    setCurrentUser(id.toString());
     localStorage.setItem("currentUser", id);
   };
   const logout = () => {

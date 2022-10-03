@@ -57,3 +57,16 @@ exports.delete = async (req, res) => {
     message: `Deleted user ${id}`
   });
 }
+
+
+exports.update = async (req, res) => {
+  // adapted from lec 9 ex 1
+
+  const user = await db.user.findByPk(req.body.id)
+  
+  user.username = req.body.username;
+  user.email = req.body.email;
+
+  await user.save();
+  res.json(user)
+}

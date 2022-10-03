@@ -1,6 +1,7 @@
 // bootstrap for styling
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import Spinner from "react-bootstrap/Spinner";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Card from "react-bootstrap/Card";
 import AnimatedAlert from "./AnimatedAlert";
@@ -23,6 +24,7 @@ function Register() {
   const [error, setError] = useState(false);
   const [show, setShow] = useState(false);
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleInputChange = (event) => {
@@ -30,17 +32,12 @@ function Register() {
   };
 
   const handleSubmit = async (e) => {
+    setLoading(true)
     setError(false); //clear error
     setMessage(""); //clear message
 
     e.preventDefault(); //prevent form from submitting automatically
 
-    //Ensure email is unique
-    if (await findUserByEmail(user.email) !== null) {
-      setError(true);
-      setMessage("Sorry, that email is already in use");
-      return;
-    }
 
     //Call validate function, store error message as string, give it NAME_LENGTH because we can't use context in it
     let validateMessage = validate(user, NAME_LENGTH);
@@ -50,6 +47,15 @@ function Register() {
     if (validateMessage !== "") {
       setError(true);
       setMessage(validateMessage);
+      setLoading(false)
+      return;
+    }
+
+    //Ensure email is unique, after checking it exists to prevent uneeded api calls
+    if (await findUserByEmail(user.email) !== null) {
+      setError(true);
+      setMessage("Sorry, that email is already in use");
+      setLoading(false)
       return;
     }
 
@@ -65,6 +71,7 @@ function Register() {
       //TODO: change navigate to profile when its working again
       navigate(`/profile/${newUser.id}`, { replace: true });
     }, 1500);
+    setLoading(false)
   };
 
   return (
@@ -120,9 +127,17 @@ function Register() {
           />
         </FloatingLabel>
         <div className="d-flex justify-content-center">
-          <Button variant="success" type="submit">
+          {loading ? (<div><Button variant="success" disabled>
+            <Spinner
+              as="span"
+              animation="border"
+              size="sm"
+              role="status"
+              aria-hidden="true"
+            />{" "}Creating
+          </Button></div>) : (<Button variant="success" type="submit">
             Create Account
-          </Button>
+          </Button>)}
         </div>
       </Form>
     </Card>
