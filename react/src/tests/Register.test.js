@@ -39,7 +39,7 @@ test("Register User", async () => {
     await act (async() => {
         fireEvent.click(button);
 
-        await delay(4500);
+        await delay(3000);
     });
     
     //Assert that user was redirected to profile upon successful login
