@@ -37,87 +37,100 @@ function PostCard(props) {
       setName(user.username);
     }
 
-    if(name === undefined) { // only query db when name isnt set
+    if (name === undefined) {
+      // only query db when name isnt set
       assignNameToPost();
     }
-
   }, [post.userId]);
 
   return (
-    <Card>
-      <Card.Body>
-        <div dangerouslySetInnerHTML={{ __html: props.post.content }} />
-      </Card.Body>
-      {props.post.image && ( // only render <hr> and <img> if the post actually has an image
+      <Card>
         <Card.Body>
-          <hr />
-
-          <img
-            variant="bottom"
-            alt={
-              props.post.image === "[deleted]"
-                ? "This image has been deleted"
-                : "Posted by a user"
-            }
-            src={props.post.image}
-          />
+          <div dangerouslySetInnerHTML={{ __html: props.post.content }} />
         </Card.Body>
-      )}
+        {props.post.image && ( // only render <hr> and <img> if the post actually has an image
+          <Card.Body>
+            <hr />
 
-      <Card.Footer className="d-flex justify-content-between">
-        <div
-          onClick={() => {
-            navigate(`/profile/${post.userId}`, {
-              replace: false,
-            });
-          }}
-        >
-          Posted by:{" "}
-          {name ? (
-            <Button size="sm" variant="outline-secondary">
-              {name}
-            </Button>
-          ) : (
-            <Button size="sm" variant="outline-secondary">
-              &nbsp; {/* fixes the button changing size when name loads */}
-            </Button>
-          )}
-        </div>{" "}
-        <div>
-          {props.allowDelete && (
-            <span className="postButton">
-              <PostCreator
-                show={showEdit}
-                toggle={toggleEdit}
-                fields={post}
-                setFields={setPost}
-                editing={true}
-              />
-              <Button
-                size="sm"
-                variant="info"
-                onClick={() => {
-                  toggleEdit();
-                }}
-              >
-                <PencilSquare /> Edit
-              </Button>{" "}
-              <Button
-                size="sm"
-                onClick={() => {
-                  deletePost(props.post.postId);
-                  props.setAltered(true);
-                }}
-                variant="danger"
-              >
-                <Trash /> Delete
+            <img
+              variant="bottom"
+              alt={
+                props.post.image === "[deleted]"
+                  ? "This image has been deleted"
+                  : "Posted by a user"
+              }
+              src={props.post.image}
+            />
+          </Card.Body>
+        )}
+
+        <Card.Footer className="d-flex justify-content-between">
+          <div
+            onClick={() => {
+              navigate(`/profile/${post.userId}`, {
+                replace: false,
+              });
+            }}
+          >
+            Posted by:{" "}
+            {name ? (
+              <Button size="sm" variant="outline-secondary">
+                {name}
               </Button>
-            </span>
-          )}{" "}
-          {getDate()} | {getTime()}
-        </div>
-      </Card.Footer>
-    </Card>
+            ) : (
+              <Button size="sm" variant="outline-secondary">
+                &nbsp; {/* fixes the button changing size when name loads */}
+              </Button>
+            )}
+          </div>{" "}
+          <div>
+            {props.post.depth < 2 && (
+              <span>
+                <Button
+                  size="sm"
+                  variant="info"
+                  onClick={() => {
+                    props.toggleReply();
+                  }}
+                >
+                  <PencilSquare /> Reply
+                </Button>
+              </span>
+            )}
+            {props.allowDelete && (
+              <span className="postButton">
+                <PostCreator
+                  show={showEdit}
+                  
+                  fields={post}
+                  setFields={setPost}
+                  editing={true}
+                />
+                <Button
+                  size="sm"
+                  variant="info"
+                  onClick={() => {
+                    toggleEdit();
+                  }}
+                >
+                  <PencilSquare /> Edit
+                </Button>{" "}
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    deletePost(props.post.postId);
+                    props.setAltered(true);
+                  }}
+                  variant="danger"
+                >
+                  <Trash /> Delete
+                </Button>
+              </span>
+            )}{" "}
+            {getDate()} | {getTime()}
+          </div>
+        </Card.Footer>
+      </Card>
   );
 }
 
