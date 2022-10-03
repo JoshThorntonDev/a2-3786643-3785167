@@ -22,6 +22,18 @@ function PostCreator(props) {
     return props.fields.content.replace(/<(.|\n)*?>/g, "").trim().length;
   };
 
+  var title;
+
+  switch (props.type) {
+    case "REPLY":
+      title = "Replying";
+      break
+
+    default:
+      title = "New Post"
+  }
+
+
   const handleInputChange = (event) => {
     props.setFields({
       ...props.fields,
@@ -66,10 +78,19 @@ function PostCreator(props) {
       getContentLength() <= MAX_LENGTH &&
       imageOK
     ) {
+      var depth = 0
+
+      if(props.type === "REPLY") {
+        depth = props.fields.depth + 1;
+
+      }
+
       const newPost = {
         content: props.fields.content,
         image: props.fields.image,
         userId: props.fields.userId,
+        depth: depth,
+        replyId: props.fields.replyId,
       };
 
       setSaving(true); // changes save button to show save animation
@@ -102,7 +123,7 @@ function PostCreator(props) {
   return (
     <Modal show={props.show} onHide={props.toggle}>
       <Modal.Header closeButton>
-        <Modal.Title>{props.editing ? "Edit Post" : "New Post"}</Modal.Title>
+        <Modal.Title>{title}{props.fields.replyId}</Modal.Title>
       </Modal.Header>
       <AnimatedAlert
         variant="danger"

@@ -20,6 +20,7 @@ function Posts() {
   const { currentUser } = useContext(UserContext);
   const [showModal, setShowModal] = useState(false);
   const [sortNewest, setSortNewest] = useState(false);
+  const [showReply, setShowReply] = useState(false);
 
   useEffect(() => {
     async function loadPosts() {
@@ -44,20 +45,28 @@ function Posts() {
     userId: currentUser,
     content: "",
     image: "",
-    replyPostIds: [],
-    date: "unknown",
-    time: "",
-    postId: "",
+    replyId: null,
+    depth: 0
   });
+
 
   const toggleModal = () => {
     // toggle the edit state
 
     post.content = "";
-    post.postId = "";
+    post.replyId = null;
     post.image = "";
 
     setShowModal((current) => !current);
+  };
+  const toggleReply = (depth, replyId) => {
+
+    post.content = "";
+    post.replyId = replyId;
+    post.image = "";
+    post.depth = depth;
+
+    setShowReply((current) => !current);
   };
 
   const handlePageClick = (data) => {
@@ -83,6 +92,15 @@ function Posts() {
         toggle={toggleModal}
         fields={post}
         setFields={setPost}
+      />
+
+      <PostCreator
+        show={showReply}
+        toggle={toggleReply}
+        fields={post}
+        setFields={setPost}
+        type="REPLY"
+        replyId={post.replyId}
       />
 
       <div>
@@ -139,7 +157,7 @@ function Posts() {
               </div>
             </div>
             {postsToDisplay.map((x) => (
-              <PostCard key={x.id} post={x} allowDelete={false} />
+              <PostCard key={x.id} post={x} allowDelete={false} toggleReply={toggleReply} />
             ))}
           </div>
         )}

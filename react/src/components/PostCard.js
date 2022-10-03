@@ -90,7 +90,7 @@ function PostCard(props) {
                   size="sm"
                   variant="info"
                   onClick={() => {
-                    props.toggleReply();
+                    props.toggleReply(props.post.depth, props.post.id);
                   }}
                 >
                   <PencilSquare /> Reply
