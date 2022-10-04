@@ -108,7 +108,7 @@ function PostCard(props) {
 
           </div>{" "}
           {props.toggleReplies !== null && (
-              <Button onClick={props.toggleReplies} variant="secondary" type="submit">
+              <Button size="sm" onClick={props.toggleReplies} variant="secondary" type="submit">
                 Show/Hide Replies
               </Button>
             )}

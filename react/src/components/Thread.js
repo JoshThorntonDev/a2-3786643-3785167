@@ -2,6 +2,7 @@ import PostCard from "./PostCard";
 import { useContext, useEffect, useState } from "react";
 import { findUser, getRepliesTo } from "../data/dbrepository";
 import Stack from "react-bootstrap/Stack";
+import Fade from "react-bootstrap/Fade";
 import Button from "react-bootstrap/Button";
 import Collapse from "react-bootstrap/esm/Collapse";
 
@@ -11,11 +12,15 @@ function Thread(props) {
 
   const [newChild, setNewChild] = useState(false);
 
-  const [showReplies, setShowReplies] = useState(true);
+  const [showReplies, setShowReplies] = useState(false);
+
+  const [showSelf, setShowSelf] = useState(false)
 
   const toggleReplies = () => {
     setShowReplies((current) => !current);
   };
+
+  
 
   useEffect(() => {
     async function getReplies() {
@@ -25,6 +30,7 @@ function Thread(props) {
     }
 
     getReplies();
+    setShowSelf(true)
   }, []);
 
   useEffect(() => {
@@ -37,42 +43,45 @@ function Thread(props) {
   }, [newChild]);
 
   return (
-    <Stack>
-      {props.main & (replies.length !== 0) ? (
-        <PostCard
-          post={post}
-          allowDelete={false}
-          update={setNewChild}
-          toggleReplies={toggleReplies}
-        />
-      ) : (
-        <PostCard
-          post={post}
-          allowDelete={false}
-          update={setNewChild}
-          toggleReplies={null}
-        />
-      )}
+    <Collapse in={showSelf}>
+      <Stack>
+        {props.main & (replies.length !== 0) ? (
+          <PostCard
+            post={post}
+            allowDelete={false}
+            update={setNewChild}
+            toggleReplies={toggleReplies}
+          />
+        ) : (
+          <PostCard
+            post={post}
+            allowDelete={false}
+            update={setNewChild}
+            toggleReplies={null}
+          />
+        )}
 
-      {
-        // only put the child posts inside a collapse if this is a top level post,
-        //otherwise it is impossible to show them without giving the show prop to every child
-        props.main ? replies.map((x) => (
-              <Collapse className="" key={x.id} in={showReplies}>
-                <div className="reply">
+        {
+          // only put the child posts inside a collapse if this is a top level post,
+          //otherwise it is impossible to show them without giving the show prop to every child
+          props.main
+            ? replies.map((x) => (
+                <Collapse className="" key={x.id} in={showReplies}>
+                  <div className="reply">
+                    <Thread post={x} allowDelete={false} reply={"reply"} />
+                  </div>
+                </Collapse>
+              ))
+            : replies.map((x) => (
+                <div key={x.id} className="reply">
                   <Thread post={x} allowDelete={false} reply={"reply"} />
                 </div>
-              </Collapse>
-            ))
-          : replies.map((x) => (
-              <div key={x.id} className="reply">
-                <Thread post={x} allowDelete={false} reply={"reply"} />
-              </div>
-            ))
-      }
+              ))
+        }
 
-      {}
-    </Stack>
+        {}
+      </Stack>
+    </Collapse>
   );
 }
 export default Thread;
