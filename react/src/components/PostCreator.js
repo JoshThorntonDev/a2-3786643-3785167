@@ -89,7 +89,7 @@ function PostCreator(props) {
         userId: props.fields.userId,
         depth: depth,
         replyId: props.fields.replyId,
-        
+        updatedAt: new Date() // ensure a valid date is ALWAYS set
       };
 
       setSaving(true); // changes save button to show save animation
@@ -101,7 +101,7 @@ function PostCreator(props) {
         props.toggle();
         setTimeout(() => {
           if (props.type === "REPLY") {
-            props.update(newPost);
+            props.update(newPost); // give the reply to the parent post so it can be rerendered without using the db
           }
           setSaving(false);
         }, MIN_SAVE_TIME - 300); // this prevents the button changing back to normal while still visible
