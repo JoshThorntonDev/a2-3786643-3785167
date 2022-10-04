@@ -3,26 +3,46 @@ import Card from "react-bootstrap/Card";
 import "./css/Posts.css";
 import { PencilSquare, Trash } from "react-bootstrap-icons";
 import { deletePost } from "../data/PostRepository";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import PostCreator from "./PostCreator";
 import { findUser, getRepliesTo } from "../data/dbrepository";
 import { useNavigate } from "react-router-dom";
 import Stack from "react-bootstrap/Stack";
+import UserContext from "../contexts/UserContext";
 
 function PostCard(props) {
   const navigate = useNavigate();
   const [post, setPost] = useState(props.post);
   const [name, setName] = useState(props.name);
   const [showEdit, setShowEdit] = useState(false);
-
+  const [showReply, setShowReply] = useState(false);
   const [replies, setReplies] = useState([]);
+  const { currentUser } = useContext(UserContext);
 
-  const REPLY_DEPTH = 10 // sets max reply depth
+  const REPLY_DEPTH = 10; // sets max reply depth
 
   const toggleEdit = () => {
     // toggle the edit state
     setShowEdit((current) => !current);
     props.setAltered(true);
+  };
+
+  const [reply, setReply] = useState({
+    userId: currentUser,
+    content: "",
+    image: "",
+    replyId: null,
+    depth: 0,
+  });
+
+
+  const toggleReply = (depth, replyId) => {
+    reply.content = "";
+    reply.replyId = replyId;
+
+    reply.depth = depth;
+
+    setShowReply((current) => !current);
   };
 
   const getDate = () => {
@@ -47,16 +67,6 @@ function PostCard(props) {
     }
   }, [post.userId]);
 
-  useEffect(() => {
-    async function getReplies() {
-      const temp = await getRepliesTo(Number(post.id));
-      setReplies(temp);
-    }
-
-    if (props.checkNewReplies) {
-      getReplies();
-    }
-  }, [props.checkNewReplies]);
 
   return (
     <Stack>
@@ -106,7 +116,7 @@ function PostCard(props) {
                   size="sm"
                   variant="info"
                   onClick={() => {
-                    props.toggleReply(props.post.depth, props.post.id);
+                    toggleReply(props.post.depth, props.post.id);
                   }}
                 >
                   <PencilSquare /> Reply
@@ -146,17 +156,17 @@ function PostCard(props) {
           </div>
         </Card.Footer>
       </Card>
-      {replies.map((x) => (
-        <div key={x.id} className="reply">
-          <PostCard
-            post={x}
-            allowDelete={false}
-            toggleReply={props.toggleReply}
-            checkNewReplies={props.checkNewReplies}
-            reply={"reply"}
-          />
-        </div>
-      ))}
+
+
+      <PostCreator
+        show={showReply}
+        toggle={toggleReply}
+        fields={reply}
+        setFields={setReply}
+        type="REPLY"
+        replyId={reply.replyId}
+        update={props.update}
+      />
     </Stack>
   );
 }

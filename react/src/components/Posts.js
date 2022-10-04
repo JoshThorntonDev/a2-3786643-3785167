@@ -6,12 +6,12 @@ import "./css/Posts.css";
 import PostCreator from "./PostCreator";
 import { PlusCircleFill } from "react-bootstrap-icons";
 import Form from "react-bootstrap/Form";
-import PostCard from "./PostCard";
 import UserContext from "../contexts/UserContext";
 import Spinner from "react-bootstrap/Spinner";
 
 import ReactPaginate from "react-paginate";
 import PlaceholderPost from "./PlaceholderPost";
+import Thread from "./Thread";
 
 function Posts() {
   const [posts, setPosts] = useState([]);
@@ -20,9 +20,7 @@ function Posts() {
   const { currentUser } = useContext(UserContext);
   const [showModal, setShowModal] = useState(false);
   const [sortNewest, setSortNewest] = useState(false);
-  const [showReply, setShowReply] = useState(false);
-
-  const [checkNewReplies, setCheckNewReplies] = useState(true);
+  
 
   const [post, setPost] = useState({
     userId: currentUser,
@@ -47,13 +45,11 @@ function Posts() {
         setIsLoading(false);
       }, 300);
 
-      setTimeout(() => {
-        setCheckNewReplies(false);
-      }, 3000);
+
     }
 
     loadPosts();
-  }, [showModal, sortNewest, showReply]); // if modal or sort order gets toggled, reload the posts
+  }, [showModal, sortNewest]); // if modal or sort order gets toggled, reload the posts
 
   const toggleModal = () => {
     // toggle the edit state
@@ -64,14 +60,7 @@ function Posts() {
 
     setShowModal((current) => !current);
   };
-  const toggleReply = (depth, replyId) => {
-    post.content = "";
-    post.replyId = replyId;
-    post.image = "";
-    post.depth = depth;
 
-    setShowReply((current) => !current);
-  };
 
   const handlePageClick = (data) => {
     setPage(data.selected);
@@ -96,16 +85,6 @@ function Posts() {
         toggle={toggleModal}
         fields={post}
         setFields={setPost}
-      />
-
-      <PostCreator
-        show={showReply}
-        toggle={toggleReply}
-        fields={post}
-        setFields={setPost}
-        type="REPLY"
-        replyId={post.replyId}
-        setCheckNewReplies={setCheckNewReplies}
       />
 
       <div>
@@ -163,12 +142,7 @@ function Posts() {
             </div>
             {postsToDisplay.map((x) => (
               <div key={x.id} className="topPost">
-                <PostCard
-                  post={x}
-                  allowDelete={false}
-                  toggleReply={toggleReply}
-                  checkNewReplies={checkNewReplies}
-                />
+                <Thread post={x} />
               </div>
             ))}
           </div>

@@ -102,7 +102,7 @@ function PostCreator(props) {
         props.toggle();
         setTimeout(() => {
           if(props.type === "REPLY") {
-            props.setCheckNewReplies(true)
+            props.update(true)
           }
           setSaving(false);
         }, MIN_SAVE_TIME - 300); // this prevents the button changing back to normal while still visible
