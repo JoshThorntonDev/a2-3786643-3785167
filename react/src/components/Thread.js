@@ -3,6 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import { findUser, getRepliesTo } from "../data/dbrepository";
 import Stack from "react-bootstrap/Stack";
 import Button from "react-bootstrap/Button";
+import Collapse from "react-bootstrap/esm/Collapse";
 
 function Thread(props) {
   const [post] = useState(props.post);
@@ -10,7 +11,7 @@ function Thread(props) {
 
   const [newChild, setNewChild] = useState(false);
 
-  const [showReplies, setShowReplies] = useState(true);
+  const [showReplies, setShowReplies] = useState(false);
 
   const toggleReplies = () => {
     setShowReplies((current) => !current);
@@ -37,7 +38,7 @@ function Thread(props) {
 
   return (
     <Stack>
-      {props.main & replies.length !== 0 ? (
+      {props.main & (replies.length !== 0) ? (
         <PostCard
           post={post}
           allowDelete={false}
@@ -45,15 +46,29 @@ function Thread(props) {
           toggleReplies={toggleReplies}
         />
       ) : (
-        <PostCard post={post} allowDelete={false} update={setNewChild} toggleReplies={null} />
+        <PostCard
+          post={post}
+          allowDelete={false}
+          update={setNewChild}
+          toggleReplies={null}
+        />
       )}
 
-      {showReplies &&
-        replies.map((x) => (
-          <div key={x.id} className="reply">
-            <Thread post={x} allowDelete={false} reply={"reply"} />
-          </div>
-        ))}
+      {props.main
+        ? replies.map((x) => (
+            <Collapse key={x.id} in={showReplies}>
+              <div className="reply">
+                <Thread post={x} allowDelete={false} reply={"reply"} />
+              </div>
+            </Collapse>
+          ))
+        : replies.map((x) => (
+            <div key={x.id} className="reply">
+              <Thread post={x} allowDelete={false} reply={"reply"} />
+            </div>
+          ))}
+
+      {}
     </Stack>
   );
 }
