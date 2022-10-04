@@ -36,11 +36,9 @@ test("Register User", async () => {
     button = screen.getByText("Create Account");
 
     //Simulate click on submit button and wait for redirect
-    await act (async() => {
-        fireEvent.click(button);
+    fireEvent.click(button);
 
-        await delay(3000);
-    });
+    await delay(3000);
     
     //Assert that user was redirected to profile upon successful login
     expect(global.window.location.href).toContain('/profile');
