@@ -27,12 +27,11 @@ function PostCreator(props) {
   switch (props.type) {
     case "REPLY":
       title = "Replying";
-      break
+      break;
 
     default:
-      title = "New Post"
+      title = "New Post";
   }
-
 
   const handleInputChange = (event) => {
     props.setFields({
@@ -78,11 +77,10 @@ function PostCreator(props) {
       getContentLength() <= MAX_LENGTH &&
       imageOK
     ) {
-      var depth = 0
+      var depth = 0;
 
-      if(props.type === "REPLY") {
+      if (props.type === "REPLY") {
         depth = props.fields.depth + 1;
-
       }
 
       const newPost = {
@@ -91,6 +89,7 @@ function PostCreator(props) {
         userId: props.fields.userId,
         depth: depth,
         replyId: props.fields.replyId,
+        
       };
 
       setSaving(true); // changes save button to show save animation
@@ -101,8 +100,8 @@ function PostCreator(props) {
         // force saving to always take a minimum amount of time to let user see saving animation
         props.toggle();
         setTimeout(() => {
-          if(props.type === "REPLY") {
-            props.update(true)
+          if (props.type === "REPLY") {
+            props.update(newPost);
           }
           setSaving(false);
         }, MIN_SAVE_TIME - 300); // this prevents the button changing back to normal while still visible

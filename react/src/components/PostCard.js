@@ -16,7 +16,6 @@ function PostCard(props) {
   const [name, setName] = useState(props.name);
   const [showEdit, setShowEdit] = useState(false);
   const [showReply, setShowReply] = useState(false);
-  const [replies, setReplies] = useState([]);
   const { currentUser } = useContext(UserContext);
 
   const REPLY_DEPTH = 10; // sets max reply depth

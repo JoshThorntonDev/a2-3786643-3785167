@@ -7,7 +7,7 @@ function Thread(props) {
   const [post] = useState(props.post);
   const [replies, setReplies] = useState([]);
 
-  const [childCalledUpdate, setChildCalledUpdate] = useState(false);
+  const [newChild, setNewChild] = useState(false);
 
   useEffect(() => {
     async function getReplies() {
@@ -19,33 +19,26 @@ function Thread(props) {
   }, []);
 
   useEffect(() => {
-    async function getReplies() {
-      const temp = await getRepliesTo(Number(post.id));
-      setReplies(temp);
-    }
+    if (newChild) {
+      setReplies([
+        ...replies,
+        newChild,
+      ]);
 
-    if (childCalledUpdate) {
-      setReplies([]);
-      getReplies();
+      setNewChild(false);
     }
-
-    setChildCalledUpdate(false);
-  }, [childCalledUpdate]);
+  }, [newChild]);
 
   return (
     <Stack>
-      <PostCard post={post} allowDelete={false} update={setChildCalledUpdate} />
+      <PostCard post={post} allowDelete={false} update={setNewChild} />
 
-      {replies.map((x) => (
-        <div key={x.id} className="reply">
-          <Thread
-            post={x}
-            allowDelete={false}
-            reply={"reply"}
-            update={setChildCalledUpdate}
-          />
-        </div>
-      ))}
+      {
+        replies.map((x) => (
+          <div key={x.id} className="reply">
+            <Thread post={x} allowDelete={false} reply={"reply"} />
+          </div>
+        ))}
     </Stack>
   );
 }

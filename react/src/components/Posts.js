@@ -20,7 +20,6 @@ function Posts() {
   const { currentUser } = useContext(UserContext);
   const [showModal, setShowModal] = useState(false);
   const [sortNewest, setSortNewest] = useState(false);
-  
 
   const [post, setPost] = useState({
     userId: currentUser,
@@ -44,8 +43,6 @@ function Posts() {
         // in case the db responds extremely quickly, prevent loading animation from looking bad
         setIsLoading(false);
       }, 300);
-
-
     }
 
     loadPosts();
@@ -60,7 +57,6 @@ function Posts() {
 
     setShowModal((current) => !current);
   };
-
 
   const handlePageClick = (data) => {
     setPage(data.selected);
