@@ -1,6 +1,4 @@
-.card {
-  min-height: 10vh;
-}
+
 
 .card img {
   /* i think these two values strike a good balance between being able to see the images clearly 
@@ -22,12 +20,16 @@
 }
 
 .reply {
-  width: 99%;
+  width: 97%;
   align-self: end;
   margin: 0;
+}
+.reply p{
+  margin:0
 }
 
 .topPost {
   margin-top: 2vh;
   margin-bottom: 2vh;
 }
+

@@ -11,7 +11,7 @@ function Thread(props) {
 
   const [newChild, setNewChild] = useState(false);
 
-  const [showReplies, setShowReplies] = useState(false);
+  const [showReplies, setShowReplies] = useState(true);
 
   const toggleReplies = () => {
     setShowReplies((current) => !current);
@@ -54,19 +54,22 @@ function Thread(props) {
         />
       )}
 
-      {props.main
-        ? replies.map((x) => (
-            <Collapse key={x.id} in={showReplies}>
-              <div className="reply">
+      {
+        // only put the child posts inside a collapse if this is a top level post,
+        //otherwise it is impossible to show them without giving the show prop to every child
+        props.main ? replies.map((x) => (
+              <Collapse className="" key={x.id} in={showReplies}>
+                <div className="reply">
+                  <Thread post={x} allowDelete={false} reply={"reply"} />
+                </div>
+              </Collapse>
+            ))
+          : replies.map((x) => (
+              <div key={x.id} className="reply">
                 <Thread post={x} allowDelete={false} reply={"reply"} />
               </div>
-            </Collapse>
-          ))
-        : replies.map((x) => (
-            <div key={x.id} className="reply">
-              <Thread post={x} allowDelete={false} reply={"reply"} />
-            </div>
-          ))}
+            ))
+      }
 
       {}
     </Stack>
