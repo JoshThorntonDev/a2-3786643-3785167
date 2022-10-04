@@ -34,7 +34,6 @@ function PostCard(props) {
     depth: 0,
   });
 
-
   const toggleReply = (depth, replyId) => {
     reply.content = "";
     reply.replyId = replyId;
@@ -65,7 +64,6 @@ function PostCard(props) {
       assignNameToPost();
     }
   }, [post.userId]);
-
 
   return (
     <Stack>
@@ -107,7 +105,13 @@ function PostCard(props) {
                 &nbsp; {/* fixes the button changing size when name loads */}
               </Button>
             )}
+
           </div>{" "}
+          {props.toggleReplies !== null && (
+              <Button onClick={props.toggleReplies} variant="success" type="submit">
+                Show/Hide Replies
+              </Button>
+            )}
           <div>
             {props.post.depth < REPLY_DEPTH && (
               <span>
@@ -155,7 +159,6 @@ function PostCard(props) {
           </div>
         </Card.Footer>
       </Card>
-
 
       <PostCreator
         show={showReply}

@@ -2,12 +2,19 @@ import PostCard from "./PostCard";
 import { useContext, useEffect, useState } from "react";
 import { findUser, getRepliesTo } from "../data/dbrepository";
 import Stack from "react-bootstrap/Stack";
+import Button from "react-bootstrap/Button";
 
 function Thread(props) {
   const [post] = useState(props.post);
   const [replies, setReplies] = useState([]);
 
   const [newChild, setNewChild] = useState(false);
+
+  const [showReplies, setShowReplies] = useState(true);
+
+  const toggleReplies = () => {
+    setShowReplies((current) => !current);
+  };
 
   useEffect(() => {
     async function getReplies() {
@@ -30,13 +37,23 @@ function Thread(props) {
 
   return (
     <Stack>
-      <PostCard post={post} allowDelete={false} update={setNewChild} />
+      {props.main & replies.length !== 0 ? (
+        <PostCard
+          post={post}
+          allowDelete={false}
+          update={setNewChild}
+          toggleReplies={toggleReplies}
+        />
+      ) : (
+        <PostCard post={post} allowDelete={false} update={setNewChild} toggleReplies={null} />
+      )}
 
-      {replies.map((x) => (
-        <div key={x.id} className="reply">
-          <Thread post={x} allowDelete={false} reply={"reply"} />
-        </div>
-      ))}
+      {showReplies &&
+        replies.map((x) => (
+          <div key={x.id} className="reply">
+            <Thread post={x} allowDelete={false} reply={"reply"} />
+          </div>
+        ))}
     </Stack>
   );
 }

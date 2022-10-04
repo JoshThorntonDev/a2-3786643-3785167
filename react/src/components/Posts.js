@@ -138,7 +138,7 @@ function Posts() {
             </div>
             {postsToDisplay.map((x) => (
               <div key={x.id} className="topPost">
-                <Thread post={x} />
+                <Thread post={x} main={true} />
               </div>
             ))}
           </div>
