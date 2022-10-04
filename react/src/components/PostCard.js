@@ -17,6 +17,8 @@ function PostCard(props) {
 
   const [replies, setReplies] = useState([]);
 
+  const REPLY_DEPTH = 10 // sets max reply depth
+
   const toggleEdit = () => {
     // toggle the edit state
     setShowEdit((current) => !current);
@@ -98,7 +100,7 @@ function PostCard(props) {
             )}
           </div>{" "}
           <div>
-            {props.post.depth < 2 && (
+            {props.post.depth < REPLY_DEPTH && (
               <span>
                 <Button
                   size="sm"
