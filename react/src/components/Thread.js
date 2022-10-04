@@ -1,9 +1,7 @@
 import PostCard from "./PostCard";
-import { useContext, useEffect, useState } from "react";
-import { findUser, getRepliesTo } from "../data/dbrepository";
+import { useEffect, useState } from "react";
+import { getRepliesTo } from "../data/dbrepository";
 import Stack from "react-bootstrap/Stack";
-import Fade from "react-bootstrap/Fade";
-import Button from "react-bootstrap/Button";
 import Collapse from "react-bootstrap/esm/Collapse";
 
 function Thread(props) {
@@ -19,8 +17,7 @@ function Thread(props) {
   const toggleReplies = () => {
     setShowReplies((current) => !current);
   };
-
-  
+ 
 
   useEffect(() => {
     async function getReplies() {
@@ -31,7 +28,7 @@ function Thread(props) {
 
     getReplies();
     setShowSelf(true)
-  }, []);
+  }, [post.id]);
 
   useEffect(() => {
     if (newChild) {
@@ -40,7 +37,7 @@ function Thread(props) {
 
       setNewChild(false);
     }
-  }, [newChild]);
+  }, [newChild, replies]);
 
   return (
     <Collapse in={showSelf}>
