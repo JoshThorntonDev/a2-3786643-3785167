@@ -43,6 +43,10 @@ test("Register User", async () => {
     //Assert that user was redirected to profile upon successful login
     expect(global.window.location.href).toContain('/profile');
 
+    //Assert that we are on the new user's profile
+    expect(screen.getAllByText("Test", { exact: false })[0]).toBeInTheDocument();
+    expect(screen.getByText("test@email.com", { exact: false })).toBeInTheDocument();
+
 });
 
 function delay(milliseconds){
