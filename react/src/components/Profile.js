@@ -193,7 +193,14 @@ function Profile() {
               )}
 
               {postsToDisplay.map((x) => (
-                <PostCard key={x.id} post={x} allowDelete={false} name={user.username} /> // setting name means the db doesnt need to be queried for the name
+                <div className="profilePost">
+                  <PostCard
+                    key={x.id}
+                    post={x}
+                    allowDelete={false}
+                    name={user.username}
+                  />
+                </div>
               ))}
             </div>
           )}

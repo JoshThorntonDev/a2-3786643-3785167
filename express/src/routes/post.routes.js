@@ -11,6 +11,10 @@ module.exports = (express, app) => {
   // Select all posts.
   router.get("/user/:id", controller.allByUser);
 
+
+   // Select all replies to post.
+   router.get("/replies/:id", controller.repliesTo);
+
   // Create a new post.
   router.post("/", controller.create);
 

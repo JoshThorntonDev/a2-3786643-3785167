@@ -6,12 +6,12 @@ import "./css/Posts.css";
 import PostCreator from "./PostCreator";
 import { PlusCircleFill } from "react-bootstrap-icons";
 import Form from "react-bootstrap/Form";
-import PostCard from "./PostCard";
 import UserContext from "../contexts/UserContext";
 import Spinner from "react-bootstrap/Spinner";
 
 import ReactPaginate from "react-paginate";
 import PlaceholderPost from "./PlaceholderPost";
+import Thread from "./Thread";
 
 function Posts() {
   const [posts, setPosts] = useState([]);
@@ -20,6 +20,14 @@ function Posts() {
   const { currentUser } = useContext(UserContext);
   const [showModal, setShowModal] = useState(false);
   const [sortNewest, setSortNewest] = useState(false);
+
+  const [post, setPost] = useState({
+    userId: currentUser,
+    content: "",
+    image: "",
+    replyId: null,
+    depth: 0,
+  });
 
   useEffect(() => {
     async function loadPosts() {
@@ -40,21 +48,11 @@ function Posts() {
     loadPosts();
   }, [showModal, sortNewest]); // if modal or sort order gets toggled, reload the posts
 
-  const [post, setPost] = useState({
-    userId: currentUser,
-    content: "",
-    image: "",
-    replyPostIds: [],
-    date: "unknown",
-    time: "",
-    postId: "",
-  });
-
   const toggleModal = () => {
     // toggle the edit state
 
     post.content = "";
-    post.postId = "";
+    post.replyId = null;
     post.image = "";
 
     setShowModal((current) => !current);
@@ -139,7 +137,9 @@ function Posts() {
               </div>
             </div>
             {postsToDisplay.map((x) => (
-              <PostCard key={x.id} post={x} allowDelete={false} />
+              <div key={x.id} className="topPost">
+                <Thread post={x} main={true} />
+              </div>
             ))}
           </div>
         )}

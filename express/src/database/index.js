@@ -25,6 +25,11 @@ db.user.hasMany(db.post, {
   }
 })
 
+db.post.hasOne(db.post, {
+  foreignKey: "replyId"
+
+})
+
 db.post.belongsTo(db.user);
 
 
