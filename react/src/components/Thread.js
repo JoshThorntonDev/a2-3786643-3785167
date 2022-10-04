@@ -12,12 +12,11 @@ function Thread(props) {
 
   const [showReplies, setShowReplies] = useState(false);
 
-  const [showSelf, setShowSelf] = useState(false)
+  const [showSelf, setShowSelf] = useState(false);
 
   const toggleReplies = () => {
     setShowReplies((current) => !current);
   };
- 
 
   useEffect(() => {
     async function getReplies() {
@@ -27,7 +26,7 @@ function Thread(props) {
     }
 
     getReplies();
-    setShowSelf(true)
+    setShowSelf(true);
   }, [post.id]);
 
   useEffect(() => {
@@ -37,13 +36,13 @@ function Thread(props) {
 
       setNewChild(false);
 
-      setShowReplies(true)
+      setShowReplies(true);
     }
   }, [newChild, replies]);
 
   return (
     <Collapse in={showSelf}>
-      <Stack>
+      <Stack className={showReplies & props.main ? "topPostBottom" : ""}>
         {props.main & (replies.length !== 0) ? (
           <PostCard
             post={post}
@@ -65,14 +64,24 @@ function Thread(props) {
           //otherwise it is impossible to show them without giving the show prop to every child
           props.main
             ? replies.map((x) => (
-                <Collapse className="" key={x.id} in={showReplies}>
+                <Collapse
+                  key={x.id}
+                  in={showReplies}
+                >
                   <div className="reply">
+                    <div className="line">
+
+                    </div>
+
                     <Thread post={x} allowDelete={false} reply={"reply"} />
                   </div>
                 </Collapse>
               ))
             : replies.map((x) => (
                 <div key={x.id} className="reply">
+                  <div className="line">
+
+                  </div>
                   <Thread post={x} allowDelete={false} reply={"reply"} />
                 </div>
               ))
