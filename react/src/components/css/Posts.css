@@ -29,7 +29,7 @@
 
 
 .line {
-  flex-grow: 0.1;
+  flex-grow: 0.03;
   border-width: 0 0 0 1px;
   border-style:solid;
   border-color: gray;
