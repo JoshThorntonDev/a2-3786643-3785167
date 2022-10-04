@@ -22,14 +22,14 @@ function Posts() {
   const [sortNewest, setSortNewest] = useState(false);
   const [showReply, setShowReply] = useState(false);
 
-  const [checkNewReplies, setCheckNewReplies] = useState(true)
+  const [checkNewReplies, setCheckNewReplies] = useState(true);
 
   const [post, setPost] = useState({
     userId: currentUser,
     content: "",
     image: "",
     replyId: null,
-    depth: 0
+    depth: 0,
   });
 
   useEffect(() => {
@@ -48,16 +48,12 @@ function Posts() {
       }, 300);
 
       setTimeout(() => {
-
-        setCheckNewReplies(false)
+        setCheckNewReplies(false);
       }, 3000);
     }
 
     loadPosts();
   }, [showModal, sortNewest, showReply]); // if modal or sort order gets toggled, reload the posts
-
-
-
 
   const toggleModal = () => {
     // toggle the edit state
@@ -69,14 +65,12 @@ function Posts() {
     setShowModal((current) => !current);
   };
   const toggleReply = (depth, replyId) => {
-
     post.content = "";
     post.replyId = replyId;
     post.image = "";
     post.depth = depth;
 
     setShowReply((current) => !current);
-
   };
 
   const handlePageClick = (data) => {
@@ -168,9 +162,14 @@ function Posts() {
               </div>
             </div>
             {postsToDisplay.map((x) => (
-
-              <PostCard key={x.id} post={x} allowDelete={false} toggleReply={toggleReply} checkNewReplies={checkNewReplies} />
-
+              <div key={x.id} className="topPost">
+                <PostCard
+                  post={x}
+                  allowDelete={false}
+                  toggleReply={toggleReply}
+                  checkNewReplies={checkNewReplies}
+                />
+              </div>
             ))}
           </div>
         )}

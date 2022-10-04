@@ -1,6 +1,4 @@
 .card {
-  margin-top: 2vh;
-  margin-bottom: 2vh;
   min-height: 10vh;
 }
 
@@ -23,13 +21,12 @@
   min-width: 7rem;
 }
 
-.top {
-  width: 100%;
+.reply {
+  width: 99%;
+  align-self: end;
+  margin: 0;
 }
 
-.test {
-
-
-  width: 90%;
-  
+.topPost {
+  margin-bottom: 2vh;
 }

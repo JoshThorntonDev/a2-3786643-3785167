@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import PostCreator from "./PostCreator";
 import { findUser, getRepliesTo } from "../data/dbrepository";
 import { useNavigate } from "react-router-dom";
+import Stack from "react-bootstrap/Stack";
 
 function PostCard(props) {
   const navigate = useNavigate();
@@ -53,11 +54,11 @@ function PostCard(props) {
     if (props.checkNewReplies) {
       getReplies();
     }
-  }, [props.checkNewReplies])
+  }, [props.checkNewReplies]);
 
   return (
-    <div className="top">
-      <Card>
+    <Stack>
+      <Card className={props.reply}>
         <Card.Body>
           <div dangerouslySetInnerHTML={{ __html: props.post.content }} />
         </Card.Body>
@@ -144,19 +145,17 @@ function PostCard(props) {
         </Card.Footer>
       </Card>
       {replies.map((x) => (
-        <div className="d-flex justify-content-end reply">
-        <div className="test">
+        <div key={x.id} className="reply">
           <PostCard
-            key={x.id}
             post={x}
             allowDelete={false}
             toggleReply={props.toggleReply}
             checkNewReplies={props.checkNewReplies}
+            reply={"reply"}
           />
         </div>
-        </div>
       ))}
-    </div>
+    </Stack>
   );
 }
 
