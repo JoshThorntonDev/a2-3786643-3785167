@@ -61,8 +61,8 @@ async function getPosts() {
   return response.data;
 }
 
-async function updatePost(id) {
-    const response = await axios.put(API_HOST + `/${POST_KEY}/`, id);
+async function updatePost(post) {
+    const response = await axios.put(API_HOST + `/${POST_KEY}/`, post);
     
     return response;
   }
