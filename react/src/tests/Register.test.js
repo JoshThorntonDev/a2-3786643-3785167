@@ -1,8 +1,8 @@
 //Tests for register page
 
 import {render, screen, fireEvent } from "@testing-library/react";
-import { act } from "react-dom/test-utils";
 import App from "../App.js";
+import { validate } from "../components/RegisterValidation.js";
 
 let container;
 
@@ -47,6 +47,28 @@ test("Register User", async () => {
     expect(screen.getAllByText("Test", { exact: false })[0]).toBeInTheDocument();
     expect(screen.getByText("test@email.com", { exact: false })).toBeInTheDocument();
 
+}); 
+
+//Test the validate function used in the registration page
+test("Validate Function", () => {
+    //Create an invalid user (missing name and email, invalid password)
+    const user = {
+        username: "",
+        email: "",
+        password: "pass",
+    };
+    const name_length = 20;
+
+    //Assert that validate returns missing name error
+    let validateMsg = validate(user, name_length);
+    expect(validateMsg).toBe("Name is a required field");
+    
+    //Give the user a username
+    user.username = "Test User";
+
+    //Assert that validate returns missing email error
+    validateMsg = validate(user, name_length);
+    expect(validateMsg).toBe("Email is a required field");
 });
 
 function delay(milliseconds){
