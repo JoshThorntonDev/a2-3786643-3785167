@@ -38,6 +38,13 @@ async function findUserByEmail(email) {
 }
 
 async function deleteUser(user) {
+
+  var posts = await getPostsByUser(user.id)
+
+  posts.forEach(post => { // keep posts made by user that is being deleted, otherwise replies will break
+    deletePost(post)
+  });
+
   const response = await axios.delete(API_HOST + `/${USER_KEY}/${user.id}`);
 
   return response.data;
@@ -62,10 +69,25 @@ async function getPosts() {
 }
 
 async function updatePost(post) {
-    const response = await axios.put(API_HOST + `/${POST_KEY}/`, post);
-    
-    return response;
-  }
+  const response = await axios.put(API_HOST + `/${POST_KEY}/`, post);
+
+  return response;
+}
+
+async function deletePost(postToDelete) {
+  // doesnt actually delete, updates content and image to [deleted], preserving any replies the post had
+
+  const post = postToDelete;
+  post.content = "[deleted]";
+  post.image = "";
+  post.userId = 1;
+  // id 1 is a special user that holds all deleted posts, this makes it much easier to render deleted posts,
+  // as they normally look for the name of who posted them
+
+  const response = await axios.put(API_HOST + `/${POST_KEY}/`, post);
+
+  return response;
+}
 
 async function getRepliesTo(postId) {
   const response = await axios.get(API_HOST + `/${POST_KEY}/replies/${postId}`);
@@ -78,8 +100,6 @@ async function getPostsByUser(id) {
   return response.data;
 }
 
-
-
 export {
   verifyUser,
   findUser,
@@ -90,6 +110,7 @@ export {
   createPost,
   getPosts,
   updatePost,
+  deletePost,
   getRepliesTo,
   getPostsByUser,
 };
