@@ -47,7 +47,7 @@ test("Register User", async () => {
     expect(screen.getAllByText("Test", { exact: false })[0]).toBeInTheDocument();
     expect(screen.getByText("test@email.com", { exact: false })).toBeInTheDocument();
 
-}); 
+});
 
 //Test the validate function used in the registration page
 test("Validate Function", () => {
