@@ -21,7 +21,7 @@ db.post = require("./models/post.js")(db.sequelize, DataTypes);
 //Commented out for now until posts are integrated
 db.user.hasMany(db.post, {
   foreignKey: {
-    allowNull: false
+    allowNull: true
   }
 })
 
@@ -56,8 +56,17 @@ async function seedData() {
   //Only seed table when it's empty
   if (userCount === 0) {
     const argon2 = require("argon2");
-
     let hash = await argon2.hash("password1!", { type: argon2.argon2id });
+
+    hash = await argon2.hash("neverLetAny0N3InThisAccount!?!(!*#*#&(!@*&$(", { type: argon2.argon2id });
+    await db.user.create({
+      id: 1,
+      email: "[deleted]",
+      password_hash: hash,
+      username: "[deleted]",
+    });
+
+    
     await db.user.create({
       id: userId1,
       email: "first@email.com",
@@ -72,6 +81,8 @@ async function seedData() {
       password_hash: hash,
       username: "Second User",
     });
+
+
   }
 
   //Only seed table when it's empty

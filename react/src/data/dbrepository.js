@@ -71,12 +71,12 @@ async function deletePost(postToDelete) {
   // doesnt actually delete, updates content and image to [deleted], preserving any replies the post had
 
   const post = postToDelete;
-  post.content = "[deleted]"
-  post.image = ""
-  post.userId = null
+  post.content = "[deleted]";
+  post.image = "";
+  post.userId = 1;
+  // id 1 is a special user that holds all deleted posts, this makes it much easier to render deleted posts,
+  // as they normally look for the name of who posted them
 
-
-  
   const response = await axios.put(API_HOST + `/${POST_KEY}/`, post);
 
   return response;

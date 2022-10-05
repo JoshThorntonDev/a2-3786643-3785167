@@ -55,6 +55,12 @@ exports.update = async (req, res) => {
   post.content = req.body.content;
   post.image = req.body.image;
 
+
+  if(req.body.userId === 1) {
+    post.userId = 1
+  }
+
+
   await post.save()
   res.json(post)
 }
