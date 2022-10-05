@@ -24,13 +24,8 @@ beforeEach(() => {
     container = utils.container;
 });
 
-//Test registering a valid user
-/*test("Register User", async () => {
-    let button = screen.getAllByText("Sign Up");
-
-    //Simulate click on sign up button
-    fireEvent.click(button[0]);
-
+//Test the registration form
+test("Register Form", async () => {
     //Get username, email and password input elements
     const username = screen.getByPlaceholderText("name");
     const email = screen.getByPlaceholderText("email");
@@ -46,21 +41,19 @@ beforeEach(() => {
     expect(email.value).toBe("test@email.com");
     expect(password.value).toBe("testpass1!");
 
-    button = screen.getByText("Create Account");
+    const button = screen.getByText("Create Account");
+
+    const consoleLog = jest.spyOn(console, 'log');
+
+    //Assert that console.log hasn't been called yet (form hasn't been submitted)
+    expect(consoleLog).not.toHaveBeenCalled();
 
     //Simulate click on submit button and wait for redirect
     fireEvent.click(button);
 
-    await delay(3000);
-    
-    //Assert that user was redirected to profile upon successful login
-    expect(global.window.location.href).toContain('/profile');
-
-    //Assert that we are on the new user's profile
-    expect(screen.getAllByText("Test", { exact: false })[0]).toBeInTheDocument();
-    expect(screen.getByText("test@email.com", { exact: false })).toBeInTheDocument();
-
-}); */
+    //Assert that console.log was called after form submitted
+    expect(consoleLog).toHaveBeenCalled();
+});
 
 //Test the validate function used in the registration page
 test("Validate Function", () => {
