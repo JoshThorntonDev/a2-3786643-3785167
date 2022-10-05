@@ -119,7 +119,6 @@ function PostCreator(props) {
         setTimeout(() => {
           if (props.type === "REPLY") {
             props.update(storedPost); // give the reply to the parent post so it can be rerendered without using the db
-
           } else if (props.type === "EDIT") {
             props.updater({ content: newPost.content, image: newPost.image });
           }
@@ -145,7 +144,7 @@ function PostCreator(props) {
   };
 
   return (
-    <Modal show={props.show} onHide={props.toggle}>
+    <Modal show={props.show} onHide={props.toggle} centered>
       <Modal.Header closeButton>
         <Modal.Title>{title}</Modal.Title>
       </Modal.Header>

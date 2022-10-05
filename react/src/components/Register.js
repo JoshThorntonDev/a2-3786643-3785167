@@ -24,7 +24,7 @@ function Register() {
   const [error, setError] = useState(false);
   const [show, setShow] = useState(false);
   const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); // for displaying loading animation
   const navigate = useNavigate();
 
   const handleInputChange = (event) => {
@@ -32,12 +32,11 @@ function Register() {
   };
 
   const handleSubmit = async (e) => {
-    setLoading(true)
+    setLoading(true);
     setError(false); //clear error
     setMessage(""); //clear message
 
     e.preventDefault(); //prevent form from submitting automatically
-
 
     //Call validate function, store error message as string, give it NAME_LENGTH because we can't use context in it
     let validateMessage = validate(user, NAME_LENGTH);
@@ -47,15 +46,15 @@ function Register() {
     if (validateMessage !== "") {
       setError(true);
       setMessage(validateMessage);
-      setLoading(false)
+      setLoading(false);
       return;
     }
 
     //Ensure email is unique, after checking it exists to prevent uneeded api calls
-    if (await findUserByEmail(user.email) !== null) {
+    if ((await findUserByEmail(user.email)) !== null) {
       setError(true);
       setMessage("Sorry, that email is already in use");
-      setLoading(false)
+      setLoading(false);
       return;
     }
 
@@ -68,10 +67,9 @@ function Register() {
     //Redirect user and set them as logged in
     setTimeout(() => {
       login(newUser.id);
-      //TODO: change navigate to profile when its working again
       navigate(`/profile/${newUser.id}`, { replace: true });
     }, 1500);
-    setLoading(false)
+    setLoading(false);
   };
 
   return (
@@ -127,17 +125,24 @@ function Register() {
           />
         </FloatingLabel>
         <div className="d-flex justify-content-center">
-          {loading ? (<div><Button variant="success" disabled>
-            <Spinner
-              as="span"
-              animation="border"
-              size="sm"
-              role="status"
-              aria-hidden="true"
-            />{" "}Creating
-          </Button></div>) : (<Button variant="success" type="submit">
-            Create Account
-          </Button>)}
+          {loading ? (
+            <div>
+              <Button variant="success" disabled>
+                <Spinner
+                  as="span"
+                  animation="border"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                />{" "}
+                Creating
+              </Button>
+            </div>
+          ) : (
+            <Button variant="success" type="submit">
+              Create Account
+            </Button>
+          )}
         </div>
       </Form>
     </Card>

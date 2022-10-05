@@ -26,7 +26,8 @@ function Profile() {
   const [updated, setUpdated] = useState(false);
   const navigate = useNavigate();
 
-  if(id === "1") { // dont allow access to the deleted user
+  if (id === "1") {
+    // dont allow access to the deleted user
     navigate(`/posts`, { replace: true });
   }
 

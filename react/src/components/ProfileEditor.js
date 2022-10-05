@@ -46,6 +46,7 @@ function ProfileEditor(props) {
     }
 
     const editTarget = await verifyUser(
+      // get the user that we're editing
       props.user.email,
       props.fields.password
     );
@@ -57,16 +58,16 @@ function ProfileEditor(props) {
     } else {
       //show confirmation message before redirecting
 
-      editTarget.username = props.fields.name;
+      editTarget.username = props.fields.name; // set the new name
 
-      editUser(editTarget);
+      editUser(editTarget); // save user
       setMessage("Profile update successful");
       setShow(true);
-      
+
       setTimeout(() => {
         setShow(false); // hide success message so it isnt there when opening modal again
         props.toggle(); // close modal
-        props.setUpdated(true) // tell Profile it was updated and needs to rerender
+        props.setUpdated(true); // tell Profile it was updated and needs to rerender
       }, 800);
     }
   };

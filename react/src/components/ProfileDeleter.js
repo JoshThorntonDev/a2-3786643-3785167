@@ -1,7 +1,6 @@
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import { useContext, useRef, useState } from "react";
-import { getUsers, removeUser } from "../data/Repository";
 import Button from "react-bootstrap/Button";
 import AnimatedAlert from "./AnimatedAlert";
 import { useNavigate } from "react-router-dom";
@@ -18,8 +17,7 @@ import { deleteUser, verifyUser } from "../data/dbrepository";
 // fields (containing email, name, date and password)
 // setFields
 function ProfileDeleter(props) {
-  const users = getUsers();
-  const { currentUser, logout } = useContext(UserContext);
+  const { logout } = useContext(UserContext);
   // get users and current user so we dont have to have ugly things like props.users[props.currentUser].password
 
   const passwordRef = useRef(null);
@@ -37,17 +35,14 @@ function ProfileDeleter(props) {
   };
 
   const attemptSave = async (event) => {
-
-    // deleteUser(props.user);
-    // logout()
-    // navigate("/", { replace: true });
-
     setMessage(""); // clear error message
     setError(false); // reset error state
     event.preventDefault(); // prevent form from submitting
 
-    const deleteTarget = await verifyUser(props.user.email, props.fields.password)
-
+    const deleteTarget = await verifyUser(
+      props.user.email,
+      props.fields.password
+    );
 
     if (deleteTarget === null) {
       setMessage("Sorry, your password was incorrect");
@@ -58,13 +53,12 @@ function ProfileDeleter(props) {
       setShow(true);
       deleteUser(deleteTarget);
       setMessage("Account deleted successfully");
-      
+
       setTimeout(() => {
-        logout()
+        logout();
         navigate("/", { replace: true });
       }, 1500);
     }
-
   };
 
   return (
