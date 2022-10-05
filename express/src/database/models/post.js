@@ -17,6 +17,11 @@ module.exports = (sequelize, DataTypes) =>
             type: DataTypes.STRING(),
             defaultValue: "",
             allowNull: false
+        },
+        depth: {
+            type: DataTypes.INTEGER,
+            defaultValue: 0,
+            allowNull: false
         }
 
     });

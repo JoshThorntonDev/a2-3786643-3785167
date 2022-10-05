@@ -1,6 +1,4 @@
 .card {
-  margin-top: 2vh;
-  margin-bottom: 2vh;
   min-height: 10vh;
 }
 
@@ -21,4 +19,15 @@
 
 .saveButton {
   min-width: 7rem;
+}
+
+.reply {
+  width: 99%;
+  align-self: end;
+  margin: 0;
+}
+
+.topPost {
+  margin-top: 2vh;
+  margin-bottom: 2vh;
 }

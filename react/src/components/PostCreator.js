@@ -22,6 +22,17 @@ function PostCreator(props) {
     return props.fields.content.replace(/<(.|\n)*?>/g, "").trim().length;
   };
 
+  var title;
+
+  switch (props.type) {
+    case "REPLY":
+      title = "Replying";
+      break;
+
+    default:
+      title = "New Post";
+  }
+
   const handleInputChange = (event) => {
     props.setFields({
       ...props.fields,
@@ -66,10 +77,19 @@ function PostCreator(props) {
       getContentLength() <= MAX_LENGTH &&
       imageOK
     ) {
+      var depth = 0;
+
+      if (props.type === "REPLY") {
+        depth = props.fields.depth + 1;
+      }
+
       const newPost = {
         content: props.fields.content,
         image: props.fields.image,
         userId: props.fields.userId,
+        depth: depth,
+        replyId: props.fields.replyId,
+        updatedAt: new Date() // ensure a valid date is ALWAYS set
       };
 
       setSaving(true); // changes save button to show save animation
@@ -80,6 +100,9 @@ function PostCreator(props) {
         // force saving to always take a minimum amount of time to let user see saving animation
         props.toggle();
         setTimeout(() => {
+          if (props.type === "REPLY") {
+            props.update(newPost); // give the reply to the parent post so it can be rerendered without using the db
+          }
           setSaving(false);
         }, MIN_SAVE_TIME - 300); // this prevents the button changing back to normal while still visible
       }, MIN_SAVE_TIME);
@@ -102,7 +125,7 @@ function PostCreator(props) {
   return (
     <Modal show={props.show} onHide={props.toggle}>
       <Modal.Header closeButton>
-        <Modal.Title>{props.editing ? "Edit Post" : "New Post"}</Modal.Title>
+        <Modal.Title>{title}</Modal.Title>
       </Modal.Header>
       <AnimatedAlert
         variant="danger"
