@@ -18,6 +18,8 @@ function PostCard(props) {
   const [showReply, setShowReply] = useState(false);
   const { currentUser } = useContext(UserContext);
 
+  const [allowEdit, setAllowEdit] = useState(false);
+
   const REPLY_DEPTH = 10; // sets max reply depth
 
   const toggleEdit = () => {
@@ -63,6 +65,12 @@ function PostCard(props) {
       // only query db when name isnt set
       assignNameToPost();
     }
+
+    if (post.userId.toString() === currentUser) { // only users who made the post should be able to edit/delete
+      console.log('edit enabled ')
+      setAllowEdit(true)
+    }
+
   }, [post.userId]);
 
   return (
@@ -126,7 +134,7 @@ function PostCard(props) {
                 </Button>
               </span>
             )}
-            {props.allowDelete && (
+            {allowEdit && (
               <span className="postButton">
                 <PostCreator
                   show={showEdit}
