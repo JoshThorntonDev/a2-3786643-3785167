@@ -53,6 +53,8 @@ function PostCard(props) {
 
   const toggleReply = (depth, replyId) => {
     reply.content = "";
+    reply.image = "";
+
     reply.replyId = replyId;
 
     reply.depth = depth;
