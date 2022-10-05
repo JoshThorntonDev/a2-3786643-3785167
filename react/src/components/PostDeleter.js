@@ -5,7 +5,8 @@ import Button from "react-bootstrap/Button";
 import AnimatedAlert from "./AnimatedAlert";
 import UserContext from "../contexts/UserContext";
 import { deletePost, findUser, verifyUser } from "../data/dbrepository";
-
+import Spinner from "react-bootstrap/Spinner";
+import { Trash } from "react-bootstrap-icons";
 //renders a modal that allows the user to delete their post
 // similar to the ProfileEditor function, but only takes an input of confirmation password
 
@@ -24,6 +25,8 @@ function PostDeleter(props) {
   const [show, setShow] = useState(false);
   const [message, setMessage] = useState("");
 
+  const [saving, setSaving] = useState(false);
+
   const [fields, setFields] = useState({
     password: "",
   });
@@ -38,17 +41,18 @@ function PostDeleter(props) {
   const attemptSave = async (event) => {
     event.preventDefault(); // prevent form from submitting
 
+    setSaving(true);
     const current = await findUser(currentUser);
+    const verifiedUser = await verifyUser(current.email, fields.password);
 
     setMessage(""); // clear error message
     setError(false); // reset error state
-
-    const verifiedUser = await verifyUser(current.email, fields.password);
 
     if (verifiedUser === null) {
       setMessage("Sorry, your password was incorrect");
       setError(true);
       passwordRef.current.focus(); // focus on password field
+      setSaving(false);
     } else {
       //delete post and show confirmation message
       setShow(true);
@@ -59,9 +63,9 @@ function PostDeleter(props) {
         setShow(false);
         setMessage("");
 
-
-        props.setName('[deleted]') // set locally stored name
-        props.setEdit(false) // hide edit/delete buttons on post
+        props.setName("[deleted]"); // set locally stored name
+        props.setEdit(false); // hide edit/delete buttons on post
+        setSaving(false);
       }, 1000);
     }
   };
@@ -103,8 +107,28 @@ function PostDeleter(props) {
           <Button variant="secondary" onClick={props.toggle}>
             Close
           </Button>
-          <Button onClick={attemptSave} variant="danger" type="submit">
-            Delete
+          <Button
+            className="saveButton"
+            onClick={attemptSave}
+            variant="danger"
+            type="submit"
+          >
+            {saving ? (
+              <div>
+                <Spinner
+                  as="span"
+                  animation="border"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                />{" "}
+                Deleting
+              </div>
+            ) : (
+              <div>
+                <Trash /> Delete
+              </div>
+            )}
           </Button>
         </Modal.Footer>
       </Form>
