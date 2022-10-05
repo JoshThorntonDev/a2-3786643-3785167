@@ -34,9 +34,9 @@ function Posts() {
       const currentPosts = await getPosts();
 
       if (sortNewest) {
-        setPosts(currentPosts.reverse());
-      } else {
         setPosts(currentPosts);
+      } else {
+        setPosts(currentPosts.reverse());
       }
 
       setTimeout(() => {
@@ -129,8 +129,8 @@ function Posts() {
                     <Form.Select
                       onChange={(e) => setSortNewest((current) => !current)}
                     >
-                      <option>Oldest First</option>
                       <option>Newest First</option>
+                      <option>Oldest First</option>
                     </Form.Select>
                   </Form.Group>
                 </Form>
