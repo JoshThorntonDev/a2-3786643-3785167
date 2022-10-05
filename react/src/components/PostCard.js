@@ -111,10 +111,11 @@ function PostCard(props) {
             <Row>
               <Col>
                 <Row>
-                  <Col>
+                  <Col className="postButton">
                     {name ? (
                       name !== "[deleted]" ? (
                         <Button
+                          
                           size="sm"
                           variant="outline-success"
                           onClick={() => {
@@ -194,8 +195,8 @@ function PostCard(props) {
 
                       )}
                     </Col>{" "}
-                    <Col sm="auto">
-                      <small>
+                    <Col className="p-0" sm="auto">
+                      <small className='align-middle'>
                         {getDate()} | {getTime()}
                       </small>
                     </Col>
