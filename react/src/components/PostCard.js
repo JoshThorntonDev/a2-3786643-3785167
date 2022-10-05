@@ -67,9 +67,12 @@ function PostCard(props) {
     return time.toLocaleTimeString();
   };
 
+  // on first render, set content and image
   useEffect(() => {
     setPostValue({ content: post.content, image: post.image });
+  }, []);
 
+  useEffect(() => {
     async function assignNameToPost() {
       const user = await findUser(post.userId);
       setName(user.username);
@@ -92,19 +95,10 @@ function PostCard(props) {
         <Card.Body>
           <div dangerouslySetInnerHTML={{ __html: postValue.content }} />
         </Card.Body>
-        {postValue.image && ( // only render <hr> and <img> if the post actually has an image
+        {postValue.image !== "" && ( // only render <hr> and <img> if the post actually has an image
           <Card.Body>
             <hr />
-
-            <img
-              variant="bottom"
-              alt={
-                props.post.image === "[deleted]"
-                  ? "This image has been deleted"
-                  : "Posted by a user"
-              }
-              src={postValue.image}
-            />
+            <img alt="" variant="bottom" src={postValue.image} />
           </Card.Body>
         )}
 
@@ -165,7 +159,7 @@ function PostCard(props) {
                 <Button
                   size="sm"
                   onClick={() => {
-                    toggleDelete()
+                    toggleDelete();
                   }}
                   variant="danger"
                 >
