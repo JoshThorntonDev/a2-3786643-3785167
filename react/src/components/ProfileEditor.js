@@ -45,7 +45,8 @@ function ProfileEditor(props) {
       return;
     }
 
-    const editTarget = await verifyUser( // get the user that we're editing
+    const editTarget = await verifyUser(
+      // get the user that we're editing
       props.user.email,
       props.fields.password
     );

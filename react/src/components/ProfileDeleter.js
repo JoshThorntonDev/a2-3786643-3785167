@@ -1,7 +1,6 @@
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import { useContext, useRef, useState } from "react";
-import { getUsers, removeUser } from "../data/Repository";
 import Button from "react-bootstrap/Button";
 import AnimatedAlert from "./AnimatedAlert";
 import { useNavigate } from "react-router-dom";
@@ -18,8 +17,7 @@ import { deleteUser, verifyUser } from "../data/dbrepository";
 // fields (containing email, name, date and password)
 // setFields
 function ProfileDeleter(props) {
-  const users = getUsers();
-  const { currentUser, logout } = useContext(UserContext);
+  const { logout } = useContext(UserContext);
   // get users and current user so we dont have to have ugly things like props.users[props.currentUser].password
 
   const passwordRef = useRef(null);
