@@ -1,14 +1,15 @@
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import "./css/Posts.css";
-import { PencilSquare, Trash } from "react-bootstrap-icons";
+import { PencilSquare, Trash, ChatLeftText } from "react-bootstrap-icons";
 import { deletePost } from "../data/PostRepository";
 import { useContext, useEffect, useState } from "react";
 import PostCreator from "./PostCreator";
-import { findUser, getRepliesTo } from "../data/dbrepository";
+import { findUser } from "../data/dbrepository";
 import { useNavigate } from "react-router-dom";
 import Stack from "react-bootstrap/Stack";
 import UserContext from "../contexts/UserContext";
+
 
 function PostCard(props) {
   const navigate = useNavigate();
@@ -79,7 +80,7 @@ function PostCard(props) {
       // only users who made the post should be able to edit/delete
       setAllowEdit(true);
     }
-  }, [post.userId]);
+  }, [post.userId, currentUser, name, post.content, post.image]);
 
 
   return (
@@ -143,7 +144,7 @@ function PostCard(props) {
                     toggleReply(props.post.depth, props.post.id);
                   }}
                 >
-                  <PencilSquare /> Reply
+                  <ChatLeftText /> Reply
                 </Button>{" "}
               </span>
             )}
