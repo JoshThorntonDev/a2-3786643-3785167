@@ -2,7 +2,7 @@ import PostCard from "./PostCard";
 import { useEffect, useState } from "react";
 import { getRepliesTo } from "../data/dbrepository";
 import Stack from "react-bootstrap/Stack";
-import Collapse from "react-bootstrap/esm/Collapse";
+import Collapse from "react-bootstrap/Collapse";
 
 function Thread(props) {
   const [post] = useState(props.post);
