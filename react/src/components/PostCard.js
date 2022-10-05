@@ -25,7 +25,6 @@ function PostCard(props) {
   const toggleEdit = () => {
     // toggle the edit state
     setShowEdit((current) => !current);
-    props.setAltered(true);
   };
 
   const [reply, setReply] = useState({
@@ -66,11 +65,11 @@ function PostCard(props) {
       assignNameToPost();
     }
 
-    if (post.userId.toString() === currentUser) { // only users who made the post should be able to edit/delete
-      console.log('edit enabled ')
-      setAllowEdit(true)
+    if (post.userId.toString() === currentUser) {
+      // only users who made the post should be able to edit/delete
+      console.log("edit enabled ");
+      setAllowEdit(true);
     }
-
   }, [post.userId]);
 
   return (
@@ -113,16 +112,20 @@ function PostCard(props) {
                 &nbsp; {/* fixes the button changing size when name loads */}
               </Button>
             )}
-
           </div>{" "}
           {props.toggleReplies !== null && (
-              <Button size="sm" onClick={props.toggleReplies} variant="secondary" type="submit">
-                Show/Hide Replies
-              </Button>
-            )}
+            <Button
+              size="sm"
+              onClick={props.toggleReplies}
+              variant="secondary"
+              type="submit"
+            >
+              Show/Hide Replies
+            </Button>
+          )}
           <div>
             {props.post.depth < REPLY_DEPTH && (
-              <span>
+              <span className="postButton">
                 <Button
                   size="sm"
                   variant="outline-primary"
@@ -131,17 +134,11 @@ function PostCard(props) {
                   }}
                 >
                   <PencilSquare /> Reply
-                </Button>
+                </Button>{" "}
               </span>
             )}
             {allowEdit && (
               <span className="postButton">
-                <PostCreator
-                  show={showEdit}
-                  fields={post}
-                  setFields={setPost}
-                  editing={true}
-                />
                 <Button
                   size="sm"
                   variant="info"
@@ -176,6 +173,14 @@ function PostCard(props) {
         type="REPLY"
         replyId={reply.replyId}
         update={props.update}
+      />
+
+      <PostCreator
+        show={showEdit}
+        toggle={toggleEdit}
+        fields={post}
+        setFields={setPost}
+        editing={true}
       />
     </Stack>
   );
