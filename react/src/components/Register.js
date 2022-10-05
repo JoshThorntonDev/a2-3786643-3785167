@@ -35,7 +35,6 @@ function Register() {
     setLoading(true)
     setError(false); //clear error
     setMessage(""); //clear message
-    console.log("handleSubmit called");
 
     e.preventDefault(); //prevent form from submitting automatically
 

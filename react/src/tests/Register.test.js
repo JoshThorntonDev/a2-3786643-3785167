@@ -43,16 +43,11 @@ test("Register Form", async () => {
 
     const button = screen.getByText("Create Account");
 
-    const consoleLog = jest.spyOn(console, 'log');
-
-    //Assert that console.log hasn't been called yet (form hasn't been submitted)
-    expect(consoleLog).not.toHaveBeenCalled();
-
     //Simulate click on submit button and wait for redirect
     fireEvent.click(button);
 
-    //Assert that console.log was called after form submitted
-    expect(consoleLog).toHaveBeenCalled();
+    //Assert that "Creating" appears in the document after form is submitted
+    expect(screen.getByText("Creating")).toBeInTheDocument();    
 });
 
 //Test the validate function used in the registration page
