@@ -11,12 +11,14 @@ module.exports = (express, app) => {
   // Select all posts.
   router.get("/user/:id", controller.allByUser);
 
-
-   // Select all replies to post.
-   router.get("/replies/:id", controller.repliesTo);
+  // Select all replies to post.
+  router.get("/replies/:id", controller.repliesTo);
 
   // Create a new post.
   router.post("/", controller.create);
+
+  // Update a post with id.
+  router.put("/", controller.update)
 
   // Add routes to server.
   app.use("/api/posts", router);

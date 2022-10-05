@@ -18,12 +18,20 @@ function PostCard(props) {
   const [showReply, setShowReply] = useState(false);
   const { currentUser } = useContext(UserContext);
 
+  const [postValue, setPostValue] = useState({ 
+    // stores what the post is currently displaying, so that when a user enters text in the editor,
+    // it doesn't update the post until they save
+    content: "",
+    image: ""
+  })
+
+  const [allowEdit, setAllowEdit] = useState(false);
+
   const REPLY_DEPTH = 10; // sets max reply depth
 
   const toggleEdit = () => {
     // toggle the edit state
     setShowEdit((current) => !current);
-    props.setAltered(true);
   };
 
   const [reply, setReply] = useState({
@@ -54,6 +62,9 @@ function PostCard(props) {
   };
 
   useEffect(() => {
+    setPostValue({content: post.content, image: post.image})
+
+
     async function assignNameToPost() {
       const user = await findUser(post.userId);
       setName(user.username);
@@ -63,15 +74,21 @@ function PostCard(props) {
       // only query db when name isnt set
       assignNameToPost();
     }
+
+    if (post.userId.toString() === currentUser) {
+      // only users who made the post should be able to edit/delete
+      setAllowEdit(true);
+    }
   }, [post.userId]);
+
 
   return (
     <Stack>
       <Card className={props.reply}>
         <Card.Body>
-          <div dangerouslySetInnerHTML={{ __html: props.post.content }} />
+          <div dangerouslySetInnerHTML={{ __html: postValue.content }} />
         </Card.Body>
-        {props.post.image && ( // only render <hr> and <img> if the post actually has an image
+        {postValue.image && ( // only render <hr> and <img> if the post actually has an image
           <Card.Body>
             <hr />
 
@@ -82,7 +99,7 @@ function PostCard(props) {
                   ? "This image has been deleted"
                   : "Posted by a user"
               }
-              src={props.post.image}
+              src={postValue.image}
             />
           </Card.Body>
         )}
@@ -105,16 +122,20 @@ function PostCard(props) {
                 &nbsp; {/* fixes the button changing size when name loads */}
               </Button>
             )}
-
           </div>{" "}
           {props.toggleReplies !== null && (
-              <Button size="sm" onClick={props.toggleReplies} variant="secondary" type="submit">
-                Show/Hide Replies
-              </Button>
-            )}
+            <Button
+              size="sm"
+              onClick={props.toggleReplies}
+              variant="secondary"
+              type="submit"
+            >
+              Show/Hide Replies
+            </Button>
+          )}
           <div>
             {props.post.depth < REPLY_DEPTH && (
-              <span>
+              <span className="postButton">
                 <Button
                   size="sm"
                   variant="outline-primary"
@@ -123,17 +144,11 @@ function PostCard(props) {
                   }}
                 >
                   <PencilSquare /> Reply
-                </Button>
+                </Button>{" "}
               </span>
             )}
-            {props.allowDelete && (
+            {allowEdit && (
               <span className="postButton">
-                <PostCreator
-                  show={showEdit}
-                  fields={post}
-                  setFields={setPost}
-                  editing={true}
-                />
                 <Button
                   size="sm"
                   variant="info"
@@ -168,6 +183,15 @@ function PostCard(props) {
         type="REPLY"
         replyId={reply.replyId}
         update={props.update}
+      />
+
+      <PostCreator
+        show={showEdit}
+        toggle={toggleEdit}
+        fields={post}
+        setFields={setPost}
+        updater={setPostValue}
+        type="EDIT"
       />
     </Stack>
   );
