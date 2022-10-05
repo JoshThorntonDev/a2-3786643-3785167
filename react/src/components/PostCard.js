@@ -180,17 +180,18 @@ function PostCard(props) {
                   <Row>
                     <Col>
                       {props.post.depth < REPLY_DEPTH && !props.onProfile && (
-                        <span className="postButton">
-                          <Button
+
+                          <Button 
                             size="sm"
+                            className="w-50"
                             variant="outline-primary"
                             onClick={() => {
                               toggleReply(props.post.depth, props.post.id);
                             }}
                           >
                             <ChatLeftText /> Reply
-                          </Button>{" "}
-                        </span>
+                          </Button>
+
                       )}
                     </Col>{" "}
                     <Col sm="auto">
