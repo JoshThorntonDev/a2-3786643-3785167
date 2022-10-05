@@ -72,6 +72,10 @@ async function deletePost(postToDelete) {
 
   const post = postToDelete;
   post.content = "[deleted]"
+  post.image = ""
+  post.userId = null
+
+
   
   const response = await axios.put(API_HOST + `/${POST_KEY}/`, post);
 
