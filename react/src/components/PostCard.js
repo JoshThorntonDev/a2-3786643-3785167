@@ -2,29 +2,29 @@ import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import "./css/Posts.css";
 import { PencilSquare, Trash, ChatLeftText } from "react-bootstrap-icons";
-import { deletePost } from "../data/PostRepository";
 import { useContext, useEffect, useState } from "react";
 import PostCreator from "./PostCreator";
 import { findUser } from "../data/dbrepository";
 import { useNavigate } from "react-router-dom";
 import Stack from "react-bootstrap/Stack";
 import UserContext from "../contexts/UserContext";
-
+import PostDeleter from "./PostDeleter";
 
 function PostCard(props) {
   const navigate = useNavigate();
   const [post, setPost] = useState(props.post);
   const [name, setName] = useState(props.name);
   const [showEdit, setShowEdit] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
   const [showReply, setShowReply] = useState(false);
   const { currentUser } = useContext(UserContext);
 
-  const [postValue, setPostValue] = useState({ 
+  const [postValue, setPostValue] = useState({
     // stores what the post is currently displaying, so that when a user enters text in the editor,
     // it doesn't update the post until they save
     content: "",
-    image: ""
-  })
+    image: "",
+  });
 
   const [allowEdit, setAllowEdit] = useState(false);
 
@@ -33,6 +33,11 @@ function PostCard(props) {
   const toggleEdit = () => {
     // toggle the edit state
     setShowEdit((current) => !current);
+  };
+
+  const toggleDelete = () => {
+    // toggle the delete state
+    setShowDelete((current) => !current);
   };
 
   const [reply, setReply] = useState({
@@ -63,8 +68,7 @@ function PostCard(props) {
   };
 
   useEffect(() => {
-    setPostValue({content: post.content, image: post.image})
-
+    setPostValue({ content: post.content, image: post.image });
 
     async function assignNameToPost() {
       const user = await findUser(post.userId);
@@ -81,7 +85,6 @@ function PostCard(props) {
       setAllowEdit(true);
     }
   }, [post.userId, currentUser, name, post.content, post.image]);
-
 
   return (
     <Stack>
@@ -162,8 +165,7 @@ function PostCard(props) {
                 <Button
                   size="sm"
                   onClick={() => {
-                    deletePost(props.post.postId);
-                    props.setAltered(true);
+                    toggleDelete()
                   }}
                   variant="danger"
                 >
@@ -193,6 +195,14 @@ function PostCard(props) {
         setFields={setPost}
         updater={setPostValue}
         type="EDIT"
+      />
+
+      <PostDeleter
+        post={post}
+        show={showDelete}
+        toggle={toggleDelete}
+        updater={setPostValue}
+        type="DELETE"
       />
     </Stack>
   );

@@ -62,10 +62,21 @@ async function getPosts() {
 }
 
 async function updatePost(post) {
-    const response = await axios.put(API_HOST + `/${POST_KEY}/`, post);
-    
-    return response;
-  }
+  const response = await axios.put(API_HOST + `/${POST_KEY}/`, post);
+
+  return response;
+}
+
+async function deletePost(postToDelete) {
+  // doesnt actually delete, updates content and image to [deleted], preserving any replies the post had
+
+  const post = postToDelete;
+  post.content = "[deleted]"
+  
+  const response = await axios.put(API_HOST + `/${POST_KEY}/`, post);
+
+  return response;
+}
 
 async function getRepliesTo(postId) {
   const response = await axios.get(API_HOST + `/${POST_KEY}/replies/${postId}`);
@@ -78,8 +89,6 @@ async function getPostsByUser(id) {
   return response.data;
 }
 
-
-
 export {
   verifyUser,
   findUser,
@@ -90,6 +99,7 @@ export {
   createPost,
   getPosts,
   updatePost,
+  deletePost,
   getRepliesTo,
   getPostsByUser,
 };
