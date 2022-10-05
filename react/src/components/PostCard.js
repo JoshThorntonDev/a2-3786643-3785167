@@ -17,7 +17,13 @@ function PostCard(props) {
   const [showEdit, setShowEdit] = useState(false);
   const [showReply, setShowReply] = useState(false);
   const { currentUser } = useContext(UserContext);
- 
+  
+  const [postValue, setPostValue] = useState({ 
+    // stores what the post is currently displaying, so that when a user enters text in the editor,
+    // it doesn't update the post until they save
+    content: "",
+    image: ""
+  })
 
   const [allowEdit, setAllowEdit] = useState(false);
 
@@ -56,6 +62,9 @@ function PostCard(props) {
   };
 
   useEffect(() => {
+    setPostValue({content: post.content, image: post.image})
+
+
     async function assignNameToPost() {
       const user = await findUser(post.userId);
       setName(user.username);
@@ -77,9 +86,9 @@ function PostCard(props) {
     <Stack>
       <Card className={props.reply}>
         <Card.Body>
-          <div dangerouslySetInnerHTML={{ __html: post.content }} />
+          <div dangerouslySetInnerHTML={{ __html: postValue.content }} />
         </Card.Body>
-        {post.image && ( // only render <hr> and <img> if the post actually has an image
+        {postValue.image && ( // only render <hr> and <img> if the post actually has an image
           <Card.Body>
             <hr />
 
@@ -90,7 +99,7 @@ function PostCard(props) {
                   ? "This image has been deleted"
                   : "Posted by a user"
               }
-              src={props.post.image}
+              src={postValue.image}
             />
           </Card.Body>
         )}
@@ -181,6 +190,7 @@ function PostCard(props) {
         toggle={toggleEdit}
         fields={post}
         setFields={setPost}
+        updater={setPostValue}
         type="EDIT"
       />
     </Stack>

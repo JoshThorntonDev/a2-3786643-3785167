@@ -56,7 +56,7 @@ exports.update = async (req, res) => {
   post.image = req.body.image;
 
   await post.save()
-
+  res.json(post)
 }
 
 // delete a post

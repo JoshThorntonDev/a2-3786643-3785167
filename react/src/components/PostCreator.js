@@ -9,6 +9,11 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import Spinner from "react-bootstrap/Spinner";
 
+// props:
+// type - valid values, null, EDIT, REPLY - null is for normal post creation
+// update: a setter for a post's child, it given the newPost after saving if type is REPLY, allows new reply to be rendered without querying db
+// updater: a setter with fields content and image. Used to update the content and image fields of a post
+
 // this component can create and edit posts. By default, it will only create, but setting type to "EDIT" will put it in editing mode
 function PostCreator(props) {
   const MAX_LENGTH = 600; // maximum length of posts
@@ -97,27 +102,24 @@ function PostCreator(props) {
 
       setSaving(true); // changes save button to show save animation
 
-
       if (props.type === "EDIT") {
+        newPost.id = props.fields.id;
 
-        newPost.id = props.fields.id
-        
-        await updatePost(newPost)
+        await updatePost(newPost);
       } else {
         await createPost(newPost);
       }
-      
 
       setTimeout(() => {
         // force saving to always take a minimum amount of time to let user see saving animation
+
         props.toggle();
         setTimeout(() => {
           if (props.type === "REPLY") {
             props.update(newPost); // give the reply to the parent post so it can be rerendered without using the db
           } else if (props.type === "EDIT") {
-            props.setFields(newPost)
+            props.updater({ content: newPost.content, image: newPost.image });
           }
-
 
           setSaving(false);
         }, MIN_SAVE_TIME - 300); // this prevents the button changing back to normal while still visible
@@ -125,6 +127,7 @@ function PostCreator(props) {
 
       setMessage("");
     } else {
+      // checks failed
       setError(true);
       if (imageOK) {
         inputRef.current.focus(); // focus on post entry field
@@ -153,7 +156,7 @@ function PostCreator(props) {
         <Modal.Body>
           <Form.Group className="mb-3">
             <Form.Label>
-              {props.type ==="EDIT" ? "Update your" : "Enter your"} post here
+              {props.type === "EDIT" ? "Update your" : "Enter your"} post here
             </Form.Label>
 
             <ReactQuill
