@@ -201,8 +201,8 @@ function PostCard(props) {
         post={post}
         show={showDelete}
         toggle={toggleDelete}
-        updater={setPostValue}
-        type="DELETE"
+        setName={setName}
+        setEdit={setAllowEdit}
       />
     </Stack>
   );

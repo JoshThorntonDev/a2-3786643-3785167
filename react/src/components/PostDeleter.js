@@ -9,14 +9,12 @@ import { deletePost, findUser, verifyUser } from "../data/dbrepository";
 //renders a modal that allows the user to delete their post
 // similar to the ProfileEditor function, but only takes an input of confirmation password
 
-
 // required props are:
 // show (boolean)
 // toggle (function, preferably one that clears `fields` and changes `show`)
 // fields (containing email, name, date and password)
 // setFields
 function PostDeleter(props) {
-
   const { currentUser } = useContext(UserContext);
   // get users and current user so we dont have to have ugly things like props.users[props.currentUser].password
 
@@ -27,8 +25,8 @@ function PostDeleter(props) {
   const [message, setMessage] = useState("");
 
   const [fields, setFields] = useState({
-    password: ""
-  })
+    password: "",
+  });
 
   const handleInputChange = (event) => {
     setFields({
@@ -41,12 +39,11 @@ function PostDeleter(props) {
     event.preventDefault(); // prevent form from submitting
 
     const current = await findUser(currentUser);
-    
+
     setMessage(""); // clear error message
     setError(false); // reset error state
-    
 
-    const verifiedUser = await verifyUser(current.email, fields.password)
+    const verifiedUser = await verifyUser(current.email, fields.password);
 
     if (verifiedUser === null) {
       setMessage("Sorry, your password was incorrect");
@@ -55,11 +52,18 @@ function PostDeleter(props) {
     } else {
       //delete post and show confirmation message
       setShow(true);
-      deletePost(props.post);
+      await deletePost(props.post);
       setMessage("Post deleted successfully");
-      props.toggle()
-    }
+      setTimeout(() => {
+        props.toggle();
+        setShow(false);
+        setMessage("");
 
+
+        props.setName('[deleted]') // set locally stored name
+        props.setEdit(false) // hide edit/delete buttons on post
+      }, 1000);
+    }
   };
 
   return (
