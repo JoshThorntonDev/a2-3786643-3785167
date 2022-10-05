@@ -138,7 +138,7 @@ function PostCard(props) {
             </Button>
           )}
           <div>
-            {props.post.depth < REPLY_DEPTH && (
+            {props.post.depth < REPLY_DEPTH && !props.onProfile && (
               <span className="postButton">
                 <Button
                   size="sm"
