@@ -17,6 +17,7 @@ function PostCard(props) {
   const [showEdit, setShowEdit] = useState(false);
   const [showReply, setShowReply] = useState(false);
   const { currentUser } = useContext(UserContext);
+ 
 
   const [allowEdit, setAllowEdit] = useState(false);
 
@@ -67,18 +68,18 @@ function PostCard(props) {
 
     if (post.userId.toString() === currentUser) {
       // only users who made the post should be able to edit/delete
-      console.log("edit enabled ");
       setAllowEdit(true);
     }
   }, [post.userId]);
+
 
   return (
     <Stack>
       <Card className={props.reply}>
         <Card.Body>
-          <div dangerouslySetInnerHTML={{ __html: props.post.content }} />
+          <div dangerouslySetInnerHTML={{ __html: post.content }} />
         </Card.Body>
-        {props.post.image && ( // only render <hr> and <img> if the post actually has an image
+        {post.image && ( // only render <hr> and <img> if the post actually has an image
           <Card.Body>
             <hr />
 
@@ -180,7 +181,7 @@ function PostCard(props) {
         toggle={toggleEdit}
         fields={post}
         setFields={setPost}
-        editing={true}
+        type="EDIT"
       />
     </Stack>
   );

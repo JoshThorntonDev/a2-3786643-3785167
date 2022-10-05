@@ -4,13 +4,12 @@ import { useRef, useState } from "react";
 import { CheckCircleFill } from "react-bootstrap-icons";
 import Button from "react-bootstrap/Button";
 import AnimatedAlert from "./AnimatedAlert";
-import { createPost } from "../data/dbrepository";
+import { createPost, updatePost } from "../data/dbrepository";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import Spinner from "react-bootstrap/Spinner";
 
-// this component can create and edit posts. By default, it will only create, but setting the prop 'editing' to true
-// will put it in editing mode
+// this component can create and edit posts. By default, it will only create, but setting type to "EDIT" will put it in editing mode
 function PostCreator(props) {
   const MAX_LENGTH = 600; // maximum length of posts
   const MIN_SAVE_TIME = 500; // minimum save time so the save animation can play, should always be less than 1000, and greater than 300
@@ -27,6 +26,10 @@ function PostCreator(props) {
   switch (props.type) {
     case "REPLY":
       title = "Replying";
+      break;
+
+    case "EDIT":
+      title = "Editing";
       break;
 
     default:
@@ -89,12 +92,21 @@ function PostCreator(props) {
         userId: props.fields.userId,
         depth: depth,
         replyId: props.fields.replyId,
-        updatedAt: new Date() // ensure a valid date is ALWAYS set
+        updatedAt: new Date(), // ensure a valid date is ALWAYS set
       };
 
       setSaving(true); // changes save button to show save animation
 
-      await createPost(newPost);
+
+      if (props.type === "EDIT") {
+
+        newPost.id = props.fields.id
+        
+        await updatePost(newPost)
+      } else {
+        await createPost(newPost);
+      }
+      
 
       setTimeout(() => {
         // force saving to always take a minimum amount of time to let user see saving animation
@@ -102,7 +114,11 @@ function PostCreator(props) {
         setTimeout(() => {
           if (props.type === "REPLY") {
             props.update(newPost); // give the reply to the parent post so it can be rerendered without using the db
+          } else if (props.type === "EDIT") {
+            props.setFields(newPost)
           }
+
+
           setSaving(false);
         }, MIN_SAVE_TIME - 300); // this prevents the button changing back to normal while still visible
       }, MIN_SAVE_TIME);
@@ -137,7 +153,7 @@ function PostCreator(props) {
         <Modal.Body>
           <Form.Group className="mb-3">
             <Form.Label>
-              {props.editing ? "Update your" : "Enter your"} post here
+              {props.type ==="EDIT" ? "Update your" : "Enter your"} post here
             </Form.Label>
 
             <ReactQuill
