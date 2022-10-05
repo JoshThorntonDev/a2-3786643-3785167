@@ -102,12 +102,14 @@ function PostCreator(props) {
 
       setSaving(true); // changes save button to show save animation
 
+      var storedPost;
+
       if (props.type === "EDIT") {
         newPost.id = props.fields.id;
 
-        await updatePost(newPost);
+        storedPost = await updatePost(newPost);
       } else {
-        await createPost(newPost);
+        storedPost = await createPost(newPost);
       }
 
       setTimeout(() => {
@@ -116,7 +118,8 @@ function PostCreator(props) {
         props.toggle();
         setTimeout(() => {
           if (props.type === "REPLY") {
-            props.update(newPost); // give the reply to the parent post so it can be rerendered without using the db
+            props.update(storedPost); // give the reply to the parent post so it can be rerendered without using the db
+
           } else if (props.type === "EDIT") {
             props.updater({ content: newPost.content, image: newPost.image });
           }

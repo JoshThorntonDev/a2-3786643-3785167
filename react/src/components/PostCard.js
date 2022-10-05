@@ -17,7 +17,7 @@ function PostCard(props) {
   const [showEdit, setShowEdit] = useState(false);
   const [showReply, setShowReply] = useState(false);
   const { currentUser } = useContext(UserContext);
-  
+
   const [postValue, setPostValue] = useState({ 
     // stores what the post is currently displaying, so that when a user enters text in the editor,
     // it doesn't update the post until they save
