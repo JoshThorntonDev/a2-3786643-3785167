@@ -69,6 +69,20 @@ test("Validate Function", () => {
     //Assert that validate returns missing email error
     validateMsg = validate(user, name_length);
     expect(validateMsg).toBe("Email is a required field");
+
+    //Give the user an email
+    user.email = "test@email.com";
+
+    //Assert that validate returns invalid password error
+    validateMsg = validate(user, name_length);
+    expect(validateMsg).toContain("Password must be at least 8 characters");
+
+    //Give the user a valid password
+    user.password = "testpass1!";
+
+    //Expect validate to return no error message as user is valid
+    validateMsg = validate(user, name_length);
+    expect(validateMsg).toBe("");
 });
 
 function delay(milliseconds){
