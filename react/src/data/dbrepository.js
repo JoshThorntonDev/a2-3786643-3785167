@@ -38,6 +38,13 @@ async function findUserByEmail(email) {
 }
 
 async function deleteUser(user) {
+
+  var posts = await getPostsByUser(user.id)
+
+  posts.forEach(post => { // keep posts made by user that is being deleted, otherwise replies will break
+    deletePost(post)
+  });
+
   const response = await axios.delete(API_HOST + `/${USER_KEY}/${user.id}`);
 
   return response.data;
