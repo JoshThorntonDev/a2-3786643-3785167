@@ -144,7 +144,7 @@ function PostCreator(props) {
   };
 
   return (
-    <Modal show={props.show} onHide={props.toggle}>
+    <Modal show={props.show} onHide={props.toggle} centered>
       <Modal.Header closeButton>
         <Modal.Title>{title}</Modal.Title>
       </Modal.Header>

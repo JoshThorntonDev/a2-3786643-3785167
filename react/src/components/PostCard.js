@@ -95,7 +95,7 @@ function PostCard(props) {
 
   return (
     <Stack>
-      <Card className={props.reply}>
+      <Card border={showReply && 'secondary'} className={props.reply}>
         <Card.Body>
           <div dangerouslySetInnerHTML={{ __html: postValue.content }} />
         </Card.Body>
