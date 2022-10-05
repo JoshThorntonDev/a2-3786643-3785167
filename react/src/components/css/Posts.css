@@ -49,3 +49,7 @@
   border-style:dashed;
   border-color: gray;
 }
+
+.ql-editor {
+  min-height: 10vh
+}
