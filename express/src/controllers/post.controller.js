@@ -46,6 +46,19 @@ exports.create = async (req, res) => {
   res.json(post);
 };
 
+exports.update = async (req, res) => {
+
+  const id = req.body.id;
+  
+  const post = await db.post.findByPk(id)
+
+  post.content = req.body.content;
+  post.image = req.body.image;
+
+  await post.save()
+  res.json(post)
+}
+
 // delete a post
 exports.delete = async (req, res) => {
   const id = req.params.id;

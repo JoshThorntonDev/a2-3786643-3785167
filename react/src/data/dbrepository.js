@@ -4,72 +4,92 @@
 import axios from "axios";
 
 const API_HOST = "http://localhost:4000/api";
-const USER_KEY = "user";
+const USER_KEY = "users";
+const POST_KEY = "posts";
 
 // --- User Methods ---------------------------------------------------------------------------------------
 async function verifyUser(email, password) {
-    const response = await axios.get(API_HOST + "/users/login", { params: { email, password } });
-    const user = response.data;
-    
-    return user;
+  const response = await axios.get(API_HOST + `/${USER_KEY}/login`, {
+    params: { email, password },
+  });
+  const user = response.data;
+
+  return user;
 }
 
 async function findUser(id) {
-    const response = await axios.get(API_HOST + `/users/select/${id}`);
-  
-    return response.data;
+  const response = await axios.get(API_HOST + `/${USER_KEY}/select/${id}`);
+
+  return response.data;
 }
-  
+
 async function createUser(user) {
-    const response = await axios.post(API_HOST + "/users", user);
-  
-    return response.data;
+  const response = await axios.post(API_HOST + `/${USER_KEY}`, user);
+
+  return response.data;
 }
 
 async function findUserByEmail(email) {
-    const response = await axios.get(API_HOST + `/users/selectemail/${email}`);
-    
-    return response.data;
+  const response = await axios.get(
+    API_HOST + `/${USER_KEY}/selectemail/${email}`
+  );
+
+  return response.data;
 }
 
 async function deleteUser(user) {
-    const response = await axios.delete(API_HOST + `/users/${user.id}`);
+  const response = await axios.delete(API_HOST + `/${USER_KEY}/${user.id}`);
 
-    return response.data;
+  return response.data;
 }
 
 async function editUser(user) {
-    const response = await axios.put(API_HOST + `/users`, user);
+  const response = await axios.put(API_HOST + `/${USER_KEY}`, user);
 
-    return response.data;
+  return response.data;
 }
 
 // --- Post Methods ---------------------------------------------------------------------------------------
 async function createPost(post) {
-    const response = await axios.post(API_HOST + "/posts", post)
-    return response.data
+  const response = await axios.post(API_HOST + `/${POST_KEY}`, post);
+  return response.data;
 }
 
 async function getPosts() {
-    const response = await axios.get(API_HOST + "/posts");
+  const response = await axios.get(API_HOST + `/${POST_KEY}`);
 
-    return response.data;
+  return response.data;
 }
 
-async function getRepliesTo(postId) {
-    const response = await axios.get(API_HOST + `/posts/replies/${postId}`)
-    return response.data
+async function updatePost(post) {
+    const response = await axios.put(API_HOST + `/${POST_KEY}/`, post);
+    
+    return response;
+  }
 
+async function getRepliesTo(postId) {
+  const response = await axios.get(API_HOST + `/${POST_KEY}/replies/${postId}`);
+  return response.data;
 }
 
 async function getPostsByUser(id) {
-    const response = await axios.get(API_HOST + `/posts/user/${id}`);
+  const response = await axios.get(API_HOST + `/${POST_KEY}/user/${id}`);
 
-    return response.data;
+  return response.data;
 }
 
+
+
 export {
-    verifyUser, findUser, createUser,
-    findUserByEmail, deleteUser, editUser, createPost,
-    getPosts, getRepliesTo, getPostsByUser
-  }
+  verifyUser,
+  findUser,
+  createUser,
+  findUserByEmail,
+  deleteUser,
+  editUser,
+  createPost,
+  getPosts,
+  updatePost,
+  getRepliesTo,
+  getPostsByUser,
+};
