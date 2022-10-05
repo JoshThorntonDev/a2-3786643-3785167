@@ -7,6 +7,7 @@ import UserContext from "../contexts/UserContext";
 import { deletePost, findUser, verifyUser } from "../data/dbrepository";
 import Spinner from "react-bootstrap/Spinner";
 import { Trash } from "react-bootstrap-icons";
+
 //renders a modal that allows the user to delete their post
 // similar to the ProfileEditor function, but only takes an input of confirmation password
 
@@ -56,8 +57,10 @@ function PostDeleter(props) {
     } else {
       //delete post and show confirmation message
       setShow(true);
+
       await deletePost(props.post);
       setMessage("Post deleted successfully");
+
       setTimeout(() => {
         props.toggle();
         setShow(false);

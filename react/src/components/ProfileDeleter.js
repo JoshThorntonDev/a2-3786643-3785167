@@ -37,17 +37,14 @@ function ProfileDeleter(props) {
   };
 
   const attemptSave = async (event) => {
-
-    // deleteUser(props.user);
-    // logout()
-    // navigate("/", { replace: true });
-
     setMessage(""); // clear error message
     setError(false); // reset error state
     event.preventDefault(); // prevent form from submitting
 
-    const deleteTarget = await verifyUser(props.user.email, props.fields.password)
-
+    const deleteTarget = await verifyUser(
+      props.user.email,
+      props.fields.password
+    );
 
     if (deleteTarget === null) {
       setMessage("Sorry, your password was incorrect");
@@ -58,13 +55,12 @@ function ProfileDeleter(props) {
       setShow(true);
       deleteUser(deleteTarget);
       setMessage("Account deleted successfully");
-      
+
       setTimeout(() => {
-        logout()
+        logout();
         navigate("/", { replace: true });
       }, 1500);
     }
-
   };
 
   return (

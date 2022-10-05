@@ -119,7 +119,6 @@ function PostCreator(props) {
         setTimeout(() => {
           if (props.type === "REPLY") {
             props.update(storedPost); // give the reply to the parent post so it can be rerendered without using the db
-
           } else if (props.type === "EDIT") {
             props.updater({ content: newPost.content, image: newPost.image });
           }
