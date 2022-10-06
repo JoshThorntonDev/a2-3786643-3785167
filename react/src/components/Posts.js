@@ -34,9 +34,9 @@ function Posts() {
       const currentPosts = await getPosts();
 
       if (sortNewest) {
-        setPosts(currentPosts.reverse());
-      } else {
         setPosts(currentPosts);
+      } else {
+        setPosts(currentPosts.reverse());
       }
 
       setTimeout(() => {
@@ -62,7 +62,7 @@ function Posts() {
     setPage(data.selected);
   };
 
-  const pageSize = 8; // number of posts to display per page
+  const pageSize = 6; // number of posts to display per page
   const pageCount = Math.ceil(posts.length / pageSize); // finds the number of pages needed to fit all posts
   const offset = page * pageSize; // keeps track of where the first post of each page is
   const postsToDisplay = posts.slice(offset, offset + pageSize); // selects only the posts on the current page
@@ -129,8 +129,8 @@ function Posts() {
                     <Form.Select
                       onChange={(e) => setSortNewest((current) => !current)}
                     >
-                      <option>Oldest First</option>
                       <option>Newest First</option>
+                      <option>Oldest First</option>
                     </Form.Select>
                   </Form.Group>
                 </Form>

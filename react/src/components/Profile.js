@@ -26,6 +26,11 @@ function Profile() {
   const [updated, setUpdated] = useState(false);
   const navigate = useNavigate();
 
+  if (id === "1") {
+    // dont allow access to the deleted user
+    navigate(`/posts`, { replace: true });
+  }
+
   useEffect(() => {
     setIsThisMyAccount(false); // make sure theres no way to trick react into leaving this as true when changing page
 
@@ -90,7 +95,7 @@ function Profile() {
   };
 
   const getDate = () => {
-    var date = new Date(user.updatedAt);
+    var date = new Date(user.createdAt);
     return date.toLocaleDateString();
   };
 
@@ -199,6 +204,8 @@ function Profile() {
                     post={x}
                     allowDelete={false}
                     name={user.username}
+                    toggleReplies={null}
+                    onProfile={true}
                   />
                 </div>
               ))}

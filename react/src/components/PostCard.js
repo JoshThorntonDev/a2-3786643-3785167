@@ -1,29 +1,33 @@
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 import "./css/Posts.css";
-import { PencilSquare, Trash } from "react-bootstrap-icons";
-import { deletePost } from "../data/PostRepository";
+import { PencilSquare, Trash, ChatLeftText } from "react-bootstrap-icons";
 import { useContext, useEffect, useState } from "react";
 import PostCreator from "./PostCreator";
-import { findUser, getRepliesTo } from "../data/dbrepository";
+import { findUser } from "../data/dbrepository";
 import { useNavigate } from "react-router-dom";
 import Stack from "react-bootstrap/Stack";
 import UserContext from "../contexts/UserContext";
+import PostDeleter from "./PostDeleter";
 
 function PostCard(props) {
   const navigate = useNavigate();
   const [post, setPost] = useState(props.post);
   const [name, setName] = useState(props.name);
   const [showEdit, setShowEdit] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
   const [showReply, setShowReply] = useState(false);
   const { currentUser } = useContext(UserContext);
 
-  const [postValue, setPostValue] = useState({ 
+  const [postValue, setPostValue] = useState({
     // stores what the post is currently displaying, so that when a user enters text in the editor,
     // it doesn't update the post until they save
     content: "",
-    image: ""
-  })
+    image: "",
+  });
 
   const [allowEdit, setAllowEdit] = useState(false);
 
@@ -32,6 +36,11 @@ function PostCard(props) {
   const toggleEdit = () => {
     // toggle the edit state
     setShowEdit((current) => !current);
+  };
+
+  const toggleDelete = () => {
+    // toggle the delete state
+    setShowDelete((current) => !current);
   };
 
   const [reply, setReply] = useState({
@@ -44,6 +53,8 @@ function PostCard(props) {
 
   const toggleReply = (depth, replyId) => {
     reply.content = "";
+    reply.image = "";
+
     reply.replyId = replyId;
 
     reply.depth = depth;
@@ -58,13 +69,16 @@ function PostCard(props) {
 
   const getTime = () => {
     var time = new Date(post.updatedAt);
-    return time.toLocaleTimeString();
+
+    return time.toLocaleTimeString("en-AU", { hour12: false });
   };
 
+  // on first render, set content and image
   useEffect(() => {
-    setPostValue({content: post.content, image: post.image})
+    setPostValue({ content: post.content, image: post.image });
+  }, []);
 
-
+  useEffect(() => {
     async function assignNameToPost() {
       const user = await findUser(post.userId);
       setName(user.username);
@@ -79,99 +93,120 @@ function PostCard(props) {
       // only users who made the post should be able to edit/delete
       setAllowEdit(true);
     }
-  }, [post.userId]);
-
+  }, [post.userId, currentUser, name, post.content, post.image]);
 
   return (
     <Stack>
-      <Card className={props.reply}>
+      <Card border={showReply && 'secondary'} className={props.reply}>
         <Card.Body>
           <div dangerouslySetInnerHTML={{ __html: postValue.content }} />
         </Card.Body>
-        {postValue.image && ( // only render <hr> and <img> if the post actually has an image
+        {postValue.image !== "" && ( // only render <hr> and <img> if the post actually has an image
           <Card.Body>
             <hr />
-
-            <img
-              variant="bottom"
-              alt={
-                props.post.image === "[deleted]"
-                  ? "This image has been deleted"
-                  : "Posted by a user"
-              }
-              src={postValue.image}
-            />
+            <img alt="" variant="bottom" src={postValue.image} />
           </Card.Body>
         )}
 
-        <Card.Footer className="d-flex justify-content-between">
-          <div
-            onClick={() => {
-              navigate(`/profile/${post.userId}`, {
-                replace: false,
-              });
-            }}
-          >
-            Posted by:{" "}
-            {name ? (
-              <Button size="sm" variant="outline-secondary">
-                {name}
-              </Button>
-            ) : (
-              <Button size="sm" variant="outline-secondary">
-                &nbsp; {/* fixes the button changing size when name loads */}
-              </Button>
-            )}
-          </div>{" "}
-          {props.toggleReplies !== null && (
-            <Button
-              size="sm"
-              onClick={props.toggleReplies}
-              variant="secondary"
-              type="submit"
-            >
-              Show/Hide Replies
-            </Button>
-          )}
-          <div>
-            {props.post.depth < REPLY_DEPTH && (
-              <span className="postButton">
-                <Button
-                  size="sm"
-                  variant="outline-primary"
-                  onClick={() => {
-                    toggleReply(props.post.depth, props.post.id);
-                  }}
-                >
-                  <PencilSquare /> Reply
-                </Button>{" "}
-              </span>
-            )}
-            {allowEdit && (
-              <span className="postButton">
-                <Button
-                  size="sm"
-                  variant="info"
-                  onClick={() => {
-                    toggleEdit();
-                  }}
-                >
-                  <PencilSquare /> Edit
-                </Button>{" "}
-                <Button
-                  size="sm"
-                  onClick={() => {
-                    deletePost(props.post.postId);
-                    props.setAltered(true);
-                  }}
-                  variant="danger"
-                >
-                  <Trash /> Delete
-                </Button>
-              </span>
-            )}{" "}
-            {getDate()} | {getTime()}
-          </div>
+        <Card.Footer onDoubleClick={props.toggleReplies}>
+          <Container fluid>
+            <Row>
+              <Col>
+                <Row>
+                  <Col className="postButton">
+                    {name ? (
+                      name !== "[deleted]" ? (
+                        <Button
+                          
+                          size="sm"
+                          variant="outline-success"
+                          onClick={() => {
+                            navigate(`/profile/${post.userId}`, {
+                              replace: false,
+                            });
+                          }}
+                        >
+                          {name}
+                        </Button>
+                      ) : (
+                        <Button size="sm" disabled variant="outline-secondary">
+                          {name}
+                        </Button>
+                      )
+                    ) : (
+                      <Button size="sm" variant="outline-success">
+                        &nbsp;{" "}
+                        {/* fixes the button changing size when name loads */}
+                      </Button>
+                    )}
+                  </Col>
+                  <Col>
+                    {allowEdit && (
+                      <span className="postButton d-flex justify-content-evenly">
+                        <Button
+                          size="sm"
+                          variant="outline-secondary"
+                          onClick={() => {
+                            toggleEdit();
+                          }}
+                        >
+                          <PencilSquare /> Edit
+                        </Button>
+                        <Button
+                          size="sm"
+                          onClick={() => {
+                            toggleDelete();
+                          }}
+                          variant="outline-danger"
+                        >
+                          <Trash /> Delete
+                        </Button>
+                      </span>
+                    )}
+                  </Col>
+                </Row>
+              </Col>
+              <Col className="text-center">
+                {props.main && (
+                  <Button
+                    size="sm"
+                    onClick={props.toggleReplies}
+                    variant="secondary"
+                    type="submit"
+                  >
+                    Show/Hide Replies
+                  </Button>
+                )}
+              </Col>
+              <Col className="text-end">
+                <Container fluid>
+                  <Row>
+                    <Col>
+                      {props.post.depth < REPLY_DEPTH && !props.onProfile && (
+
+                          <Button 
+                            size="sm"
+                            className="w-50"
+                            variant="outline-primary"
+                            onClick={() => {
+                              toggleReply(props.post.depth, props.post.id);
+                            }}
+                          >
+                            <ChatLeftText /> Reply
+                          </Button>
+
+                      )}
+                    </Col>{" "}
+                    <Col className="p-0" sm="auto">
+                      <small className='align-middle'>
+                        {getDate()} | {getTime()}
+                      </small>
+                    </Col>
+                  </Row>
+                </Container>
+              </Col>
+            </Row>
+          </Container>
         </Card.Footer>
       </Card>
 
@@ -192,6 +227,14 @@ function PostCard(props) {
         setFields={setPost}
         updater={setPostValue}
         type="EDIT"
+      />
+
+      <PostDeleter
+        post={post}
+        show={showDelete}
+        toggle={toggleDelete}
+        setName={setName}
+        setEdit={setAllowEdit}
       />
     </Stack>
   );

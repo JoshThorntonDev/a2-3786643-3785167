@@ -3,21 +3,21 @@ import Form from "react-bootstrap/Form";
 import { useContext, useRef, useState } from "react";
 import Button from "react-bootstrap/Button";
 import AnimatedAlert from "./AnimatedAlert";
-import { useNavigate } from "react-router-dom";
 import UserContext from "../contexts/UserContext";
-import { deleteUser, verifyUser } from "../data/dbrepository";
+import { deletePost, findUser, verifyUser } from "../data/dbrepository";
+import Spinner from "react-bootstrap/Spinner";
+import { Trash } from "react-bootstrap-icons";
 
-//renders a modal that allows the user to delete their account
+//renders a modal that allows the user to delete their post
 // similar to the ProfileEditor function, but only takes an input of confirmation password
-//and deletes the user, rather than updating information
 
 // required props are:
 // show (boolean)
 // toggle (function, preferably one that clears `fields` and changes `show`)
 // fields (containing email, name, date and password)
 // setFields
-function ProfileDeleter(props) {
-  const { logout } = useContext(UserContext);
+function PostDeleter(props) {
+  const { currentUser } = useContext(UserContext);
   // get users and current user so we dont have to have ugly things like props.users[props.currentUser].password
 
   const passwordRef = useRef(null);
@@ -25,46 +25,58 @@ function ProfileDeleter(props) {
   const [error, setError] = useState(false);
   const [show, setShow] = useState(false);
   const [message, setMessage] = useState("");
-  const navigate = useNavigate();
+
+  const [saving, setSaving] = useState(false);
+
+  const [fields, setFields] = useState({
+    password: "",
+  });
 
   const handleInputChange = (event) => {
-    props.setFields({
-      ...props.fields,
+    setFields({
+      ...fields,
       [event.target.name]: event.target.value,
     });
   };
 
   const attemptSave = async (event) => {
-    setMessage(""); // clear error message
-    setError(false); // reset error state
     event.preventDefault(); // prevent form from submitting
 
-    const deleteTarget = await verifyUser(
-      props.user.email,
-      props.fields.password
-    );
+    setSaving(true);
+    const current = await findUser(currentUser);
+    const verifiedUser = await verifyUser(current.email, fields.password);
 
-    if (deleteTarget === null) {
+    setMessage(""); // clear error message
+    setError(false); // reset error state
+
+    if (verifiedUser === null) {
       setMessage("Sorry, your password was incorrect");
       setError(true);
       passwordRef.current.focus(); // focus on password field
+      setSaving(false);
     } else {
-      //show confirmation message before redirecting
+      //delete post and show confirmation message
       setShow(true);
-      deleteUser(deleteTarget);
-      setMessage("Account deleted successfully");
+
+      await deletePost(props.post);
+      setMessage("Post deleted successfully");
 
       setTimeout(() => {
-        logout();
-        navigate("/", { replace: true });
-      }, 1500);
+        props.toggle();
+        setShow(false);
+        setMessage("");
+
+        props.setName("[deleted]"); // set locally stored name
+        props.setEdit(false); // hide edit/delete buttons on post
+        setSaving(false);
+      }, 1000);
     }
   };
 
   return (
     <Modal show={props.show} onHide={props.toggle}>
       <Modal.Header closeButton>
-        <Modal.Title>Delete Profile</Modal.Title>
+        <Modal.Title>Delete Post</Modal.Title>
       </Modal.Header>
       <AnimatedAlert
         variant="success"
@@ -80,14 +92,14 @@ function ProfileDeleter(props) {
       />
       <Form onSubmit={attemptSave}>
         <Modal.Body>
-          <p>Are you sure you wish to delete this account?</p>
+          <p>Are you sure you wish to delete this post?</p>
           <Form.Group className="mb-3">
             <Form.Label>Confirmation Password</Form.Label>
             <Form.Control
               name="password"
               type="password"
               placeholder="Enter your password here"
-              value={props.fields.password}
+              value={fields.password}
               onChange={handleInputChange}
               required
               ref={passwordRef}
@@ -98,12 +110,32 @@ function ProfileDeleter(props) {
           <Button variant="secondary" onClick={props.toggle}>
             Close
           </Button>
-          <Button onClick={attemptSave} variant="danger" type="submit">
-            Delete
+          <Button
+            className="saveButton"
+            onClick={attemptSave}
+            variant="danger"
+            type="submit"
+          >
+            {saving ? (
+              <div>
+                <Spinner
+                  as="span"
+                  animation="border"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                />{" "}
+                Deleting
+              </div>
+            ) : (
+              <div>
+                <Trash /> Delete
+              </div>
+            )}
           </Button>
         </Modal.Footer>
       </Form>
     </Modal>
   );
 }
-export default ProfileDeleter;
+export default PostDeleter;
