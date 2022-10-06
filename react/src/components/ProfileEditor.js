@@ -143,7 +143,7 @@ function ProfileEditor(props) {
                   role="status"
                   aria-hidden="true"
                 />{" "}
-                Creating
+                Updating
               </Button>
             </div>
           ) : (
