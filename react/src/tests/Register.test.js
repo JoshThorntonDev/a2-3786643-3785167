@@ -43,7 +43,7 @@ test("Register Form", () => {
 
     const button = screen.getByText("Create Account");
 
-    //Simulate click on submit button and wait for redirect
+    //Simulate click on submit button
     fireEvent.click(button);
 
     //Assert that "Creating" appears in the document after form is submitted
