@@ -1,8 +1,5 @@
 .reaction-button {
     margin-right: 0.3em;
     margin-left: 0.3em;
-    min-width: 2em;
-}
-span {
-    min-width: 2rem;
+    min-width: 4em;
 }

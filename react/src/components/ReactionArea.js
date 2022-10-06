@@ -42,7 +42,7 @@ function ReactionArea(props) {
   };
 
   return (
-    <span className="align-middle">
+    <span className="reaction-area align-middle">
       <Button
         className="reaction-button"
         onClick={handleChange}

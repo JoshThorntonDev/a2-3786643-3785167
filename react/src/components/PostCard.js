@@ -114,7 +114,7 @@ function PostCard(props) {
             <Row>
               <Col>
                 <Row>
-                  <Col className="postButton">
+                  <Col sm="auto"  className="postButton">
                     {name ? (
                       name !== "[deleted]" ? (
                         <Button
@@ -166,7 +166,7 @@ function PostCard(props) {
                   </Col>
                 </Row>
               </Col>
-              <Col className="text-center">
+              <Col sm={3} className="text-center">
                 {props.main && (
                   <Button
                     size="sm"
