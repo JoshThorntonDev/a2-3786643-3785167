@@ -3,6 +3,7 @@ import Form from "react-bootstrap/Form";
 import { useContext, useRef, useState } from "react";
 import Button from "react-bootstrap/Button";
 import AnimatedAlert from "./AnimatedAlert";
+import Spinner from "react-bootstrap/Spinner";
 import { useNavigate } from "react-router-dom";
 import UserContext from "../contexts/UserContext";
 import { deleteUser, verifyUser } from "../data/dbrepository";
@@ -25,6 +26,7 @@ function ProfileDeleter(props) {
   const [error, setError] = useState(false);
   const [show, setShow] = useState(false);
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false); // for displaying loading animation
   const navigate = useNavigate();
 
   const handleInputChange = (event) => {
@@ -35,6 +37,7 @@ function ProfileDeleter(props) {
   };
 
   const attemptSave = async (event) => {
+    setLoading(true);
     setMessage(""); // clear error message
     setError(false); // reset error state
     event.preventDefault(); // prevent form from submitting
@@ -47,6 +50,7 @@ function ProfileDeleter(props) {
     if (deleteTarget === null) {
       setMessage("Sorry, your password was incorrect");
       setError(true);
+      setLoading(false);
       passwordRef.current.focus(); // focus on password field
     } else {
       //show confirmation message before redirecting
@@ -57,6 +61,7 @@ function ProfileDeleter(props) {
       setTimeout(() => {
         logout();
         navigate("/", { replace: true });
+        setLoading(false);
       }, 1500);
     }
   };
@@ -98,9 +103,24 @@ function ProfileDeleter(props) {
           <Button variant="secondary" onClick={props.toggle}>
             Close
           </Button>
+          {loading ? (
+            <div>
+              <Button variant="danger" disabled>
+                <Spinner
+                  as="span"
+                  animation="border"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                />{" "}
+                Deleting
+              </Button>
+            </div>
+          ) : (
           <Button onClick={attemptSave} variant="danger" type="submit">
             Delete
           </Button>
+          )}
         </Modal.Footer>
       </Form>
     </Modal>
