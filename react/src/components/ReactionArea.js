@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   HandThumbsDown,
   HandThumbsDownFill,
@@ -9,13 +9,20 @@ import Button from "react-bootstrap/Button";
 import "./css/ReactionArea.css";
 
 function ReactionArea(props) {
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState(props.default);
 
   const [likes, setLikes] = useState(props.likes);
   const [dislikes, setDislikes] = useState(props.dislikes);
 
   const likeButton = useRef();
   const dislikeButton = useRef();
+
+  useEffect(() => {
+    setLikes(props.likes)
+    setDislikes(props.dislikes)
+    setValue(props.default)
+
+  }, [props])
 
   const handleChange = (e) => {
     var x = e.currentTarget.value;

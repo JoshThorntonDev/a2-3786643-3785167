@@ -26,7 +26,11 @@ function PostCard(props) {
 
   const { reactions } = useContext(ReactionContext);
 
-  const [localReactions, setLocalReactions] = useState([]);
+  const [localReactions, setLocalReactions] = useState({
+    numLikes: 0,
+    numDislikes: 0,
+    default: "",
+  });
 
   const [postValue, setPostValue] = useState({
     // stores what the post is currently displaying, so that when a user enters text in the editor,
@@ -85,10 +89,28 @@ function PostCard(props) {
   }, []);
 
   useEffect(() => {
-    const x = reactions.find((reaction) => reaction.postId === post.id);
+    if (reactions.length > 0) {
+      // get reactions for this post only
+      var postReacts = [];
+      postReacts.push(
+        reactions.find((reaction) => reaction.postId === post.id)
+      );
 
-    if (x !== null) {
-      setLocalReactions(x);
+      if (postReacts[0] === undefined) {
+        return;
+      }
+      var likes = postReacts.filter((x) => x.type === "like");
+      var dislikes = postReacts.filter((x) => x.type === "dislike");
+
+      var needToSetDefault = postReacts.find(
+        (x) => x.userId.toString() === currentUser.toString()
+      );
+
+      if (needToSetDefault) {
+        localReactions.default = needToSetDefault.type;
+      }
+      localReactions.numLikes = likes.length;
+      localReactions.numDislikes = dislikes.length;
     }
   }, [reactions]);
 
@@ -197,7 +219,11 @@ function PostCard(props) {
                     <Col>
                       <Row>
                         <Col sm="auto" className="align-middle">
-                          <ReactionArea likes={5} dislikes={1} />
+                          <ReactionArea
+                            default={localReactions.default}
+                            likes={localReactions.numLikes}
+                            dislikes={localReactions.numDislikes}
+                          />
                         </Col>
                         <Col>
                           {props.post.depth < REPLY_DEPTH && !props.onProfile && (

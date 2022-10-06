@@ -1,4 +1,4 @@
-import { getPosts, getReactions } from "../data/dbrepository";
+import { getPosts } from "../data/dbrepository";
 import Button from "react-bootstrap/Button";
 import { useContext, useEffect, useState } from "react";
 import "./css/Posts.css";
