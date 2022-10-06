@@ -13,6 +13,8 @@ import ReactPaginate from "react-paginate";
 import PlaceholderPost from "./PlaceholderPost";
 import Thread from "./Thread";
 
+import ReactionContext from "../contexts/ReactionContext";
+
 function Posts() {
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -21,6 +23,9 @@ function Posts() {
   const [showModal, setShowModal] = useState(false);
   const [sortNewest, setSortNewest] = useState(false);
 
+  const { reactions } = useContext(ReactionContext);
+  const { checkForReactions } = useContext(ReactionContext);
+
   const [post, setPost] = useState({
     userId: currentUser,
     content: "",
@@ -28,6 +33,12 @@ function Posts() {
     replyId: null,
     depth: 0,
   });
+
+  useEffect(() => {
+    if (reactions.length === 0) {
+      checkForReactions();
+    }
+  }, []);
 
   useEffect(() => {
     async function loadPosts() {

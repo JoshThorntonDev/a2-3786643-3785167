@@ -14,6 +14,7 @@ import PlaceholderPost from "./PlaceholderPost";
 import Spinner from "react-bootstrap/Spinner";
 import { useNavigate } from "react-router-dom";
 import ReactPaginate from "react-paginate";
+import ReactionContext from "../contexts/ReactionContext";
 
 function Profile() {
   const { id } = useParams();
@@ -25,6 +26,9 @@ function Profile() {
   const [isThisMyAccount, setIsThisMyAccount] = useState(false);
   const [updated, setUpdated] = useState(false);
   const navigate = useNavigate();
+
+  const { reactions } = useContext(ReactionContext);
+  const { checkForReactions } = useContext(ReactionContext);
 
   if (id === "1") {
     // dont allow access to the deleted user
@@ -66,7 +70,12 @@ function Profile() {
 
     loadUser();
     loadPosts();
+
+    if (reactions.length === 0) {
+      checkForReactions();
+    }
   }, [id, updated]);
+
 
   const [fields, setFields] = useState({
     // a field storing all possible user data, currently only name is editable

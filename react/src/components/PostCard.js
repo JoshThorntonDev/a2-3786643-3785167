@@ -12,6 +12,8 @@ import { useNavigate } from "react-router-dom";
 import Stack from "react-bootstrap/Stack";
 import UserContext from "../contexts/UserContext";
 import PostDeleter from "./PostDeleter";
+import ReactionArea from "./ReactionArea";
+import ReactionContext from "../contexts/ReactionContext";
 
 function PostCard(props) {
   const navigate = useNavigate();
@@ -21,6 +23,15 @@ function PostCard(props) {
   const [showDelete, setShowDelete] = useState(false);
   const [showReply, setShowReply] = useState(false);
   const { currentUser } = useContext(UserContext);
+
+  const { reactions } = useContext(ReactionContext);
+
+  const [localReactions, setLocalReactions] = useState({
+    numLikes: 0,
+    numDislikes: 0,
+    default: "",
+    defaultId: null
+  });
 
   const [postValue, setPostValue] = useState({
     // stores what the post is currently displaying, so that when a user enters text in the editor,
@@ -79,6 +90,34 @@ function PostCard(props) {
   }, []);
 
   useEffect(() => {
+    if (reactions.length > 0) {
+      // get reactions for this post only
+      var postReacts = [];
+      postReacts.push(
+        reactions.find((reaction) => reaction.postId === post.id)
+      );
+
+      if (postReacts[0] === undefined) {
+        return;
+      }
+      var likes = postReacts.filter((x) => x.type === "like");
+      var dislikes = postReacts.filter((x) => x.type === "dislike");
+
+      var needToSetDefault = postReacts.find(
+        (x) => x.userId.toString() === currentUser.toString()
+      );
+
+      if (needToSetDefault) {
+        localReactions.default = needToSetDefault.type;
+        localReactions.defaultId = needToSetDefault.id;
+
+      }
+      localReactions.numLikes = likes.length;
+      localReactions.numDislikes = dislikes.length;
+    }
+  }, [reactions]);
+
+  useEffect(() => {
     async function assignNameToPost() {
       const user = await findUser(post.userId);
       setName(user.username);
@@ -97,7 +136,7 @@ function PostCard(props) {
 
   return (
     <Stack>
-      <Card border={showReply && 'secondary'} className={props.reply}>
+      <Card border={showReply && "secondary"} className={props.reply}>
         <Card.Body>
           <div dangerouslySetInnerHTML={{ __html: postValue.content }} />
         </Card.Body>
@@ -113,11 +152,10 @@ function PostCard(props) {
             <Row>
               <Col>
                 <Row>
-                  <Col className="postButton">
+                  <Col sm="auto" className="postButton">
                     {name ? (
                       name !== "[deleted]" ? (
                         <Button
-                          
                           size="sm"
                           variant="outline-success"
                           onClick={() => {
@@ -142,7 +180,7 @@ function PostCard(props) {
                   </Col>
                   <Col>
                     {allowEdit && (
-                      <span className="postButton d-flex justify-content-evenly">
+                      <span className="postButton">
                         <Button
                           size="sm"
                           variant="outline-secondary"
@@ -166,7 +204,7 @@ function PostCard(props) {
                   </Col>
                 </Row>
               </Col>
-              <Col className="text-center">
+              <Col sm={3} className="text-center">
                 {props.main && (
                   <Button
                     size="sm"
@@ -182,23 +220,36 @@ function PostCard(props) {
                 <Container fluid>
                   <Row>
                     <Col>
-                      {props.post.depth < REPLY_DEPTH && !props.onProfile && (
+                      <Row>
+                        <Col sm="auto" className="align-middle">
+                          <ReactionArea
+                            default={localReactions.default}
+                            defaultId={localReactions.defaultId}
+                            likes={localReactions.numLikes}
+                            dislikes={localReactions.numDislikes}
+                            userId={currentUser}
+                            postId={post.id}
 
-                          <Button 
-                            size="sm"
-                            className="w-50"
-                            variant="outline-primary"
-                            onClick={() => {
-                              toggleReply(props.post.depth, props.post.id);
-                            }}
-                          >
-                            <ChatLeftText /> Reply
-                          </Button>
-
-                      )}
+                          />
+                        </Col>
+                        <Col>
+                          {props.post.depth < REPLY_DEPTH && !props.onProfile && (
+                            <Button
+                              size="sm"
+                              className="w-50"
+                              variant="outline-primary"
+                              onClick={() => {
+                                toggleReply(props.post.depth, props.post.id);
+                              }}
+                            >
+                              <ChatLeftText /> Reply
+                            </Button>
+                          )}
+                        </Col>
+                      </Row>
                     </Col>{" "}
                     <Col className="p-0" sm="auto">
-                      <small className='align-middle'>
+                      <small className="align-middle">
                         {getDate()} | {getTime()}
                       </small>
                     </Col>
