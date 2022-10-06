@@ -30,6 +30,7 @@ function PostCard(props) {
     numLikes: 0,
     numDislikes: 0,
     default: "",
+    defaultId: null
   });
 
   const [postValue, setPostValue] = useState({
@@ -108,6 +109,8 @@ function PostCard(props) {
 
       if (needToSetDefault) {
         localReactions.default = needToSetDefault.type;
+        localReactions.defaultId = needToSetDefault.id;
+
       }
       localReactions.numLikes = likes.length;
       localReactions.numDislikes = dislikes.length;
@@ -221,8 +224,12 @@ function PostCard(props) {
                         <Col sm="auto" className="align-middle">
                           <ReactionArea
                             default={localReactions.default}
+                            defaultId={localReactions.defaultId}
                             likes={localReactions.numLikes}
                             dislikes={localReactions.numDislikes}
+                            userId={currentUser}
+                            postId={post.id}
+
                           />
                         </Col>
                         <Col>

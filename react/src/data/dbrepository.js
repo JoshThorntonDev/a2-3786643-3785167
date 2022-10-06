@@ -110,6 +110,7 @@ async function getReactions() {
 }
 
 async function createReaction(reaction) {
+  reaction.id = null;
   const response = await axios.post(API_HOST + `/${REACTION_KEY}`, reaction);
   return response.data;
 }
@@ -121,7 +122,8 @@ async function updateReaction(reaction) {
 }
 
 async function deleteReaction(reaction) {
-  const response = await axios.delete(API_HOST + `/${REACTION_KEY}/`, reaction);
+
+  const response = await axios.delete(API_HOST + `/${REACTION_KEY}/${reaction.id}`);
 
   return response;
 

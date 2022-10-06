@@ -6,55 +6,80 @@ import {
   HandThumbsUpFill,
 } from "react-bootstrap-icons";
 import Button from "react-bootstrap/Button";
+import { createReaction, deleteReaction } from "../data/dbrepository";
 import "./css/ReactionArea.css";
 
 function ReactionArea(props) {
   const [value, setValue] = useState(props.default);
-
+  const [currentId, setCurrentId] = useState(props.defaultId);
   const [likes, setLikes] = useState(props.likes);
   const [dislikes, setDislikes] = useState(props.dislikes);
 
   const likeButton = useRef();
   const dislikeButton = useRef();
 
-  useEffect(() => {
-    setLikes(props.likes)
-    setDislikes(props.dislikes)
-    setValue(props.default)
+  useEffect(() => { // ensures post updates its reactions if we're still waiting for the db to respond
+    setLikes(props.likes);
+    setDislikes(props.dislikes);
+    setValue(props.default);
+    setCurrentId(props.defaultId);
+  }, [props]);
 
-  }, [props])
+  const handleChange = async (e) => {
+    var type = e.currentTarget.value;
 
-  const handleChange = (e) => {
-    var x = e.currentTarget.value;
+    const reaction = {
+      // create a reaction object, ensure ids arent strings
+      userId: Number(props.userId),
+      postId: Number(props.postId),
+      type: type,
+      id: Number(currentId), // the reaction's id for if it is already in the db
+    };
+
     likeButton.current.blur(); // bootstrap makes the buttons look like they are still selected unless we blur
     dislikeButton.current.blur();
 
     switch (true) {
-      case x === value: // when its already selected, remove the reaction
-        if (x === "like") {
+      case type === value: // when its already selected, remove the reaction
+        if (type === "like") {
           setLikes(likes - 1);
+          deleteReaction(reaction);
         } else {
           setDislikes(dislikes - 1);
+          deleteReaction(reaction);
         }
         setValue("");
+
         break;
 
-      case x === "like":
+      case type === "like":
         if (value === "dislike") {
+          // if the other reaction type is selected, remove it
           setDislikes(dislikes - 1);
+          deleteReaction(reaction);
         }
 
         setLikes(likes + 1);
-        setValue(x);
+        setValue(type);
+
+        var res = await createReaction(reaction);
+        setCurrentId(res.id);
+
         break;
 
-      case x === "dislike":
+      case type === "dislike":
         if (value === "like") {
+          // if the other reaction type is selected, remove it
           setLikes(likes - 1);
+          deleteReaction(reaction);
         }
 
         setDislikes(dislikes + 1);
-        setValue(x);
+        setValue(type);
+
+        var res = await createReaction(reaction);
+        setCurrentId(res.id); // store id of new reaction in state in case user want to remove it
+
         break;
 
       default:

@@ -17,7 +17,7 @@ exports.create = async (req, res) => {
 };
 
 exports.update = async (req, res) => {
-  const id = req.body.id;
+  const id = req.params.id;
 
   const reaction = await db.reaction.findByPk(id);
 
@@ -31,7 +31,11 @@ exports.update = async (req, res) => {
 exports.delete = async (req, res) => {
     const id = req.params.id;
     
-    const deleted = await db.reaction.destroy({where: {id: id}})
+    const deleted = await db.reaction.destroy({
+      where: {
+        id: id
+      }
+    })
     res.json(deleted);
 
   }
