@@ -1,5 +1,10 @@
-import { useState } from "react";
-import { HandThumbsDown, HandThumbsUp } from "react-bootstrap-icons";
+import { useRef, useState } from "react";
+import {
+  HandThumbsDown,
+  HandThumbsDownFill,
+  HandThumbsUp,
+  HandThumbsUpFill,
+} from "react-bootstrap-icons";
 import Button from "react-bootstrap/Button";
 import "./css/ReactionArea.css";
 
@@ -9,36 +14,39 @@ function ReactionArea(props) {
   const [likes, setLikes] = useState(props.likes);
   const [dislikes, setDislikes] = useState(props.dislikes);
 
+  const likeButton = useRef();
+  const dislikeButton = useRef();
+
   const handleChange = (e) => {
     var x = e.currentTarget.value;
+    likeButton.current.blur(); // bootstrap makes the buttons look like they are still selected unless we blur
+    dislikeButton.current.blur();
 
-    // =====like=====
-    if (x === "like") {
-      if (value === "dislike") {
-        // decrease value of dislike if this user had disliked
-        setDislikes(dislikes - 1);
-      }
+    switch (true) {
+      case x === value:
+        if (x === "like") {
+          setLikes(likes - 1);
+        } else {
+          setDislikes(dislikes - 1);
+        }
+        setValue("");
+        break;
 
-      // if it isnt already liked, add to the counter
-      if (value !== "like") {
+      case x === "like":
         setLikes(likes + 1);
-      }
-    }
+        setValue(x);
+        break;
 
-    // =====dislike=====
-    if (x === "dislike") {
-      if (value === "like") {
-        // decrease value of like if this user had liked
-        setLikes(likes - 1);
-      }
-
-      // if it isnt already disliked, add to the counter
-      if (value !== "dislike") {
+      case x === "dislike":
         setDislikes(dislikes + 1);
-      }
-    }
+        setValue(x);
+        break;
 
-    setValue(e.currentTarget.value);
+      default:
+        // shouldnt ever get here
+        console.log("REACTION ERROR");
+        break;
+    }
   };
 
   return (
@@ -50,8 +58,9 @@ function ReactionArea(props) {
         variant="outline-success"
         value={"like"}
         active={value === "like"}
+        ref={likeButton}
       >
-        <HandThumbsUp /> {likes}
+        {value === "like" ? <HandThumbsUpFill /> : <HandThumbsUp />} {likes}
       </Button>
       <Button
         className="reaction-button"
@@ -60,8 +69,10 @@ function ReactionArea(props) {
         variant="outline-danger"
         value={"dislike"}
         active={value === "dislike"}
+        ref={dislikeButton}
       >
-        <HandThumbsDown /> {dislikes}
+        {value === "dislike" ? <HandThumbsDownFill /> : <HandThumbsDown />}{" "}
+        {dislikes}
       </Button>
     </span>
   );
