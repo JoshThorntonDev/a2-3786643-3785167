@@ -23,7 +23,7 @@ function ReactionArea(props) {
     dislikeButton.current.blur();
 
     switch (true) {
-      case x === value:
+      case x === value: // when its already selected, remove the reaction
         if (x === "like") {
           setLikes(likes - 1);
         } else {
@@ -33,11 +33,19 @@ function ReactionArea(props) {
         break;
 
       case x === "like":
+        if (value === "dislike") {
+          setDislikes(dislikes - 1);
+        }
+
         setLikes(likes + 1);
         setValue(x);
         break;
 
       case x === "dislike":
+        if (value === "like") {
+          setLikes(likes - 1);
+        }
+
         setDislikes(dislikes + 1);
         setValue(x);
         break;
