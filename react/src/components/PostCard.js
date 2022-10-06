@@ -180,7 +180,7 @@ function PostCard(props) {
                   </Col>
                   <Col>
                     {allowEdit && (
-                      <span className="postButton d-flex justify-content-evenly">
+                      <span className="postButton">
                         <Button
                           size="sm"
                           variant="outline-secondary"
