@@ -1,4 +1,4 @@
-//Tests for profile page
+//Edit Profile tests
 
 import { render, screen, fireEvent } from "@testing-library/react";
 import App from "../App";
@@ -37,7 +37,6 @@ test("Change name", () => {
     //Assert that "Updating" appears in the document after submitting
     expect(screen.getByText("Updating")).toBeInTheDocument();
 });
-
 
 //Function to log the user in before the test
 async function Login() {
