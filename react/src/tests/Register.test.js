@@ -25,7 +25,7 @@ beforeEach(() => {
 });
 
 //Test the registration form
-test("Register Form", async () => {
+test("Register Form", () => {
     //Get username, email and password input elements
     const username = screen.getByPlaceholderText("name");
     const email = screen.getByPlaceholderText("email");
