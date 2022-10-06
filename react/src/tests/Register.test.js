@@ -84,9 +84,3 @@ test("Validate Function", () => {
     validateMsg = validate(user, NAME_LENGTH);
     expect(validateMsg).toBe("");
 });
-
-function delay(milliseconds){
-    return new Promise(resolve => {
-        setTimeout(resolve, milliseconds);
-    });
-}
