@@ -1,4 +1,4 @@
-//Controller for calling methods on users
+//Controller for calling methods on posts
 //Adapted from week 8 Lab post.controller.js
 
 const db = require("../database");
@@ -65,7 +65,7 @@ exports.update = async (req, res) => {
   res.json(post)
 }
 
-// delete a post
+// delete a post, exposed to user in any way, but keeping it for posterity
 exports.delete = async (req, res) => {
   const id = req.params.id;
   

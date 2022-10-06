@@ -16,9 +16,10 @@ db.sequelize = new Sequelize(config.DB, config.USER, config.PASSWORD, {
 //Models
 db.user = require("./models/user.js")(db.sequelize, DataTypes);
 db.post = require("./models/post.js")(db.sequelize, DataTypes);
+db.reaction = require("./models/reaction.js")(db.sequelize, DataTypes);
 
-// Relate post and user.
-//Commented out for now until posts are integrated
+// Relate tables
+
 db.user.hasMany(db.post, {
   foreignKey: {
     allowNull: true
@@ -31,6 +32,13 @@ db.post.hasOne(db.post, {
 })
 
 db.post.belongsTo(db.user);
+
+db.post.hasMany(db.reaction, {
+  foreignKey: "postId"
+})
+
+db.reaction.belongsTo(db.user);
+
 
 
 //Sync schema and seed initial data
