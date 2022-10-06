@@ -92,6 +92,7 @@ function ReactionArea(props) {
   return (
     <span className="reaction-area align-middle">
       <Button
+        role={'like'}
         className="reaction-button"
         onClick={handleChange}
         size="sm"
@@ -101,8 +102,10 @@ function ReactionArea(props) {
         ref={likeButton}
       >
         {value === "like" ? <HandThumbsUpFill /> : <HandThumbsUp />} {likes}
+        
       </Button>
       <Button
+        role={'dislike'}
         className="reaction-button"
         onClick={handleChange}
         size="sm"
