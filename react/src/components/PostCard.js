@@ -13,6 +13,7 @@ import Stack from "react-bootstrap/Stack";
 import UserContext from "../contexts/UserContext";
 import PostDeleter from "./PostDeleter";
 import ReactionArea from "./ReactionArea";
+import ReactionContext from "../contexts/ReactionContext";
 
 function PostCard(props) {
   const navigate = useNavigate();
@@ -22,6 +23,10 @@ function PostCard(props) {
   const [showDelete, setShowDelete] = useState(false);
   const [showReply, setShowReply] = useState(false);
   const { currentUser } = useContext(UserContext);
+
+  const { reactions } = useContext(ReactionContext);
+
+  const [localReactions, setLocalReactions] = useState([]);
 
   const [postValue, setPostValue] = useState({
     // stores what the post is currently displaying, so that when a user enters text in the editor,
@@ -80,6 +85,14 @@ function PostCard(props) {
   }, []);
 
   useEffect(() => {
+    const x = reactions.find((reaction) => reaction.postId === post.id);
+
+    if (x !== null) {
+      setLocalReactions(x);
+    }
+  }, [reactions]);
+
+  useEffect(() => {
     async function assignNameToPost() {
       const user = await findUser(post.userId);
       setName(user.username);
@@ -114,7 +127,7 @@ function PostCard(props) {
             <Row>
               <Col>
                 <Row>
-                  <Col sm="auto"  className="postButton">
+                  <Col sm="auto" className="postButton">
                     {name ? (
                       name !== "[deleted]" ? (
                         <Button
