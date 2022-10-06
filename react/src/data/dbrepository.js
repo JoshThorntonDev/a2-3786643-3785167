@@ -6,6 +6,7 @@ import axios from "axios";
 const API_HOST = "http://localhost:4000/api";
 const USER_KEY = "users";
 const POST_KEY = "posts";
+const REACTION_KEY = "reactions"
 
 // --- User Methods ---------------------------------------------------------------------------------------
 async function verifyUser(email, password) {
@@ -100,6 +101,32 @@ async function getPostsByUser(id) {
   return response.data;
 }
 
+
+// --- Reaction Methods -----------------------------------------------------------------------------------
+
+async function getReactions() {
+  const response = await axios.get(API_HOST + `/${REACTION_KEY}`);
+  return response.data;
+}
+
+async function createReaction(reaction) {
+  const response = await axios.post(API_HOST + `/${REACTION_KEY}`, reaction);
+  return response.data;
+}
+
+async function updateReaction(reaction) {
+  const response = await axios.put(API_HOST + `/${REACTION_KEY}/`, reaction);
+
+  return response;
+}
+
+async function deleteReaction(reaction) {
+  const response = await axios.delete(API_HOST + `/${REACTION_KEY}/`, reaction);
+
+  return response;
+
+}
+
 export {
   verifyUser,
   findUser,
@@ -113,4 +140,10 @@ export {
   deletePost,
   getRepliesTo,
   getPostsByUser,
+  getReactions,
+  createReaction,
+  updateReaction,
+  deleteReaction
+
+
 };

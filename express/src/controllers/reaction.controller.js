@@ -31,8 +31,7 @@ exports.update = async (req, res) => {
 exports.delete = async (req, res) => {
     const id = req.params.id;
     
-    await db.reaction.destroy({where: {id: id}})
-    res.send({
-      message: `Deleted reaction ${id}`
-    });
+    const deleted = await db.reaction.destroy({where: {id: id}})
+    res.json(deleted);
+
   }
