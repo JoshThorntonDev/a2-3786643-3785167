@@ -14,6 +14,8 @@ module.exports = (express, app) => {
   // Update a reaction with id.
   router.put("/", controller.update);
 
+  router.delete("/", controller.delete);
+
   // Add routes to server.
   app.use("/api/reactions", router);
 };
