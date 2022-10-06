@@ -22,8 +22,6 @@
 .reply {
   width: 100%;
   align-self: end;
-  margin: 0;
-
   display: inline-flex;
 }
 
@@ -32,7 +30,8 @@
   flex-grow: 0.03;
   border-width: 0 0 0 1px;
   border-style:solid;
-  border-color: gray;
+  border-color: var(--bs-border-color-translucent);
+  transition-duration: 0.3s;
 }
 
 .reply p{
@@ -46,8 +45,8 @@
 }
 .topPostBottom {
   border-width: 0 0 1px 0;
-  border-style:dashed;
-  border-color: gray;
+  border-style:solid;
+  border-color: var(--bs-border-color-translucent);
 }
 
 .ql-editor {
