@@ -45,39 +45,35 @@ function Thread(props) {
       <Stack className={showReplies & props.main ? "topPostBottom" : ""}>
         {" "}
         {/* Controls if the post should have a line at the bottom */}
-        {props.main & (replies.length !== 0) ? (
+        {replies.length !== 0 ? (
           <PostCard
             post={post}
-            allowDelete={false}
             update={setNewChild}
             toggleReplies={toggleReplies}
+            main={props.main}
           />
         ) : (
-          <PostCard
-            post={post}
-            allowDelete={false}
-            update={setNewChild}
-            toggleReplies={null}
-          />
+          <PostCard post={post} update={setNewChild} toggleReplies={null} />
         )}
         {
-          // only put the child posts inside a collapse if this is a top level post,
-          //otherwise it is impossible to show them without giving the show prop to every child
           props.main
             ? replies.map((x) => (
                 <Collapse key={x.id} in={showReplies}>
                   <div className="reply">
                     <div className="line"></div>
 
-                    <Thread post={x} allowDelete={false} reply={"reply"} />
+                    <Thread post={x} />
                   </div>
                 </Collapse>
               ))
             : replies.map((x) => (
-                <div key={x.id} className="reply">
-                  <div className="line"></div>
-                  <Thread post={x} allowDelete={false} reply={"reply"} />
-                </div>
+                <Collapse key={x.id} in={!showReplies}>
+                  <div key={x.id} className="reply">
+                     {/* when showing replies from a main post, !showReplies shows all at first */}
+                    <div className="line"></div>
+                    <Thread post={x} />
+                  </div>
+                </Collapse>
               ))
         }
         {}

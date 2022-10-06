@@ -52,3 +52,16 @@
 .ql-editor {
   min-height: 10vh
 }
+
+.card-footer {
+  transition-duration: 0.3s;
+  
+}
+
+.card-footer:hover {
+  background-color: #c3c3c34f
+}
+
+.card-footer:active {
+  background-color: #c3c3c3b4
+}

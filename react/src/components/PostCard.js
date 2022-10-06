@@ -108,7 +108,7 @@ function PostCard(props) {
           </Card.Body>
         )}
 
-        <Card.Footer>
+        <Card.Footer onDoubleClick={props.toggleReplies}>
           <Container fluid>
             <Row>
               <Col>
@@ -167,7 +167,7 @@ function PostCard(props) {
                 </Row>
               </Col>
               <Col className="text-center">
-                {props.toggleReplies !== null && (
+                {props.main && (
                   <Button
                     size="sm"
                     onClick={props.toggleReplies}
