@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import Stack from "react-bootstrap/Stack";
 import UserContext from "../contexts/UserContext";
 import PostDeleter from "./PostDeleter";
+import ReactionArea from "./ReactionArea";
 
 function PostCard(props) {
   const navigate = useNavigate();
@@ -97,7 +98,7 @@ function PostCard(props) {
 
   return (
     <Stack>
-      <Card border={showReply && 'secondary'} className={props.reply}>
+      <Card border={showReply && "secondary"} className={props.reply}>
         <Card.Body>
           <div dangerouslySetInnerHTML={{ __html: postValue.content }} />
         </Card.Body>
@@ -117,7 +118,6 @@ function PostCard(props) {
                     {name ? (
                       name !== "[deleted]" ? (
                         <Button
-                          
                           size="sm"
                           variant="outline-success"
                           onClick={() => {
@@ -182,23 +182,28 @@ function PostCard(props) {
                 <Container fluid>
                   <Row>
                     <Col>
-                      {props.post.depth < REPLY_DEPTH && !props.onProfile && (
-
-                          <Button 
-                            size="sm"
-                            className="w-50"
-                            variant="outline-primary"
-                            onClick={() => {
-                              toggleReply(props.post.depth, props.post.id);
-                            }}
-                          >
-                            <ChatLeftText /> Reply
-                          </Button>
-
-                      )}
+                      <Row>
+                        <Col sm="auto" className="align-middle">
+                          <ReactionArea likes={5} dislikes={1} />
+                        </Col>
+                        <Col>
+                          {props.post.depth < REPLY_DEPTH && !props.onProfile && (
+                            <Button
+                              size="sm"
+                              className="w-50"
+                              variant="outline-primary"
+                              onClick={() => {
+                                toggleReply(props.post.depth, props.post.id);
+                              }}
+                            >
+                              <ChatLeftText /> Reply
+                            </Button>
+                          )}
+                        </Col>
+                      </Row>
                     </Col>{" "}
                     <Col className="p-0" sm="auto">
-                      <small className='align-middle'>
+                      <small className="align-middle">
                         {getDate()} | {getTime()}
                       </small>
                     </Col>
