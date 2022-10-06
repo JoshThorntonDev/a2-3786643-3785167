@@ -3,6 +3,7 @@ import Form from "react-bootstrap/Form";
 import { useContext, useRef, useState } from "react";
 import { CheckCircleFill } from "react-bootstrap-icons";
 import Button from "react-bootstrap/Button";
+import Spinner from "react-bootstrap/Spinner";
 import AnimatedAlert from "./AnimatedAlert";
 import UserContext from "../contexts/UserContext";
 import { editUser, verifyUser } from "../data/dbrepository";
@@ -32,8 +33,10 @@ function ProfileEditor(props) {
   const [error, setError] = useState(false);
   const [show, setShow] = useState(false);
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false); // for displaying loading animation
 
   const attemptSave = async (event) => {
+    setLoading(true);
     setMessage(""); // clear error message
     setError(false); // reset error state
     event.preventDefault(); // prevent form from submitting
@@ -41,6 +44,7 @@ function ProfileEditor(props) {
     if (props.fields.name === "") {
       setMessage("Sorry, blank names are not permitted");
       setError(true);
+      setLoading(false);
       nameRef.current.focus();
       return;
     }
@@ -54,6 +58,7 @@ function ProfileEditor(props) {
     if (editTarget === null) {
       setMessage("Sorry, your password was incorrect");
       setError(true);
+      setLoading(false);
       passwordRef.current.focus(); // focus on password field
     } else {
       //show confirmation message before redirecting
@@ -68,7 +73,9 @@ function ProfileEditor(props) {
         setShow(false); // hide success message so it isnt there when opening modal again
         props.toggle(); // close modal
         props.setUpdated(true); // tell Profile it was updated and needs to rerender
+        setLoading(false);
       }, 800);
+      
     }
   };
 
@@ -126,9 +133,24 @@ function ProfileEditor(props) {
           <Button variant="secondary" onClick={props.toggle}>
             Close
           </Button>
+          {loading ? (
+            <div>
+              <Button variant="success" disabled>
+                <Spinner
+                  as="span"
+                  animation="border"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                />{" "}
+                Creating
+              </Button>
+            </div>
+          ) : (
           <Button onClick={attemptSave} variant="success" type="submit">
             <CheckCircleFill></CheckCircleFill> Save
           </Button>
+          )}
         </Modal.Footer>
       </Form>
     </Modal>
