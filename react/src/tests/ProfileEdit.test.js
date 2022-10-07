@@ -11,7 +11,7 @@ const user = {
     email: "testuser@email.com",
 }
 
-beforeAll(async () => {
+beforeAll( () => {
     const utils = render(
     <UserContext.Provider value={{ NAME_LENGTH }}>
         <ProfileEditor
