@@ -114,14 +114,14 @@ function PostCard(props) {
       localReactions.numLikes = likes.length;
       localReactions.numDislikes = dislikes.length;
 
-      reactionArea.current = (
+      reactionArea.current = ( // update the reaction area to reflect any new reactions
         <ReactionArea
-          default={localReactions.default}
-          defaultId={localReactions.defaultId}
+          default={localReactions.default} // if it starts with nothing, a like or a dislike
+          defaultId={localReactions.defaultId} // pk of reaction in db if it exists
           likes={localReactions.numLikes}
           dislikes={localReactions.numDislikes}
           userId={currentUser}
-          postId={post.id}
+          postId={post.id} // id of the post its rendering inside
         />
       );
     }
@@ -144,6 +144,7 @@ function PostCard(props) {
     }
   }, [post.userId, currentUser, name, post.content, post.image]);
 
+  // store the reaction area in a useRef so its values arent lost on re render
   const reactionArea = useRef(
     <ReactionArea
       default={localReactions.default}
@@ -243,7 +244,7 @@ function PostCard(props) {
                     <Col>
                       <Row>
                         <Col sm="auto" className="align-middle">
-                          {reactionArea.current}
+                          {reactionArea.current /* render the current reaction area */}
                         </Col>
                         <Col>
                           {props.post.depth < REPLY_DEPTH && !props.onProfile && (
