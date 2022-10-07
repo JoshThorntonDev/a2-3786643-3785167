@@ -5,7 +5,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import "./css/Posts.css";
 import { PencilSquare, Trash, ChatLeftText } from "react-bootstrap-icons";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import PostCreator from "./PostCreator";
 import { findUser } from "../data/dbrepository";
 import { useNavigate } from "react-router-dom";
@@ -26,11 +26,11 @@ function PostCard(props) {
 
   const { reactions } = useContext(ReactionContext);
 
-  const [localReactions, setLocalReactions] = useState({
+  const [localReactions] = useState({
     numLikes: 0,
     numDislikes: 0,
     default: "",
-    defaultId: null
+    defaultId: null,
   });
 
   const [postValue, setPostValue] = useState({
@@ -110,10 +110,20 @@ function PostCard(props) {
       if (needToSetDefault) {
         localReactions.default = needToSetDefault.type;
         localReactions.defaultId = needToSetDefault.id;
-
       }
       localReactions.numLikes = likes.length;
       localReactions.numDislikes = dislikes.length;
+
+      reactionArea.current = ( // update the reaction area to reflect any new reactions
+        <ReactionArea
+          default={localReactions.default} // if it starts with nothing, a like or a dislike
+          defaultId={localReactions.defaultId} // pk of reaction in db if it exists
+          likes={localReactions.numLikes}
+          dislikes={localReactions.numDislikes}
+          userId={currentUser}
+          postId={post.id} // id of the post its rendering inside
+        />
+      );
     }
   }, [reactions]);
 
@@ -133,6 +143,18 @@ function PostCard(props) {
       setAllowEdit(true);
     }
   }, [post.userId, currentUser, name, post.content, post.image]);
+
+  // store the reaction area in a useRef so its values arent lost on re render
+  const reactionArea = useRef(
+    <ReactionArea
+      default={localReactions.default}
+      defaultId={localReactions.defaultId}
+      likes={localReactions.numLikes}
+      dislikes={localReactions.numDislikes}
+      userId={currentUser}
+      postId={post.id}
+    />
+  );
 
   return (
     <Stack>
@@ -222,15 +244,7 @@ function PostCard(props) {
                     <Col>
                       <Row>
                         <Col sm="auto" className="align-middle">
-                          <ReactionArea
-                            default={localReactions.default}
-                            defaultId={localReactions.defaultId}
-                            likes={localReactions.numLikes}
-                            dislikes={localReactions.numDislikes}
-                            userId={currentUser}
-                            postId={post.id}
-
-                          />
+                          {reactionArea.current /* render the current reaction area */}
                         </Col>
                         <Col>
                           {props.post.depth < REPLY_DEPTH && !props.onProfile && (

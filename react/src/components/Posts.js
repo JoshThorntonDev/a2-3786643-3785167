@@ -42,6 +42,7 @@ function Posts() {
 
   useEffect(() => {
     async function loadPosts() {
+      await checkForReactions() // ensure we have the latest copy of reactions
       const currentPosts = await getPosts();
 
       if (sortNewest) {
