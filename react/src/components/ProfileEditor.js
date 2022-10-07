@@ -53,7 +53,7 @@ function ProfileEditor(props) {
       setError(false);
       setSuccess(false)
       setMessage("")
-
+      setSaving(false)
     }
   }, [props.show]);
 
@@ -92,10 +92,10 @@ function ProfileEditor(props) {
       setSuccess(true);
 
       setTimeout(() => {
-        setSuccess(false); // hide success message so it isnt there when opening modal again
+
         props.toggle(); // close modal
         props.setUpdated(true); // tell Profile it was updated and needs to rerender
-        setSaving(false);
+
       }, 800);
     }
   };
@@ -155,7 +155,7 @@ function ProfileEditor(props) {
             Close
           </Button>
           {saving ? (
-            <Button className="saveButton" onClick={attemptSave} variant="success" type="submit">
+            <Button className="saveButton" onClick={attemptSave} variant="success" type="submit" disabled>
               <Spinner
                 as="span"
                 animation="border"

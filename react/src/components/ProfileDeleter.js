@@ -62,7 +62,7 @@ function ProfileDeleter(props) {
 
       setTimeout(() => {
         logout();
-        setSaving(false);
+
         navigate("/", { replace: true });
       }, 1500);
     }
@@ -77,6 +77,7 @@ function ProfileDeleter(props) {
       setError(false);
       setSuccess(false);
       setMessage("");
+
     }
   }, [props.show]);
 
@@ -118,7 +119,7 @@ function ProfileDeleter(props) {
             Close
           </Button>
           {saving ? (
-            <Button className="saveButton" onClick={attemptSave} variant="danger" type="submit">
+            <Button className="saveButton" onClick={attemptSave} variant="danger" type="submit" disabled>
               <Spinner
                 as="span"
                 animation="border"
