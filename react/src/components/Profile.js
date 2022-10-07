@@ -91,9 +91,8 @@ function Profile() {
   };
 
   const toggleDelete = () => {
-    // //toggle delete state, clear password in case it was entered before
-    // fields.password = "";
-    // setShowDelete((current) => !current);
+    //toggle delete state, clear password in case it was entered before
+    setShowDelete((current) => !current);
   };
 
   const getDate = () => {
@@ -140,12 +139,12 @@ function Profile() {
             />
 
             {
-              // <ProfileDeleter
-              //   show={showDelete}
-              //   toggle={toggleDelete}
+              <ProfileDeleter
+                show={showDelete}
+                toggle={toggleDelete}
 
-              //   user={user}
-              // />
+                user={user}
+              />
             }
             <PersonCircle size={"100"} className="image"></PersonCircle>
 
