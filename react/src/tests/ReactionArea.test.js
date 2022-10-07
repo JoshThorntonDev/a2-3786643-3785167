@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from "@testing-library/react";
-import ReactionArea from "./ReactionArea";
+import ReactionArea from "../components/ReactionArea";
 
 let container;
 
