@@ -1,12 +1,13 @@
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
-import { useContext, useRef, useState } from "react";
+import { useContext, useRef, useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import AnimatedAlert from "./AnimatedAlert";
-import Spinner from "react-bootstrap/Spinner";
 import { useNavigate } from "react-router-dom";
 import UserContext from "../contexts/UserContext";
 import { deleteUser, verifyUser } from "../data/dbrepository";
+import { Trash } from "react-bootstrap-icons";
+import Spinner from "react-bootstrap/Spinner";
 
 //renders a modal that allows the user to delete their account
 // similar to the ProfileEditor function, but only takes an input of confirmation password
@@ -15,56 +16,70 @@ import { deleteUser, verifyUser } from "../data/dbrepository";
 // required props are:
 // show (boolean)
 // toggle (function, preferably one that clears `fields` and changes `show`)
-// fields (containing email, name, date and password)
-// setFields
+// user, with an email field
+
 function ProfileDeleter(props) {
   const { logout } = useContext(UserContext);
-  // get users and current user so we dont have to have ugly things like props.users[props.currentUser].password
+
+  const [fields, setFields] = useState({
+    password: "",
+  });
 
   const passwordRef = useRef(null);
 
   const [error, setError] = useState(false);
-  const [show, setShow] = useState(false);
+  const [success, setSuccess] = useState(false);
   const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false); // for displaying loading animation
   const navigate = useNavigate();
 
+  const [saving, setSaving] = useState(false);
+
   const handleInputChange = (event) => {
-    props.setFields({
-      ...props.fields,
+    setFields({
+      ...fields,
       [event.target.name]: event.target.value,
     });
   };
 
   const attemptSave = async (event) => {
-    setLoading(true);
+    setSaving(true);
     setMessage(""); // clear error message
     setError(false); // reset error state
     event.preventDefault(); // prevent form from submitting
 
-    const deleteTarget = await verifyUser(
-      props.user.email,
-      props.fields.password
-    );
+    const deleteTarget = await verifyUser(props.user.email, fields.password);
 
     if (deleteTarget === null) {
       setMessage("Sorry, your password was incorrect");
       setError(true);
-      setLoading(false);
       passwordRef.current.focus(); // focus on password field
+      setSaving(false);
     } else {
       //show confirmation message before redirecting
-      setShow(true);
+      setSuccess(true);
       deleteUser(deleteTarget);
       setMessage("Account deleted successfully");
 
       setTimeout(() => {
         logout();
+
         navigate("/", { replace: true });
-        setLoading(false);
       }, 1500);
     }
   };
+
+  useEffect(() => {
+    // clear everything if the modal is closed
+    if (!props.show) {
+      setFields({
+        password: "",
+      });
+      setError(false);
+      setSuccess(false);
+      setMessage("");
+
+    }
+  }, [props.show]);
 
   return (
     <Modal show={props.show} onHide={props.toggle}>
@@ -74,8 +89,8 @@ function ProfileDeleter(props) {
       <AnimatedAlert
         variant="success"
         message={message}
-        display={show}
-        setDisplay={setShow}
+        display={success}
+        setDisplay={setSuccess}
       />
       <AnimatedAlert
         variant="danger"
@@ -92,7 +107,7 @@ function ProfileDeleter(props) {
               name="password"
               type="password"
               placeholder="Enter your password here"
-              value={props.fields.password}
+              value={fields.password}
               onChange={handleInputChange}
               required
               ref={passwordRef}
@@ -103,23 +118,21 @@ function ProfileDeleter(props) {
           <Button variant="secondary" onClick={props.toggle}>
             Close
           </Button>
-          {loading ? (
-            <div>
-              <Button variant="danger" disabled>
-                <Spinner
-                  as="span"
-                  animation="border"
-                  size="sm"
-                  role="status"
-                  aria-hidden="true"
-                />{" "}
-                Deleting
-              </Button>
-            </div>
+          {saving ? (
+            <Button className="saveButton" onClick={attemptSave} variant="danger" type="submit" disabled>
+              <Spinner
+                as="span"
+                animation="border"
+                size="sm"
+                role="status"
+                aria-hidden="true"
+              />{" "}
+              Deleting
+            </Button>
           ) : (
-          <Button onClick={attemptSave} variant="danger" type="submit">
-            Delete
-          </Button>
+            <Button className="saveButton" onClick={attemptSave} variant="danger" type="submit">
+              <Trash></Trash> Delete
+            </Button>
           )}
         </Modal.Footer>
       </Form>
