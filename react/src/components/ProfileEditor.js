@@ -14,6 +14,7 @@ import Spinner from "react-bootstrap/Spinner";
 // required props are:
 // show (boolean)
 // toggle (function, preferably one that clears `fields` and changes `show`)
+// user, with name and email fields
 
 function ProfileEditor(props) {
   const { NAME_LENGTH } = useContext(UserContext);
