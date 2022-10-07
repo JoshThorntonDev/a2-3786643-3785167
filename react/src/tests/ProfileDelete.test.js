@@ -1,62 +1,44 @@
-//Delete Profile tests
+//Tests for ProfileDelter component
 
 import { render, screen, fireEvent } from "@testing-library/react";
-import App from "../App";
+import ProfileDeleter from "../components/ProfileDeleter.js";
+import UserContext from "../contexts/UserContext";
+import {BrowserRouter} from "react-router-dom";
 
 let container;
+const NAME_LENGTH = 20;
+const user = {
+    username: "Test User",
+    email: "testuser@email.com",
+}
 
 beforeAll(async () => {
-    const utils = render(<App />);
+    const utils = render(
+    <UserContext.Provider value={{ NAME_LENGTH }}>
+        <BrowserRouter>
+            <ProfileDeleter
+                show={true}
+                user={user}
+            />
+        </BrowserRouter>
+    </UserContext.Provider>
+    );
     container = utils.container;
-    await Login();
 });
-
-//Test profile delete user function
+//Test ProfileDelter form
 test("Delete User", () => {
-    //Get delete button and simulate click on it
-    var button = screen.getAllByText('Delete');
-    fireEvent.click(button[0]);
-
-    //Get verification password field and fill it in
+    //Get password verification field and fill it in
     const password = screen.getByPlaceholderText('Enter your password here')
     fireEvent.change(password, { target: { value: "password1!" } });
 
     //Expect password value to be updated correctly
     expect(password.value).toBe("password1!");
 
-    var button = screen.getAllByText('Delete')[1];
+    const button = screen.getAllByText('Delete')[0];
 
-    //Simulate a click on submit button and wait for profile to update
+    //Simulate a click on delete button
     fireEvent.click(button)
 
-    //Assert that "Updating" appears in the document after submitting
+    //Expect "Deleting" button to appear after submitting
     expect(screen.getByText("Deleting")).toBeInTheDocument();
 });
-
-//Function to log the user in before the test
-async function Login() {
-    let button = screen.getAllByText("Login");
-
-    // Simulate click.
-    fireEvent.click(button[0]);
-
-    const email = screen.getByPlaceholderText('email@example.com');
-    fireEvent.change(email, { target: { value: "testuser@email.com" } });
-
-    const password = screen.getByPlaceholderText('Password here')
-    fireEvent.change(password, { target: { value: "password1!" } });
-
-
-    button = screen.getAllByText("Login");
-    
-    fireEvent.click(button[1])
-    await delay(3000)
-
-    expect(global.window.location.href).toContain('/profile/2')
-}
-
-function delay(milliseconds){
-    return new Promise(resolve => {
-        setTimeout(resolve, milliseconds);
-    });
-}
