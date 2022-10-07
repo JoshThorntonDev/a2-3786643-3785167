@@ -26,12 +26,40 @@ function PostCard(props) {
 
   const { reactions } = useContext(ReactionContext);
 
-  const [localReactions, setLocalReactions] = useState({
-    numLikes: 0,
-    numDislikes: 0,
-    default: "",
-    defaultId: null
-  });
+  const getReactionValues = () => {
+    var fields = {
+      numLikes: 0,
+      numDislikes: 0,
+      default: "",
+      defaultId: null,
+    };
+    
+    if (reactions.length > 0) {
+      var postReacts = reactions.filter(
+        (reaction) => reaction.postId === post.id
+      );
+
+      if (postReacts[0] === undefined) {
+        return fields;
+      }
+      fields.numLikes = postReacts.filter((x) => x.type === "like").length;
+      fields.numDislikes = postReacts.filter(
+        (x) => x.type === "dislike"
+      ).length;
+
+      var needToSetDefault = postReacts.find(
+        (x) => x.userId.toString() === currentUser.toString()
+      );
+
+      if (needToSetDefault) {
+        fields.default = needToSetDefault.type;
+        fields.defaultId = needToSetDefault.id;
+      }
+    }
+    return fields;
+  };
+
+  const [localReactions, setLocalReactions] = useState(getReactionValues());
 
   const [postValue, setPostValue] = useState({
     // stores what the post is currently displaying, so that when a user enters text in the editor,
@@ -90,31 +118,33 @@ function PostCard(props) {
   }, []);
 
   useEffect(() => {
-    if (reactions.length > 0) {
-      // get reactions for this post only
-      var postReacts = [];
-      postReacts.push(
-        reactions.find((reaction) => reaction.postId === post.id)
-      );
+    console.log("reactions changed");
+    // if (reactions.length > 0) {
+    //   // get reactions for this post only
+    //   var postReacts = [];
+    //   postReacts.push(
+    //     reactions.find((reaction) => reaction.postId === post.id)
+    //   );
 
-      if (postReacts[0] === undefined) {
-        return;
-      }
-      var likes = postReacts.filter((x) => x.type === "like");
-      var dislikes = postReacts.filter((x) => x.type === "dislike");
+    //   if (postReacts[0] === undefined) {
+    //     return;
+    //   }
+    //   var likes = postReacts.filter((x) => x.type === "like");
+    //   var dislikes = postReacts.filter((x) => x.type === "dislike");
 
-      var needToSetDefault = postReacts.find(
-        (x) => x.userId.toString() === currentUser.toString()
-      );
+    //   var needToSetDefault = postReacts.find(
+    //     (x) => x.userId.toString() === currentUser.toString()
+    //   );
 
-      if (needToSetDefault) {
-        localReactions.default = needToSetDefault.type;
-        localReactions.defaultId = needToSetDefault.id;
+    //   if (needToSetDefault) {
+    //     localReactions.default = needToSetDefault.type;
+    //     localReactions.defaultId = needToSetDefault.id;
 
-      }
-      localReactions.numLikes = likes.length;
-      localReactions.numDislikes = dislikes.length;
-    }
+    //   }
+    //   localReactions.numLikes = likes.length;
+    //   localReactions.numDislikes = dislikes.length;
+    // }
+
   }, [reactions]);
 
   useEffect(() => {
@@ -229,7 +259,8 @@ function PostCard(props) {
                             dislikes={localReactions.numDislikes}
                             userId={currentUser}
                             postId={post.id}
-
+                            storage={setLocalReactions}
+                            func={getReactionValues}
                           />
                         </Col>
                         <Col>
