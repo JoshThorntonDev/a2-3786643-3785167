@@ -1,11 +1,12 @@
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
-import { useContext, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { CheckCircleFill } from "react-bootstrap-icons";
 import Button from "react-bootstrap/Button";
 import AnimatedAlert from "./AnimatedAlert";
 import UserContext from "../contexts/UserContext";
 import { editUser, verifyUser } from "../data/dbrepository";
+import Spinner from "react-bootstrap/Spinner";
 
 // this function renders a modal containing a form that can edit user information
 // currently, it supports changing the name, and can be updated to also edit email and password if required
@@ -13,15 +14,24 @@ import { editUser, verifyUser } from "../data/dbrepository";
 // required props are:
 // show (boolean)
 // toggle (function, preferably one that clears `fields` and changes `show`)
-// fields (containing email, name and password)
-// setFields
+// user, with name and email fields
+
 function ProfileEditor(props) {
   const { NAME_LENGTH } = useContext(UserContext);
-  // get users and current users so we dont have to have ugly things like props.users[props.currentUser].password
+
+
+  const [saving, setSaving] = useState(false);
+
+  const [fields, setFields] = useState({
+    // a field storing all possible user data, currently only name is editable
+    name: "",
+    email: "",
+    password: "",
+  });
 
   const handleInputChange = (event) => {
-    props.setFields({
-      ...props.fields,
+    setFields({
+      ...fields,
       [event.target.name]: event.target.value,
     });
   };
@@ -29,45 +39,63 @@ function ProfileEditor(props) {
   const passwordRef = useRef(null);
   const nameRef = useRef(null);
 
-  const [error, setError] = useState(false);
-  const [show, setShow] = useState(false);
-  const [message, setMessage] = useState("");
+  const [error, setError] = useState(false); // shows red alert
+  const [success, setSuccess] = useState(false); // shows green alert
+  const [message, setMessage] = useState(""); // message in alert
+
+  useEffect(() => { // clear everything if the modal is closed
+    if (!props.show) {
+      setFields({
+        name: "",
+        email: "",
+        password: "",
+      });
+      setError(false);
+      setSuccess(false)
+      setMessage("")
+      setSaving(false)
+    }
+  }, [props.show]);
 
   const attemptSave = async (event) => {
+    setSaving(true);
     setMessage(""); // clear error message
     setError(false); // reset error state
     event.preventDefault(); // prevent form from submitting
 
-    if (props.fields.name === "") {
+    if (fields.name === "") {
       setMessage("Sorry, blank names are not permitted");
       setError(true);
       nameRef.current.focus();
+      setSaving(false);
       return;
     }
 
     const editTarget = await verifyUser(
       // get the user that we're editing
       props.user.email,
-      props.fields.password
+      fields.password
     );
 
     if (editTarget === null) {
       setMessage("Sorry, your password was incorrect");
       setError(true);
       passwordRef.current.focus(); // focus on password field
+      setSaving(false);
     } else {
       //show confirmation message before redirecting
 
-      editTarget.username = props.fields.name; // set the new name
+      editTarget.username = fields.name; // set the new name
 
       editUser(editTarget); // save user
       setMessage("Profile update successful");
-      setShow(true);
+      setSuccess(true);
 
       setTimeout(() => {
-        setShow(false); // hide success message so it isnt there when opening modal again
+
         props.toggle(); // close modal
         props.setUpdated(true); // tell Profile it was updated and needs to rerender
+
       }, 800);
     }
   };
@@ -86,8 +114,8 @@ function ProfileEditor(props) {
       <AnimatedAlert
         variant="success"
         message={message}
-        display={show}
-        setDisplay={setShow}
+        display={success}
+        setDisplay={setSuccess}
       />
       <Form onSubmit={attemptSave}>
         <Modal.Body>
@@ -99,13 +127,13 @@ function ProfileEditor(props) {
               placeholder={props.user.username}
               autoFocus
               maxLength={NAME_LENGTH}
-              value={props.fields.name}
+              value={fields.name}
               onChange={handleInputChange}
               required
               ref={nameRef}
             />
             <Form.Text muted className="float-end">
-              {props.fields.name.trim().length} / {NAME_LENGTH}
+              {fields.name.trim().length} / {NAME_LENGTH}
               {/* .trim() prevents the counter increasing when the post starts and ends with whitespace */}
             </Form.Text>
           </Form.Group>
@@ -115,7 +143,7 @@ function ProfileEditor(props) {
               name="password"
               type="password"
               placeholder="Enter your password here"
-              value={props.fields.password}
+              value={fields.password}
               onChange={handleInputChange}
               required
               ref={passwordRef}
@@ -126,9 +154,22 @@ function ProfileEditor(props) {
           <Button variant="secondary" onClick={props.toggle}>
             Close
           </Button>
-          <Button onClick={attemptSave} variant="success" type="submit">
-            <CheckCircleFill></CheckCircleFill> Save
-          </Button>
+          {saving ? (
+            <Button className="saveButton" onClick={attemptSave} variant="success" type="submit" disabled>
+              <Spinner
+                as="span"
+                animation="border"
+                size="sm"
+                role="status"
+                aria-hidden="true"
+              />{" "}
+              Saving
+            </Button>
+          ) : (
+            <Button className="saveButton" onClick={attemptSave} variant="success" type="submit">
+              <CheckCircleFill></CheckCircleFill> Save
+            </Button>
+          )}
         </Modal.Footer>
       </Form>
     </Modal>

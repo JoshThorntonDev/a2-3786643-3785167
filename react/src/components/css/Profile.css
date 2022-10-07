@@ -24,3 +24,7 @@
 .profilePost {
   margin-bottom: 1vh;
 }
+
+.saveButton {
+  min-width: 7rem;
+}

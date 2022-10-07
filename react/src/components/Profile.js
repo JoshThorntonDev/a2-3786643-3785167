@@ -77,12 +77,7 @@ function Profile() {
   }, [id, updated]);
 
 
-  const [fields, setFields] = useState({
-    // a field storing all possible user data, currently only name is editable
-    name: "",
-    email: "",
-    password: "",
-  });
+
   // the field is stored here to make it easier to clear the values when the modal is closed,
   // either by closing it manually or when an update is successful
 
@@ -92,14 +87,11 @@ function Profile() {
   const toggleEdit = () => {
     // toggle the edit state
     // it also clears the fields in case the user opens it again
-    fields.name = "";
-    fields.password = "";
     setShowEdit((current) => !current);
   };
 
   const toggleDelete = () => {
     //toggle delete state, clear password in case it was entered before
-    fields.password = "";
     setShowDelete((current) => !current);
   };
 
@@ -140,8 +132,8 @@ function Profile() {
             <ProfileEditor
               show={showEdit}
               toggle={toggleEdit}
-              fields={fields}
-              setFields={setFields}
+
+
               user={user}
               setUpdated={setUpdated}
             />
@@ -150,8 +142,7 @@ function Profile() {
               <ProfileDeleter
                 show={showDelete}
                 toggle={toggleDelete}
-                fields={fields}
-                setFields={setFields}
+
                 user={user}
               />
             }
