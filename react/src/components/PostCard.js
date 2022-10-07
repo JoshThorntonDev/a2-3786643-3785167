@@ -5,7 +5,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import "./css/Posts.css";
 import { PencilSquare, Trash, ChatLeftText } from "react-bootstrap-icons";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import PostCreator from "./PostCreator";
 import { findUser } from "../data/dbrepository";
 import { useNavigate } from "react-router-dom";
@@ -26,40 +26,12 @@ function PostCard(props) {
 
   const { reactions } = useContext(ReactionContext);
 
-  const getReactionValues = () => {
-    var fields = {
-      numLikes: 0,
-      numDislikes: 0,
-      default: "",
-      defaultId: null,
-    };
-    
-    if (reactions.length > 0) {
-      var postReacts = reactions.filter(
-        (reaction) => reaction.postId === post.id
-      );
-
-      if (postReacts[0] === undefined) {
-        return fields;
-      }
-      fields.numLikes = postReacts.filter((x) => x.type === "like").length;
-      fields.numDislikes = postReacts.filter(
-        (x) => x.type === "dislike"
-      ).length;
-
-      var needToSetDefault = postReacts.find(
-        (x) => x.userId.toString() === currentUser.toString()
-      );
-
-      if (needToSetDefault) {
-        fields.default = needToSetDefault.type;
-        fields.defaultId = needToSetDefault.id;
-      }
-    }
-    return fields;
-  };
-
-  const [localReactions, setLocalReactions] = useState(getReactionValues());
+  const [localReactions] = useState({
+    numLikes: 0,
+    numDislikes: 0,
+    default: "",
+    defaultId: null,
+  });
 
   const [postValue, setPostValue] = useState({
     // stores what the post is currently displaying, so that when a user enters text in the editor,
@@ -118,33 +90,41 @@ function PostCard(props) {
   }, []);
 
   useEffect(() => {
-    console.log("reactions changed");
-    // if (reactions.length > 0) {
-    //   // get reactions for this post only
-    //   var postReacts = [];
-    //   postReacts.push(
-    //     reactions.find((reaction) => reaction.postId === post.id)
-    //   );
+    if (reactions.length > 0) {
+      // get reactions for this post only
+      var postReacts = [];
+      postReacts.push(
+        reactions.find((reaction) => reaction.postId === post.id)
+      );
 
-    //   if (postReacts[0] === undefined) {
-    //     return;
-    //   }
-    //   var likes = postReacts.filter((x) => x.type === "like");
-    //   var dislikes = postReacts.filter((x) => x.type === "dislike");
+      if (postReacts[0] === undefined) {
+        return;
+      }
+      var likes = postReacts.filter((x) => x.type === "like");
+      var dislikes = postReacts.filter((x) => x.type === "dislike");
 
-    //   var needToSetDefault = postReacts.find(
-    //     (x) => x.userId.toString() === currentUser.toString()
-    //   );
+      var needToSetDefault = postReacts.find(
+        (x) => x.userId.toString() === currentUser.toString()
+      );
 
-    //   if (needToSetDefault) {
-    //     localReactions.default = needToSetDefault.type;
-    //     localReactions.defaultId = needToSetDefault.id;
+      if (needToSetDefault) {
+        localReactions.default = needToSetDefault.type;
+        localReactions.defaultId = needToSetDefault.id;
+      }
+      localReactions.numLikes = likes.length;
+      localReactions.numDislikes = dislikes.length;
 
-    //   }
-    //   localReactions.numLikes = likes.length;
-    //   localReactions.numDislikes = dislikes.length;
-    // }
-
+      reactionArea.current = (
+        <ReactionArea
+          default={localReactions.default}
+          defaultId={localReactions.defaultId}
+          likes={localReactions.numLikes}
+          dislikes={localReactions.numDislikes}
+          userId={currentUser}
+          postId={post.id}
+        />
+      );
+    }
   }, [reactions]);
 
   useEffect(() => {
@@ -163,6 +143,17 @@ function PostCard(props) {
       setAllowEdit(true);
     }
   }, [post.userId, currentUser, name, post.content, post.image]);
+
+  const reactionArea = useRef(
+    <ReactionArea
+      default={localReactions.default}
+      defaultId={localReactions.defaultId}
+      likes={localReactions.numLikes}
+      dislikes={localReactions.numDislikes}
+      userId={currentUser}
+      postId={post.id}
+    />
+  );
 
   return (
     <Stack>
@@ -252,16 +243,7 @@ function PostCard(props) {
                     <Col>
                       <Row>
                         <Col sm="auto" className="align-middle">
-                          <ReactionArea
-                            default={localReactions.default}
-                            defaultId={localReactions.defaultId}
-                            likes={localReactions.numLikes}
-                            dislikes={localReactions.numDislikes}
-                            userId={currentUser}
-                            postId={post.id}
-                            storage={setLocalReactions}
-                            func={getReactionValues}
-                          />
+                          {reactionArea.current}
                         </Col>
                         <Col>
                           {props.post.depth < REPLY_DEPTH && !props.onProfile && (
