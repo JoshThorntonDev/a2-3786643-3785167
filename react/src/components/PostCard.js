@@ -250,7 +250,7 @@ function PostCard(props) {
                           {props.post.depth < REPLY_DEPTH && !props.onProfile && (
                             <Button
                               size="sm"
-                              className="w-50"
+                              className="postButton"
                               variant="outline-primary"
                               onClick={() => {
                                 toggleReply(props.post.depth, props.post.id);

@@ -27,6 +27,7 @@ function Thread(props) {
 
     getReplies();
     setShowSelf(true);
+    setShowReplies(true);
   }, [post.id]);
 
   useEffect(() => {
@@ -35,14 +36,15 @@ function Thread(props) {
       setReplies([...replies, newChild]);
 
       setNewChild(false);
-
-      setShowReplies(true); // we just made a reply, so we probably want to see the replies
+      
+      setShowReplies(true);
     }
   }, [newChild, replies]);
+  
 
   return (
     <Collapse in={showSelf}>
-      <Stack className={showReplies & props.main ? "topPostBottom" : ""}>
+      <Stack className={!showReplies & props.main ? "topPostBottom" : ""}>
         {" "}
         {/* Controls if the post should have a line at the bottom */}
         {replies.length !== 0 ? (
@@ -58,7 +60,7 @@ function Thread(props) {
         {
           props.main
             ? replies.map((x) => (
-                <Collapse key={x.id} in={showReplies}>
+                <Collapse key={x.id} in={!showReplies}>
                   <div className="reply">
                     <div className="line"></div>
 
@@ -67,7 +69,7 @@ function Thread(props) {
                 </Collapse>
               ))
             : replies.map((x) => (
-                <Collapse key={x.id} in={!showReplies}>
+                <Collapse key={x.id} in={showReplies}>
                   <div key={x.id} className="reply">
                      {/* when showing replies from a main post, !showReplies shows all at first */}
                     <div className="line"></div>
