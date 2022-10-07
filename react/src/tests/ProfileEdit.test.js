@@ -23,7 +23,7 @@ beforeAll( () => {
     container = utils.container;
 });
 
-//Test profile editor form
+//Test ProfileEditor form
 test("Profile Name Change Form", () => {
     //Get username edit field and update it
     const name = screen.getByPlaceholderText('Test User')
