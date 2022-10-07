@@ -75,6 +75,14 @@ async function seedData() {
 
     hash = await argon2.hash("password1!", { type: argon2.argon2id });
     await db.user.create({
+      id: 2,
+      email: "testuser@email.com",
+      password_hash: hash,
+      username: "Test User"
+    })
+
+    hash = await argon2.hash("password1!", { type: argon2.argon2id });
+    await db.user.create({
       id: userId1,
       email: "first@email.com",
       password_hash: hash,
