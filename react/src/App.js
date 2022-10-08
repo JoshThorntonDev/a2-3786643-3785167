@@ -10,6 +10,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Posts from "./components/Posts";
 import UserContext from "./contexts/UserContext";
 import ReactionContext from "./contexts/ReactionContext";
+import PostContext from "./contexts/PostContext";
 import { useState } from "react";
 import { getReactions } from "./data/dbrepository";
 
@@ -34,11 +35,13 @@ function App() {
     const temp = await getReactions();
     setReactions(temp);
   };
+  const [allPosts, setAllPosts] = useState([])
 
   return (
     <div className="contain">
       <UserContext.Provider value={{ currentUser, login, logout, NAME_LENGTH }}>
         <ReactionContext.Provider value={{ reactions, checkForReactions }}>
+        <PostContext.Provider value={{allPosts, setAllPosts}}>
           <BrowserRouter>
             <Header />
             <div className="content">
@@ -54,6 +57,7 @@ function App() {
             </div>
             <Footer />
           </BrowserRouter>
+          </PostContext.Provider>
         </ReactionContext.Provider>
       </UserContext.Provider>
     </div>
