@@ -6,7 +6,7 @@ import axios from "axios";
 const API_HOST = "http://localhost:4000/api";
 const USER_KEY = "users";
 const POST_KEY = "posts";
-const REACTION_KEY = "reactions"
+const REACTION_KEY = "reactions";
 
 // --- User Methods ---------------------------------------------------------------------------------------
 async function verifyUser(email, password) {
@@ -38,12 +38,18 @@ async function findUserByEmail(email) {
   return response.data;
 }
 
+async function getUsers() {
+  const response = await axios.get(API_HOST + `/${USER_KEY}`);
+
+  return response.data;
+}
+
 async function deleteUser(user) {
+  var posts = await getPostsByUser(user.id);
 
-  var posts = await getPostsByUser(user.id)
-
-  posts.forEach(post => { // keep posts made by user that is being deleted, otherwise replies will break
-    deletePost(post)
+  posts.forEach((post) => {
+    // keep posts made by user that is being deleted, otherwise replies will break
+    deletePost(post);
   });
 
   const response = await axios.delete(API_HOST + `/${USER_KEY}/${user.id}`);
@@ -101,7 +107,6 @@ async function getPostsByUser(id) {
   return response.data;
 }
 
-
 // --- Reaction Methods -----------------------------------------------------------------------------------
 
 async function getReactions() {
@@ -122,11 +127,11 @@ async function updateReaction(reaction) {
 }
 
 async function deleteReaction(reaction) {
-
-  const response = await axios.delete(API_HOST + `/${REACTION_KEY}/${reaction.id}`);
+  const response = await axios.delete(
+    API_HOST + `/${REACTION_KEY}/${reaction.id}`
+  );
 
   return response;
-
 }
 
 export {
@@ -138,6 +143,7 @@ export {
   editUser,
   createPost,
   getPosts,
+  getUsers,
   updatePost,
   deletePost,
   getRepliesTo,
@@ -145,7 +151,5 @@ export {
   getReactions,
   createReaction,
   updateReaction,
-  deleteReaction
-
-
+  deleteReaction,
 };

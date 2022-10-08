@@ -1,4 +1,4 @@
-import { getPosts } from "../data/dbrepository";
+import { getPosts, getUsers } from "../data/dbrepository";
 import Button from "react-bootstrap/Button";
 import { useContext, useEffect, useRef, useState } from "react";
 import "./css/Posts.css";
@@ -21,6 +21,8 @@ function Posts() {
   const postRef = useRef([]);
   const topPostRef = useRef([]);
   const [posts, setPosts] = useState(postRef.current);
+
+  const [users, setUsers] = useState([]);
 
   const [topPosts, setTopPosts] = useState(topPostRef.current);
 
@@ -64,6 +66,12 @@ function Posts() {
 
         setTopPosts(tempTopPosts);
 
+
+        const users = await getUsers()
+        setUsers(users)
+
+
+
         setTimeout(() => {
           // in case the db responds extremely quickly, prevent loading animation from looking bad
           setIsLoading(false);
@@ -73,22 +81,23 @@ function Posts() {
     }
 
     loadPosts();
+
+
   }, [showModal]); // if modal or sort order gets toggled, reload the posts
 
-useEffect(() => {
-  if (posts.length !== 0) {
-    console.log(posts, 'did something break?')
-    var tempTopPosts = getTopLevelPosts(posts);
+  useEffect(() => {
+    if (posts.length !== 0) {
+      var tempTopPosts = getTopLevelPosts(posts);
 
-    setTopPosts(tempTopPosts);
+      setTopPosts(tempTopPosts);
 
-    setTimeout(() => {
-      // in case the db responds extremely quickly, prevent loading animation from looking bad
-      setIsLoading(false);
-      setSortNewest(true);
-    }, 300);
-  }
-},[posts])
+      setTimeout(() => {
+        // in case the db responds extremely quickly, prevent loading animation from looking bad
+        setIsLoading(false);
+        setSortNewest(true);
+      }, 300);
+    }
+  }, [posts]);
 
   useEffect(() => {
     if (!sortNewest) {

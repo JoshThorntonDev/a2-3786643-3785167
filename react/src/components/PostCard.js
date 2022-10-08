@@ -128,16 +128,6 @@ function PostCard(props) {
   }, [reactions]);
 
   useEffect(() => {
-    async function assignNameToPost() {
-      const user = await findUser(post.userId);
-      setName(user.username);
-    }
-
-    if (name === undefined) {
-      // only query db when name isnt set
-      assignNameToPost();
-    }
-
     if (post.userId.toString() === currentUser) {
       // only users who made the post should be able to edit/delete
       setAllowEdit(true);

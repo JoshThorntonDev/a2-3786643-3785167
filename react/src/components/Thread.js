@@ -1,6 +1,5 @@
 import PostCard from "./PostCard";
 import { useContext, useEffect, useState } from "react";
-import { getRepliesTo } from "../data/dbrepository";
 import Stack from "react-bootstrap/Stack";
 import Collapse from "react-bootstrap/Collapse";
 import { getRepliesToFromLocal } from "../data/LocalPostManagement";
@@ -24,8 +23,8 @@ function Thread(props) {
   useEffect(() => {
     
     const temp = getRepliesToFromLocal(posts, post.id);
-    console.log(temp, 'THIS IS WHATAOIWJDF')
-    
+
+
     setReplies(temp);
 
     setShowSelf(true);
@@ -54,9 +53,10 @@ function Thread(props) {
             update={setNewChild}
             toggleReplies={toggleReplies}
             main={props.main}
+            name='temp'
           />
         ) : (
-          <PostCard post={post} update={setNewChild} toggleReplies={null} />
+          <PostCard post={post} update={setNewChild} toggleReplies={null} name='temp' />
         )}
         {props.main
           ? replies.map((x) => (
