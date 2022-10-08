@@ -4,11 +4,14 @@ import Stack from "react-bootstrap/Stack";
 import Collapse from "react-bootstrap/Collapse";
 import { getRepliesToFromLocal } from "../data/LocalPostManagement";
 import PostContext from "../contexts/PostContext";
+import UserContext from "../contexts/UserContext";
 
 function Thread(props) {
   const [post] = useState(props.post);
   const {posts} = useContext(PostContext)
   const [replies, setReplies] = useState([]);
+
+  const {users} = useContext(UserContext)
 
   const [newChild, setNewChild] = useState(false); // stores a new reply when one is made, and it changing causes useEffect to add it to the list of replies
 
@@ -20,18 +23,25 @@ function Thread(props) {
     setShowReplies((current) => !current);
   };
 
-  useEffect(() => {
-    
-    const temp = getRepliesToFromLocal(posts, post.id);
+  const [name, setName] = useState("")
 
+  useEffect(() => {
+    var user = users.find((user) => user.id === post.userId);
+    setName(user.username)
+
+    const temp = getRepliesToFromLocal(posts, post.id);
 
     setReplies(temp);
 
     setShowSelf(true);
     setShowReplies(true);
+
   }, [post.id]);
 
   useEffect(() => {
+    
+
+
     if (newChild) {
       // add a new reply
       setReplies([...replies, newChild]);
@@ -53,10 +63,10 @@ function Thread(props) {
             update={setNewChild}
             toggleReplies={toggleReplies}
             main={props.main}
-            name='temp'
+            name={name}
           />
         ) : (
-          <PostCard post={post} update={setNewChild} toggleReplies={null} name='temp' />
+          <PostCard post={post} update={setNewChild} toggleReplies={null} name={name} />
         )}
         {props.main
           ? replies.map((x) => (

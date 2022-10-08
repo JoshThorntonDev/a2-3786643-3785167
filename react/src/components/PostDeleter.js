@@ -7,6 +7,7 @@ import UserContext from "../contexts/UserContext";
 import { deletePost, findUser, verifyUser } from "../data/dbrepository";
 import Spinner from "react-bootstrap/Spinner";
 import { Trash } from "react-bootstrap-icons";
+import PostContext from "../contexts/PostContext";
 
 //renders a modal that allows the user to delete their post
 // similar to the ProfileEditor function, but only takes an input of confirmation password
@@ -18,7 +19,9 @@ import { Trash } from "react-bootstrap-icons";
 // setFields
 function PostDeleter(props) {
   const { currentUser } = useContext(UserContext);
-  // get users and current user so we dont have to have ugly things like props.users[props.currentUser].password
+
+
+  const {checkForPosts} = useContext(PostContext)
 
   const passwordRef = useRef(null);
 
@@ -66,8 +69,9 @@ function PostDeleter(props) {
         setShow(false);
         setMessage("");
 
-        props.setName("[deleted]"); // set locally stored name
-        props.setEdit(false); // hide edit/delete buttons on post
+        checkForPosts()
+
+
         setSaving(false);
       }, 1000);
     }

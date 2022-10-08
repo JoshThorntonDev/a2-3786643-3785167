@@ -20,9 +20,10 @@ import PostContext from "../contexts/PostContext";
 function Posts() {
   const postRef = useRef([]);
   const topPostRef = useRef([]);
-  const [posts, setPosts] = useState(postRef.current);
+  const {posts, setPosts} = useContext(PostContext)
+  const {checkForUsers} = useContext(UserContext)
 
-  const [users, setUsers] = useState([]);
+  
 
   const [topPosts, setTopPosts] = useState(topPostRef.current);
 
@@ -67,11 +68,8 @@ function Posts() {
       setPosts(currentPosts.reverse()); // the db gives us posts ordered from oldest to newest
 
       var tempTopPosts = getTopLevelPosts(currentPosts);
-
+      checkForUsers()
       setTopPosts(tempTopPosts);
-
-      const users = await getUsers();
-      setUsers(users);
 
       setTimeout(() => {
         // in case the db responds extremely quickly, prevent loading animation from looking bad
@@ -101,7 +99,6 @@ function Posts() {
 
 
   const toggleSort = () => {
-    console.log('toggle sort')
     setNewest((current) => !current)
     setTopPosts(topPosts.reverse());
 
@@ -128,7 +125,7 @@ function Posts() {
 
   return (
     <div>
-      <PostContext.Provider value={{ posts, setPosts }}>
+
         <h1>All Posts</h1>
         <div className="d-flex justify-content-center">
           <Button onClick={toggleModal}>
@@ -200,7 +197,7 @@ function Posts() {
             </div>
           )}
         </div>
-      </PostContext.Provider>
+
     </div>
   );
 }

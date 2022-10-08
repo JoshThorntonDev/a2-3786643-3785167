@@ -7,7 +7,7 @@ import "./css/Posts.css";
 import { PencilSquare, Trash, ChatLeftText } from "react-bootstrap-icons";
 import { useContext, useEffect, useRef, useState } from "react";
 import PostCreator from "./PostCreator";
-import { findUser } from "../data/dbrepository";
+
 import { useNavigate } from "react-router-dom";
 import Stack from "react-bootstrap/Stack";
 import UserContext from "../contexts/UserContext";
@@ -18,7 +18,6 @@ import ReactionContext from "../contexts/ReactionContext";
 function PostCard(props) {
   const navigate = useNavigate();
   const [post, setPost] = useState(props.post);
-  const [name, setName] = useState(props.name);
   const [showEdit, setShowEdit] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [showReply, setShowReply] = useState(false);
@@ -132,7 +131,7 @@ function PostCard(props) {
       // only users who made the post should be able to edit/delete
       setAllowEdit(true);
     }
-  }, [post.userId, currentUser, name, post.content, post.image]);
+  }, [post.userId, currentUser, post.content, post.image]);
 
   // store the reaction area in a useRef so its values arent lost on re render
   const reactionArea = useRef(
@@ -165,8 +164,8 @@ function PostCard(props) {
               <Col>
                 <Row>
                   <Col sm="auto" className="postButton">
-                    {name ? (
-                      name !== "[deleted]" ? (
+                    {props.name ? (
+                      props.name !== "[deleted]" ? (
                         <Button
                           size="sm"
                           variant="outline-success"
@@ -176,11 +175,11 @@ function PostCard(props) {
                             });
                           }}
                         >
-                          {name}
+                          {props.name}
                         </Button>
                       ) : (
                         <Button size="sm" disabled variant="outline-secondary">
-                          {name}
+                          {props.name}
                         </Button>
                       )
                     ) : (
@@ -288,7 +287,6 @@ function PostCard(props) {
         post={post}
         show={showDelete}
         toggle={toggleDelete}
-        setName={setName}
         setEdit={setAllowEdit}
       />
     </Stack>

@@ -10,9 +10,9 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Posts from "./components/Posts";
 import UserContext from "./contexts/UserContext";
 import ReactionContext from "./contexts/ReactionContext";
-
+import PostContext from "./contexts/PostContext";
 import { useState } from "react";
-import { getReactions } from "./data/dbrepository";
+import { getPosts, getReactions, getUsers } from "./data/dbrepository";
 
 function App() {
   const [currentUser, setCurrentUser] = useState(
@@ -30,16 +30,29 @@ function App() {
   const NAME_LENGTH = 20; // max length for user names
 
   const [reactions, setReactions] = useState([]);
+  const [posts, setPosts] = useState([]);
+  const [users, setUsers] = useState([]);
 
   const checkForReactions = async () => {
     const temp = await getReactions();
     setReactions(temp);
   };
-  
+
+  const checkForUsers = async () => {
+    const temp = await getUsers();
+    setUsers(temp);
+  };
+
+  const checkForPosts = async () => {
+    const temp = await getPosts();
+    setPosts(temp);
+  };
+
   return (
     <div className="contain">
-      <UserContext.Provider value={{ currentUser, login, logout, NAME_LENGTH }}>
+      <UserContext.Provider value={{ users, checkForUsers, setUsers, currentUser, login, logout, NAME_LENGTH }}>
         <ReactionContext.Provider value={{ reactions, checkForReactions }}>
+        <PostContext.Provider value={{ posts, setPosts, checkForPosts }}>
           <BrowserRouter>
             <Header />
             <div className="content">
@@ -55,6 +68,7 @@ function App() {
             </div>
             <Footer />
           </BrowserRouter>
+          </PostContext.Provider>
         </ReactionContext.Provider>
       </UserContext.Provider>
     </div>
