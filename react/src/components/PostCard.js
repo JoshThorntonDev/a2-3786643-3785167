@@ -92,10 +92,10 @@ function PostCard(props) {
   useEffect(() => {
     if (reactions.length > 0) {
       // get reactions for this post only
-      var postReacts = [];
-      postReacts.push(
-        reactions.find((reaction) => reaction.postId === post.id)
-      );
+      var postReacts = reactions.filter((reaction) => reaction.postId === post.id);
+
+        
+
 
       if (postReacts[0] === undefined) {
         return;
