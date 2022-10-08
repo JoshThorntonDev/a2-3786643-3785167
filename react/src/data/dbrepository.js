@@ -46,6 +46,7 @@ async function deleteUser(user) {
     deletePost(post)
   });
 
+  deleteUserReactions(user.id)
   const response = await axios.delete(API_HOST + `/${USER_KEY}/${user.id}`);
 
   return response.data;
@@ -128,6 +129,14 @@ async function deleteReaction(reaction) {
   return response;
 
 }
+
+async function deleteUserReactions(id) {
+
+  const response = await axios.delete(API_HOST + `/${REACTION_KEY}/user/${id}`);
+
+  return response;
+}
+
 
 export {
   verifyUser,

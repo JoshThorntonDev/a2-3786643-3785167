@@ -39,3 +39,16 @@ exports.delete = async (req, res) => {
     res.json(deleted);
 
   }
+
+  // delete all reactions made by specified user
+exports.deleteByUser = async (req, res) => {
+  const id = req.params.id;
+  
+  const deleted = await db.reaction.destroy({
+    where: {
+      userId: id
+    }
+  })
+  res.json(deleted);
+
+}
