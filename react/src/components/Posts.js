@@ -1,6 +1,6 @@
 import { getPosts } from "../data/dbrepository";
 import Button from "react-bootstrap/Button";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import "./css/Posts.css";
 
 import PostCreator from "./PostCreator";
@@ -14,9 +14,15 @@ import PlaceholderPost from "./PlaceholderPost";
 import Thread from "./Thread";
 
 import ReactionContext from "../contexts/ReactionContext";
+import { getTopLevelPosts } from "../data/LocalPostManagement";
 
 function Posts() {
-  const [posts, setPosts] = useState([]);
+  const postRef = useRef([]);
+  const topPostRef = useRef([]);
+  const [posts, setPosts] = useState(postRef.current);
+
+  const [topPosts, setTopPosts] = useState(topPostRef.current);
+
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(0);
   const { currentUser } = useContext(UserContext);
@@ -35,6 +41,11 @@ function Posts() {
   });
 
   useEffect(() => {
+    postRef.current = posts;
+    topPostRef.current = topPosts;
+  }, [posts, topPosts]);
+
+  useEffect(() => {
     if (reactions.length === 0) {
       checkForReactions();
     }
@@ -42,23 +53,37 @@ function Posts() {
 
   useEffect(() => {
     async function loadPosts() {
-      await checkForReactions() // ensure we have the latest copy of reactions
-      const currentPosts = await getPosts();
+      await checkForReactions(); // ensure we have the latest copy of reactions
 
-      if (sortNewest) {
-        setPosts(currentPosts);
-      } else {
+      if (posts.length === 0) {
+        const currentPosts = await getPosts();
         setPosts(currentPosts.reverse());
-      }
 
-      setTimeout(() => {
-        // in case the db responds extremely quickly, prevent loading animation from looking bad
-        setIsLoading(false);
-      }, 300);
+        var tempTopPosts = getTopLevelPosts(currentPosts);
+
+        setTopPosts(tempTopPosts);
+
+        setTimeout(() => {
+          // in case the db responds extremely quickly, prevent loading animation from looking bad
+          setIsLoading(false);
+          setSortNewest(true);
+        }, 300);
+      }
     }
 
     loadPosts();
-  }, [showModal, sortNewest]); // if modal or sort order gets toggled, reload the posts
+  }, [showModal]); // if modal or sort order gets toggled, reload the posts
+
+  useEffect(() => {
+    if(!sortNewest) {
+      setPosts(posts.reverse());
+      setTopPosts(topPosts.reverse());
+      setSortNewest(true)
+    }
+
+
+
+  }, [sortNewest]);
 
   const toggleModal = () => {
     // toggle the edit state
@@ -75,9 +100,9 @@ function Posts() {
   };
 
   const pageSize = 6; // number of posts to display per page
-  const pageCount = Math.ceil(posts.length / pageSize); // finds the number of pages needed to fit all posts
+  const pageCount = Math.ceil(topPosts.length / pageSize); // finds the number of pages needed to fit all posts
   const offset = page * pageSize; // keeps track of where the first post of each page is
-  const postsToDisplay = posts.slice(offset, offset + pageSize); // selects only the posts on the current page
+  const postsToDisplay = topPosts.slice(offset, offset + pageSize); // selects only the posts on the current page
 
   return (
     <div>
