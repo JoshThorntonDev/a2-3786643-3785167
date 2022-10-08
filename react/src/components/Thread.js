@@ -37,7 +37,7 @@ function Thread(props) {
 
       setNewChild(false);
       
-      setShowReplies(true);
+      setShowReplies(!true);
     }
   }, [newChild, replies]);
   
