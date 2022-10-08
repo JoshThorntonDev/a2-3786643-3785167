@@ -35,7 +35,7 @@ function App() {
     const temp = await getReactions();
     setReactions(temp);
   };
-
+  
   return (
     <div className="contain">
       <UserContext.Provider value={{ currentUser, login, logout, NAME_LENGTH }}>

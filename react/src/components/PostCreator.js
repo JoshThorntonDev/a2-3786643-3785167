@@ -1,6 +1,6 @@
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
-import { useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { CheckCircleFill } from "react-bootstrap-icons";
 import Button from "react-bootstrap/Button";
 import AnimatedAlert from "./AnimatedAlert";
@@ -8,6 +8,8 @@ import { createPost, updatePost } from "../data/dbrepository";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import Spinner from "react-bootstrap/Spinner";
+import PostContext from "../contexts/PostContext";
+
 
 // props:
 // type - valid values, null, EDIT, REPLY - null is for normal post creation
@@ -21,6 +23,8 @@ function PostCreator(props) {
 
   const inputRef = useRef(null);
   const imageRef = useRef(null);
+
+  const {posts, setPosts} = useContext(PostContext)
 
   const getContentLength = () => {
     return props.fields.content.replace(/<(.|\n)*?>/g, "").trim().length;
@@ -116,6 +120,16 @@ function PostCreator(props) {
         // force saving to always take a minimum amount of time to let user see saving animation
 
         props.toggle();
+
+        var temp = []
+        temp.push(storedPost)
+
+        setPosts([...temp, ...posts])
+
+
+
+
+
         setTimeout(() => {
           if (props.type === "REPLY") {
             props.update(storedPost); // give the reply to the parent post so it can be rerendered without using the db

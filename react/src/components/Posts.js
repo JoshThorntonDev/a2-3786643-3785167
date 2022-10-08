@@ -15,6 +15,7 @@ import Thread from "./Thread";
 
 import ReactionContext from "../contexts/ReactionContext";
 import { getTopLevelPosts } from "../data/LocalPostManagement";
+import PostContext from "../contexts/PostContext";
 
 function Posts() {
   const postRef = useRef([]);
@@ -57,7 +58,7 @@ function Posts() {
 
       if (posts.length === 0) {
         const currentPosts = await getPosts();
-        setPosts(currentPosts.reverse());
+        setPosts(currentPosts.reverse()); // the db gives us posts ordered from oldest to newest
 
         var tempTopPosts = getTopLevelPosts(currentPosts);
 
@@ -74,15 +75,26 @@ function Posts() {
     loadPosts();
   }, [showModal]); // if modal or sort order gets toggled, reload the posts
 
+useEffect(() => {
+  if (posts.length !== 0) {
+    console.log(posts, 'did something break?')
+    var tempTopPosts = getTopLevelPosts(posts);
+
+    setTopPosts(tempTopPosts);
+
+    setTimeout(() => {
+      // in case the db responds extremely quickly, prevent loading animation from looking bad
+      setIsLoading(false);
+      setSortNewest(true);
+    }, 300);
+  }
+},[posts])
+
   useEffect(() => {
-    if(!sortNewest) {
-      setPosts(posts.reverse());
+    if (!sortNewest) {
       setTopPosts(topPosts.reverse());
-      setSortNewest(true)
+      setSortNewest(true);
     }
-
-
-
   }, [sortNewest]);
 
   const toggleModal = () => {
@@ -106,81 +118,83 @@ function Posts() {
 
   return (
     <div>
-      <h1>All Posts</h1>
-      <div className="d-flex justify-content-center">
-        <Button onClick={toggleModal}>
-          <PlusCircleFill /> Create a post
-        </Button>
-      </div>
-      <br></br>
-      <PostCreator
-        show={showModal}
-        toggle={toggleModal}
-        fields={post}
-        setFields={setPost}
-      />
+      <PostContext.Provider value={{ posts, setPosts }}>
+        <h1>All Posts</h1>
+        <div className="d-flex justify-content-center">
+          <Button onClick={toggleModal}>
+            <PlusCircleFill /> Create a post
+          </Button>
+        </div>
+        <br></br>
+        <PostCreator
+          show={showModal}
+          toggle={toggleModal}
+          fields={post}
+          setFields={setPost}
+        />
 
-      <div>
-        {isLoading ? (
-          <div className="d-flex justify-content-center">
-            <div>
-              <Spinner animation="border" role="status">
-                <span className="visually-hidden">Loading...</span>
-              </Spinner>{" "}
-              Loading posts
-              <br></br>
-              <PlaceholderPost />
-              <br></br>
-              <PlaceholderPost />
-              <br></br>
-              <PlaceholderPost />
-            </div>
-          </div>
-        ) : posts.length === 0 ? (
-          <span className="text-muted">No posts have been submitted.</span>
-        ) : (
-          <div>
-            <div className="d-flex justify-content-between">
-              <ReactPaginate
-                onPageChange={handlePageClick}
-                pageCount={pageCount}
-                marginPagesDisplayed={2}
-                pageRangeDisplayed={5}
-                previousLabel="Previous"
-                nextLabel="Next"
-                breakLabel="..."
-                containerClassName="pagination"
-                pageClassName="page-item"
-                pageLinkClassName="page-link"
-                previousLinkClassName="page-link"
-                nextLinkClassName="page-link"
-                breakClassName="page-link"
-                activeClassName="active"
-              />
+        <div>
+          {isLoading ? (
+            <div className="d-flex justify-content-center">
               <div>
-                <Form>
-                  <Form.Group>
-                    <Form.Label>
-                      <strong>Sort by:</strong>
-                    </Form.Label>
-                    <Form.Select
-                      onChange={(e) => setSortNewest((current) => !current)}
-                    >
-                      <option>Newest First</option>
-                      <option>Oldest First</option>
-                    </Form.Select>
-                  </Form.Group>
-                </Form>
+                <Spinner animation="border" role="status">
+                  <span className="visually-hidden">Loading...</span>
+                </Spinner>{" "}
+                Loading posts
+                <br></br>
+                <PlaceholderPost />
+                <br></br>
+                <PlaceholderPost />
+                <br></br>
+                <PlaceholderPost />
               </div>
             </div>
-            {postsToDisplay.map((x) => (
-              <div key={x.id} className="topPost">
-                <Thread post={x} main={true} />
+          ) : posts.length === 0 ? (
+            <span className="text-muted">No posts have been submitted.</span>
+          ) : (
+            <div>
+              <div className="d-flex justify-content-between">
+                <ReactPaginate
+                  onPageChange={handlePageClick}
+                  pageCount={pageCount}
+                  marginPagesDisplayed={2}
+                  pageRangeDisplayed={5}
+                  previousLabel="Previous"
+                  nextLabel="Next"
+                  breakLabel="..."
+                  containerClassName="pagination"
+                  pageClassName="page-item"
+                  pageLinkClassName="page-link"
+                  previousLinkClassName="page-link"
+                  nextLinkClassName="page-link"
+                  breakClassName="page-link"
+                  activeClassName="active"
+                />
+                <div>
+                  <Form>
+                    <Form.Group>
+                      <Form.Label>
+                        <strong>Sort by:</strong>
+                      </Form.Label>
+                      <Form.Select
+                        onChange={(e) => setSortNewest((current) => !current)}
+                      >
+                        <option>Newest First</option>
+                        <option>Oldest First</option>
+                      </Form.Select>
+                    </Form.Group>
+                  </Form>
+                </div>
               </div>
-            ))}
-          </div>
-        )}
-      </div>
+              {postsToDisplay.map((x) => (
+                <div key={x.id} className="topPost">
+                  <Thread post={x} main={true} />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </PostContext.Provider>
     </div>
   );
 }

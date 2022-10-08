@@ -2,7 +2,7 @@ function getTopLevelPosts(allLocalPosts) {
   return allLocalPosts.filter((post) => post.depth === 0);
 }
 
-function getRepliesTo(allLocalPosts, postId) {
+function getRepliesToFromLocal(allLocalPosts, postId) {
   return allLocalPosts.filter((post) => post.replyId === postId);
 }
 
@@ -14,4 +14,4 @@ function reversePosts(posts) {
   return posts.reverse();
 }
 
-export { getTopLevelPosts, getRepliesTo, findPostsByUser, reversePosts };
+export { getTopLevelPosts, getRepliesToFromLocal, findPostsByUser, reversePosts};

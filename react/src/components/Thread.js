@@ -1,11 +1,14 @@
 import PostCard from "./PostCard";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { getRepliesTo } from "../data/dbrepository";
 import Stack from "react-bootstrap/Stack";
 import Collapse from "react-bootstrap/Collapse";
+import { getRepliesToFromLocal } from "../data/LocalPostManagement";
+import PostContext from "../contexts/PostContext";
 
 function Thread(props) {
   const [post] = useState(props.post);
+  const {posts} = useContext(PostContext)
   const [replies, setReplies] = useState([]);
 
   const [newChild, setNewChild] = useState(false); // stores a new reply when one is made, and it changing causes useEffect to add it to the list of replies
@@ -19,13 +22,12 @@ function Thread(props) {
   };
 
   useEffect(() => {
-    async function getReplies() {
-      // get the replies
-      const temp = await getRepliesTo(Number(post.id));
-      setReplies(temp);
-    }
+    
+    const temp = getRepliesToFromLocal(posts, post.id);
+    console.log(temp, 'THIS IS WHATAOIWJDF')
+    
+    setReplies(temp);
 
-    getReplies();
     setShowSelf(true);
     setShowReplies(true);
   }, [post.id]);
@@ -36,11 +38,10 @@ function Thread(props) {
       setReplies([...replies, newChild]);
 
       setNewChild(false);
-      
+
       setShowReplies(true);
     }
   }, [newChild, replies]);
-  
 
   return (
     <Collapse in={showSelf}>
@@ -57,27 +58,25 @@ function Thread(props) {
         ) : (
           <PostCard post={post} update={setNewChild} toggleReplies={null} />
         )}
-        {
-          props.main
-            ? replies.map((x) => (
-                <Collapse key={x.id} in={!showReplies}>
-                  <div className="reply">
-                    <div className="line"></div>
+        {props.main
+          ? replies.map((x) => (
+              <Collapse key={x.id} in={!showReplies}>
+                <div className="reply">
+                  <div className="line"></div>
 
-                    <Thread post={x} />
-                  </div>
-                </Collapse>
-              ))
-            : replies.map((x) => (
-                <Collapse key={x.id} in={showReplies}>
-                  <div key={x.id} className="reply">
-                     {/* when showing replies from a main post, !showReplies shows all at first */}
-                    <div className="line"></div>
-                    <Thread post={x} />
-                  </div>
-                </Collapse>
-              ))
-        }
+                  <Thread post={x} />
+                </div>
+              </Collapse>
+            ))
+          : replies.map((x) => (
+              <Collapse key={x.id} in={showReplies}>
+                <div key={x.id} className="reply">
+                  {/* when showing replies from a main post, !showReplies shows all at first */}
+                  <div className="line"></div>
+                  <Thread post={x} />
+                </div>
+              </Collapse>
+            ))}
         {}
       </Stack>
     </Collapse>
