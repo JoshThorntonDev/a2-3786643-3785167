@@ -5,11 +5,7 @@ const db = require("../database");
 
 // Select all posts from the database.
 exports.all = async (req, res) => {
-  const posts = await db.post.findAll({
-    where: {
-      depth: 0
-    }
-  });
+  const posts = await db.post.findAll();
   res.json(posts);
 };
 
