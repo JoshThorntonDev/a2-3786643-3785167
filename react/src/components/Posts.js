@@ -30,7 +30,9 @@ function Posts() {
   const [page, setPage] = useState(0);
   const { currentUser } = useContext(UserContext);
   const [showModal, setShowModal] = useState(false);
-  const [sortNewest, setSortNewest] = useState(false);
+
+  const [sort, setSort] = useState(false);
+  const [newest, setNewest] = useState(true);
 
   const { reactions } = useContext(ReactionContext);
   const { checkForReactions } = useContext(ReactionContext);
@@ -44,6 +46,9 @@ function Posts() {
   });
 
   useEffect(() => {
+    if (postRef.current !== posts) {
+      setTopPosts(posts);
+    }
     postRef.current = posts;
     topPostRef.current = topPosts;
   }, [posts, topPosts]);
@@ -58,53 +63,49 @@ function Posts() {
     async function loadPosts() {
       await checkForReactions(); // ensure we have the latest copy of reactions
 
-      if (posts.length === 0) {
-        const currentPosts = await getPosts();
-        setPosts(currentPosts.reverse()); // the db gives us posts ordered from oldest to newest
+      const currentPosts = await getPosts();
+      setPosts(currentPosts.reverse()); // the db gives us posts ordered from oldest to newest
 
-        var tempTopPosts = getTopLevelPosts(currentPosts);
+      var tempTopPosts = getTopLevelPosts(currentPosts);
 
-        setTopPosts(tempTopPosts);
+      setTopPosts(tempTopPosts);
 
+      const users = await getUsers();
+      setUsers(users);
 
-        const users = await getUsers()
-        setUsers(users)
-
-
-
-        setTimeout(() => {
-          // in case the db responds extremely quickly, prevent loading animation from looking bad
-          setIsLoading(false);
-          setSortNewest(true);
-        }, 300);
-      }
+      setTimeout(() => {
+        // in case the db responds extremely quickly, prevent loading animation from looking bad
+        setIsLoading(false);
+        setSort(true);
+      }, 300);
     }
 
     loadPosts();
-
-
-  }, [showModal]); // if modal or sort order gets toggled, reload the posts
+  }, []); // if modal or sort order gets toggled, reload the posts
 
   useEffect(() => {
     if (posts.length !== 0) {
       var tempTopPosts = getTopLevelPosts(posts);
 
       setTopPosts(tempTopPosts);
+      setNewest(true)
 
       setTimeout(() => {
         // in case the db responds extremely quickly, prevent loading animation from looking bad
         setIsLoading(false);
-        setSortNewest(true);
+        setSort(true);
       }, 300);
     }
   }, [posts]);
 
-  useEffect(() => {
-    if (!sortNewest) {
-      setTopPosts(topPosts.reverse());
-      setSortNewest(true);
-    }
-  }, [sortNewest]);
+
+
+  const toggleSort = () => {
+    console.log('toggle sort')
+    setNewest((current) => !current)
+    setTopPosts(topPosts.reverse());
+
+  }
 
   const toggleModal = () => {
     // toggle the edit state
@@ -123,7 +124,7 @@ function Posts() {
   const pageSize = 6; // number of posts to display per page
   const pageCount = Math.ceil(topPosts.length / pageSize); // finds the number of pages needed to fit all posts
   const offset = page * pageSize; // keeps track of where the first post of each page is
-  const postsToDisplay = topPosts.slice(offset, offset + pageSize); // selects only the posts on the current page
+  const postsToDisplay = topPosts.reverse().slice(offset, offset + pageSize); // selects only the posts on the current page
 
   return (
     <div>
@@ -180,19 +181,15 @@ function Posts() {
                   activeClassName="active"
                 />
                 <div>
-                  <Form>
-                    <Form.Group>
-                      <Form.Label>
-                        <strong>Sort by:</strong>
-                      </Form.Label>
-                      <Form.Select
-                        onChange={(e) => setSortNewest((current) => !current)}
-                      >
-                        <option>Newest First</option>
-                        <option>Oldest First</option>
-                      </Form.Select>
-                    </Form.Group>
-                  </Form>
+                  <div>Sorting By:<br></br> {newest ? ("Newest") : ("Oldest")}</div>
+
+                    <Button
+                      variant="dark"
+                      onClick={toggleSort}
+                    >
+                      Change
+                    </Button>
+
                 </div>
               </div>
               {postsToDisplay.map((x) => (

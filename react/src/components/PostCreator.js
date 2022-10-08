@@ -124,7 +124,7 @@ function PostCreator(props) {
         var temp = []
         temp.push(storedPost)
 
-        setPosts([...temp, ...posts])
+        setPosts([ ...temp, ...posts])
 
 
 
