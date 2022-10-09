@@ -84,7 +84,7 @@ function ProfileDeleter(props) {
   return (
     <Modal show={props.show} onHide={props.toggle}>
       <Modal.Header closeButton>
-        <Modal.Title>Delete Profile</Modal.Title>
+        <Modal.Title>Deleting {props.user.username}'s Profile</Modal.Title>
       </Modal.Header>
       <AnimatedAlert
         variant="success"
@@ -101,6 +101,8 @@ function ProfileDeleter(props) {
       <Form onSubmit={attemptSave}>
         <Modal.Body>
           <p>Are you sure you wish to delete this account?</p>
+          <p><strong>This cannot be undone!</strong></p>
+          <hr></hr>
           <Form.Group className="mb-3">
             <Form.Label>Confirmation Password</Form.Label>
             <Form.Control

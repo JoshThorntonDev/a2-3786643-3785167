@@ -87,14 +87,14 @@ function ProfileEditor(props) {
 
       editTarget.username = fields.name; // set the new name
 
-      editUser(editTarget); // save user
+      const updatedUser = await editUser(editTarget); // save user
       setMessage("Profile update successful");
       setSuccess(true);
 
       setTimeout(() => {
 
         props.toggle(); // close modal
-        props.setUpdated(true); // tell Profile it was updated and needs to rerender
+        props.setUser(updatedUser); // tell Profile it was updated and needs to rerender
 
       }, 800);
     }
