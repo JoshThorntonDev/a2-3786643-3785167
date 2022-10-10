@@ -13,6 +13,9 @@ import Spinner from "react-bootstrap/Spinner";
 // type - valid values, null, EDIT, REPLY - null is for normal post creation
 // update: a setter for a post's child, it given the newPost after saving if type is REPLY, allows new reply to be rendered without querying db
 // updater: a setter with fields content and image. Used to update the content and image fields of a post
+//replyId and depth: only needed when in reply mode. integers that specify the depth and ID of the parent post being replied to.
+//user: ID of currently logged in user
+//post: only needed for edit mode. contains fields of the existing post's content so that it can be displayed in the PostCreator
 
 // this component can create and edit posts. By default, it will only create, but setting type to "EDIT" will put it in editing mode
 function PostCreator(props) {
@@ -70,7 +73,7 @@ function PostCreator(props) {
       fields.content = "";
       fields.image = "";
     }
-    if (props.type === "EDIT") {
+    if (props.type === "EDIT") { //if editing, fill fields with existing post's content
       fields.content = props.post.content;
       fields.image = props.post.image
     }
@@ -107,6 +110,7 @@ function PostCreator(props) {
       var depth = 0;
       var replyId = null;
 
+      //if replying, use replyId of the parent post and set depth to be 1 deeper than the parent post
       if (props.type === "REPLY") {
         depth = props.depth + 1;
         replyId = props.replyId;
@@ -126,6 +130,7 @@ function PostCreator(props) {
       var storedPost;
 
       if (props.type === "EDIT") {
+        //if editing use the existing post's id
         newPost.id = props.post.id;
         storedPost = await updatePost(newPost);
       } else {
