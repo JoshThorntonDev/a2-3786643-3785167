@@ -1,6 +1,6 @@
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CheckCircleFill } from "react-bootstrap-icons";
 import Button from "react-bootstrap/Button";
 import AnimatedAlert from "./AnimatedAlert";
@@ -23,8 +23,14 @@ function PostCreator(props) {
   const imageRef = useRef(null);
 
   const getContentLength = () => {
-    return props.fields.content.replace(/<(.|\n)*?>/g, "").trim().length;
+    return fields.content.replace(/<(.|\n)*?>/g, "").trim().length;
   };
+
+  const [fields, setFields] = useState({
+    userId: props.user,
+    content: "",
+    image: "",
+  });
 
   var title;
 
@@ -42,15 +48,15 @@ function PostCreator(props) {
   }
 
   const handleInputChange = (event) => {
-    props.setFields({
-      ...props.fields,
+    setFields({
+      ...fields,
       [event.target.name]: event.target.value,
     });
   };
 
   const handleContentUpdate = (event) => {
-    props.setFields({
-      ...props.fields,
+    setFields({
+      ...fields,
       content: event,
     });
   };
@@ -58,6 +64,19 @@ function PostCreator(props) {
   const [error, setError] = useState(false);
   const [message, setMessage] = useState("");
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => { // clear everything if the modal is closed
+    if (!props.show) {
+      fields.content = "";
+      fields.image = "";
+    }
+    if (props.type === "EDIT") {
+      fields.content = props.post.content;
+      fields.image = props.post.image
+    }
+    setError(false);
+    setMessage("");
+  }, [props.show]); 
 
   const attemptSave = async (event) => {
     const imageRegex = new RegExp("(.png|.jpg|.jpeg|.gif|.bmp)$");
@@ -67,12 +86,12 @@ function PostCreator(props) {
     event.preventDefault(); // prevent form from submitting
 
     var imageOK = false;
-    if (props.fields.image === "") {
+    if (fields.image === "") {
       // no image, so no need to check if its a picture
       imageOK = true;
     } else if (
-      props.fields.image !== "" &&
-      imageRegex.test(props.fields.image)
+      fields.image !== "" &&
+      imageRegex.test(fields.image)
     ) {
       // if there is a url, check if it ends with .png, .jpg/jpeg, .gif or .bmp
       // this doesn't absolutely ensure that a url points to an image, but it'll prevent most invalid submissions
@@ -86,17 +105,19 @@ function PostCreator(props) {
       imageOK
     ) {
       var depth = 0;
+      var replyId = null;
 
       if (props.type === "REPLY") {
-        depth = props.fields.depth + 1;
+        depth = props.depth + 1;
+        replyId = props.replyId;
       }
 
       const newPost = {
-        content: props.fields.content,
-        image: props.fields.image,
-        userId: props.fields.userId,
+        content: fields.content,
+        image: fields.image,
+        userId: fields.userId,
         depth: depth,
-        replyId: props.fields.replyId,
+        replyId: replyId,
         updatedAt: new Date(), // ensure a valid date is ALWAYS set
       };
 
@@ -105,8 +126,7 @@ function PostCreator(props) {
       var storedPost;
 
       if (props.type === "EDIT") {
-        newPost.id = props.fields.id;
-
+        newPost.id = props.post.id;
         storedPost = await updatePost(newPost);
       } else {
         storedPost = await createPost(newPost);
@@ -164,7 +184,7 @@ function PostCreator(props) {
             <ReactQuill
               theme="snow"
               autoFocus
-              value={props.fields.content}
+              value={fields.content}
               ref={inputRef}
               onChange={handleContentUpdate}
             />
@@ -186,7 +206,7 @@ function PostCreator(props) {
               name="image"
               type="text"
               placeholder="example.com/file.jpg"
-              value={props.fields.image}
+              value={fields.image}
               onChange={handleInputChange}
               ref={imageRef}
             />

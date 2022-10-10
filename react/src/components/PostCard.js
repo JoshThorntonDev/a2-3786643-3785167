@@ -54,22 +54,13 @@ function PostCard(props) {
     setShowDelete((current) => !current);
   };
 
-  const [reply, setReply] = useState({
-    userId: currentUser,
-    content: "",
-    image: "",
-    replyId: null,
-    depth: 0,
-  });
+  const [reply, setReply] = useState();
+  const [depth, setDepth] = useState(0);
 
   const toggleReply = (depth, replyId) => {
-    reply.content = "";
-    reply.image = "";
 
-    reply.replyId = replyId;
-
-    reply.depth = depth;
-
+    setReply(replyId);
+    setDepth(depth);
     setShowReply((current) => !current);
   };
 
@@ -278,18 +269,18 @@ function PostCard(props) {
       <PostCreator
         show={showReply}
         toggle={toggleReply}
-        fields={reply}
-        setFields={setReply}
+        user={currentUser}
         type="REPLY"
-        replyId={reply.replyId}
+        replyId={reply}
+        depth={depth}
         update={props.update}
       />
 
       <PostCreator
         show={showEdit}
         toggle={toggleEdit}
-        fields={post}
-        setFields={setPost}
+        user={currentUser}
+        post={post}
         updater={setPostValue}
         type="EDIT"
       />
