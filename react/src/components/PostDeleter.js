@@ -14,8 +14,8 @@ import { Trash } from "react-bootstrap-icons";
 // required props are:
 // show (boolean)
 // toggle (function, preferably one that clears `fields` and changes `show`)
-// fields (containing email, name, date and password)
-// setFields
+// setName: setter to update the locally stored post username to [deleted]
+// setEdit: setter to toggle the editable state of the post to hide the "edit and delete" buttons
 function PostDeleter(props) {
   const { currentUser } = useContext(UserContext);
   // get users and current user so we dont have to have ugly things like props.users[props.currentUser].password
