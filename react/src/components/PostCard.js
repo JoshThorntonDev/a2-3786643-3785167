@@ -58,7 +58,7 @@ function PostCard(props) {
   const [depth, setDepth] = useState(0);
 
   const toggleReply = (depth, replyId) => {
-
+    //toggle the reply state and set the replyId and depth of the post being replied to
     setReply(replyId);
     setDepth(depth);
     setShowReply((current) => !current);
