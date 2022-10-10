@@ -36,8 +36,12 @@ function Thread(props) {
       setReplies([...replies, newChild]);
 
       setNewChild(false);
+      if (props.main) {
+        setShowReplies(!true);
+      } else {
+        setShowReplies(true);
+      }
       
-      setShowReplies(!true);
     }
   }, [newChild, replies]);
   
