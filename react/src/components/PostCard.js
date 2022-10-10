@@ -4,7 +4,7 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import "./css/Posts.css";
-import { PencilSquare, Trash, ChatLeftText } from "react-bootstrap-icons";
+import { PencilSquare, Trash, ChatLeftText, BarChartSteps } from "react-bootstrap-icons";
 import { useContext, useEffect, useRef, useState } from "react";
 import PostCreator from "./PostCreator";
 import { findUser } from "../data/dbrepository";
@@ -54,22 +54,13 @@ function PostCard(props) {
     setShowDelete((current) => !current);
   };
 
-  const [reply, setReply] = useState({
-    userId: currentUser,
-    content: "",
-    image: "",
-    replyId: null,
-    depth: 0,
-  });
+  const [reply, setReply] = useState();
+  const [depth, setDepth] = useState(0);
 
   const toggleReply = (depth, replyId) => {
-    reply.content = "";
-    reply.image = "";
-
-    reply.replyId = replyId;
-
-    reply.depth = depth;
-
+    //toggle the reply state and set the replyId and depth of the post being replied to
+    setReply(replyId);
+    setDepth(depth);
     setShowReply((current) => !current);
   };
 
@@ -92,10 +83,9 @@ function PostCard(props) {
   useEffect(() => {
     if (reactions.length > 0) {
       // get reactions for this post only
-      var postReacts = reactions.filter((reaction) => reaction.postId === post.id);
-
-        
-
+      var postReacts = reactions.filter(
+        (reaction) => reaction.postId === post.id
+      );
 
       if (postReacts[0] === undefined) {
         return;
@@ -114,16 +104,17 @@ function PostCard(props) {
       localReactions.numLikes = likes.length;
       localReactions.numDislikes = dislikes.length;
 
-      reactionArea.current = ( // update the reaction area to reflect any new reactions
-        <ReactionArea
-          default={localReactions.default} // if it starts with nothing, a like or a dislike
-          defaultId={localReactions.defaultId} // pk of reaction in db if it exists
-          likes={localReactions.numLikes}
-          dislikes={localReactions.numDislikes}
-          userId={currentUser}
-          postId={post.id} // id of the post its rendering inside
-        />
-      );
+      reactionArea.current = // update the reaction area to reflect any new reactions
+        (
+          <ReactionArea
+            default={localReactions.default} // if it starts with nothing, a like or a dislike
+            defaultId={localReactions.defaultId} // pk of reaction in db if it exists
+            likes={localReactions.numLikes}
+            dislikes={localReactions.numDislikes}
+            userId={currentUser}
+            postId={post.id} // id of the post its rendering inside
+          />
+        );
     }
   }, [reactions]);
 
@@ -231,10 +222,20 @@ function PostCard(props) {
                   <Button
                     size="sm"
                     onClick={props.toggleReplies}
-                    variant="secondary"
+                    variant="outline-secondary"
                     type="submit"
                   >
-                    Show/Hide Replies
+                    <BarChartSteps></BarChartSteps> Replies
+                  </Button>
+                )}
+                {!props.main && props.toggleReplies && (
+                  <Button
+                    size="sm"
+                    onClick={props.toggleReplies}
+                    variant="outline-secondary"
+                    type="submit"
+                  >
+                    <BarChartSteps></BarChartSteps>
                   </Button>
                 )}
               </Col>
@@ -244,7 +245,9 @@ function PostCard(props) {
                     <Col>
                       <Row>
                         <Col sm="auto" className="align-middle">
-                          {reactionArea.current /* render the current reaction area */}
+                          {
+                            reactionArea.current /* render the current reaction area */
+                          }
                         </Col>
                         <Col>
                           {props.post.depth < REPLY_DEPTH && !props.onProfile && (
@@ -278,18 +281,18 @@ function PostCard(props) {
       <PostCreator
         show={showReply}
         toggle={toggleReply}
-        fields={reply}
-        setFields={setReply}
+        user={currentUser}
         type="REPLY"
-        replyId={reply.replyId}
+        replyId={reply}
+        depth={depth}
         update={props.update}
       />
 
       <PostCreator
         show={showEdit}
         toggle={toggleEdit}
-        fields={post}
-        setFields={setPost}
+        user={currentUser}
+        post={post}
         updater={setPostValue}
         type="EDIT"
       />

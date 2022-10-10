@@ -26,13 +26,13 @@ function Posts() {
   const { reactions } = useContext(ReactionContext);
   const { checkForReactions } = useContext(ReactionContext);
 
-  const [post, setPost] = useState({
+  /*const [post, setPost] = useState({
     userId: currentUser,
     content: "",
     image: "",
     replyId: null,
     depth: 0,
-  });
+  }); */
 
   useEffect(() => {
     if (reactions.length === 0) {
@@ -63,10 +63,6 @@ function Posts() {
   const toggleModal = () => {
     // toggle the edit state
 
-    post.content = "";
-    post.replyId = null;
-    post.image = "";
-
     setShowModal((current) => !current);
   };
 
@@ -91,8 +87,7 @@ function Posts() {
       <PostCreator
         show={showModal}
         toggle={toggleModal}
-        fields={post}
-        setFields={setPost}
+        user={currentUser}
       />
 
       <div>
