@@ -9,10 +9,6 @@ import Card from "react-bootstrap/Card";
 
 
 function ProfileCard(props) {
-  const [user, setUser] = useState(props.user)
-
-  // the field is stored here to make it easier to clear the values when the modal is closed,
-  // either by closing it manually or when an update is successful
 
   const [showEdit, setShowEdit] = useState(false); // state for profile edit modal
   const [showDelete, setShowDelete] = useState(false); // state for profile delete modal
@@ -39,16 +35,16 @@ function ProfileCard(props) {
       <ProfileEditor
         show={showEdit}
         toggle={toggleEdit}
-        user={user}
-        setUser={setUser}
+        user={props.user}
+        setUser={props.setUser}
       />
 
-      {<ProfileDeleter show={showDelete} toggle={toggleDelete} user={user} />}
+      {<ProfileDeleter show={showDelete} toggle={toggleDelete} user={props.user} />}
       <PersonCircle size={"100"} className="image"></PersonCircle>
 
       <div className="information">
-        <h1>{user.username}'s Profile</h1>
-        <p>{user.email}</p>
+        <h1>{props.user.username}'s Profile</h1>
+        <p>{props.user.email}</p>
         <hr />
         <p>Joined: {getDate()}</p>
       </div>

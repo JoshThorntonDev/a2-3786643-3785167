@@ -4,7 +4,12 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import "./css/Posts.css";
-import { PencilSquare, Trash, ChatLeftText, BarChartSteps } from "react-bootstrap-icons";
+import {
+  PencilSquare,
+  Trash,
+  ChatLeftText,
+  BarChartSteps,
+} from "react-bootstrap-icons";
 import { useContext, useEffect, useRef, useState } from "react";
 import PostCreator from "./PostCreator";
 import { findUser } from "../data/dbrepository";
@@ -166,7 +171,7 @@ function PostCard(props) {
               <Col>
                 <Row>
                   <Col sm="auto" className="postButton">
-                    {name ? (
+                    {!props.onProfile ? (
                       name !== "[deleted]" ? (
                         <Button
                           size="sm"
@@ -185,10 +190,7 @@ function PostCard(props) {
                         </Button>
                       )
                     ) : (
-                      <Button size="sm" variant="outline-success">
-                        &nbsp;{" "}
-                        {/* fixes the button changing size when name loads */}
-                      </Button>
+                      <div></div>
                     )}
                   </Col>
                   <Col>

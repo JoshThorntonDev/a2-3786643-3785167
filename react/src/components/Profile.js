@@ -1,12 +1,6 @@
 import "./css/Profile.css";
-import Button from "react-bootstrap/Button";
-
-import { PencilSquare, PersonCircle, Trash } from "react-bootstrap-icons";
 import { useContext, useEffect, useState } from "react";
-import ProfileEditor from "./ProfileEditor";
-import ProfileDeleter from "./ProfileDeleter";
 import PostCard from "./PostCard";
-import Card from "react-bootstrap/Card";
 import { useParams } from "react-router-dom";
 import { findUser, getPostsByUser } from "../data/dbrepository";
 import UserContext from "../contexts/UserContext";
@@ -24,7 +18,7 @@ function Profile() {
   const { currentUser } = useContext(UserContext);
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(0);
-  const [isThisMyAccount, setIsThisMyAccount] = useState(false);
+  const [isThisMyAccount, setIsThisMyAccount] = useState(false); // determines if edit/delete buttons show
   const [updated, setUpdated] = useState(false);
   const navigate = useNavigate();
 
@@ -108,7 +102,7 @@ function Profile() {
         </div>
       ) : (
         <div>
-            <ProfileCard user={user} isThisMyAccount={isThisMyAccount}/>
+            <ProfileCard user={user} setUser={setUser} isThisMyAccount={isThisMyAccount}/>
           <hr />
 
           <h3>Posts by {user.username}</h3>
@@ -144,7 +138,8 @@ function Profile() {
                     key={x.id}
                     post={x}
                     allowDelete={false}
-                    name={user.username}
+                    user={user}
+                    setUser={setUser}
                     toggleReplies={null}
                     onProfile={true}
                   />
