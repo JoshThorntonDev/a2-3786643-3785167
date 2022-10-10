@@ -16,9 +16,7 @@ function Header() {
         <Navbar.Brand
           className="headerLogo"
           onClick={() => {
-            navigate("/", {
-              replace: true,
-            });
+            navigate("/");
           }}
         >
           Loop Agile Now

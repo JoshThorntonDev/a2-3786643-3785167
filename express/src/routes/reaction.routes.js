@@ -16,6 +16,8 @@ module.exports = (express, app) => {
 
   router.delete("/:id", controller.delete);
 
+  router.delete("/user/:id", controller.deleteByUser);
+
   // Add routes to server.
   app.use("/api/reactions", router);
 };

@@ -50,8 +50,8 @@ function Thread(props) {
       setReplies([...replies, newChild]);
 
       setNewChild(false);
-
-      setShowReplies(true);
+      
+      setShowReplies(!true);
     }
   }, [newChild, replies]);
 

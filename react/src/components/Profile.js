@@ -15,22 +15,25 @@ import Spinner from "react-bootstrap/Spinner";
 import { useNavigate } from "react-router-dom";
 import ReactPaginate from "react-paginate";
 import ReactionContext from "../contexts/ReactionContext";
+import ProfileCard from "./ProfileCard";
 import PostContext from "../contexts/PostContext";
 import { findPostsByUser } from "../data/LocalPostManagement";
-
 function Profile() {
   const { id } = useParams();
   const [user, setUser] = useState(null);
+  const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const { currentUser } = useContext(UserContext);
   const { checkForPosts } = useContext(PostContext);
   const { posts } = useContext(PostContext);
 
+  const [update, setUpdate] = useState(false);
+
   const [userPosts, setUserPosts] = useState([]);
 
   const [page, setPage] = useState(0);
   const [isThisMyAccount, setIsThisMyAccount] = useState(false);
-  const [updated, setUpdated] = useState(false);
+
   const navigate = useNavigate();
 
   const { reactions } = useContext(ReactionContext);
@@ -47,12 +50,6 @@ function Profile() {
     }
 
     setIsThisMyAccount(false); // make sure theres no way to trick react into leaving this as true when changing page
-
-    if (updated) {
-      // forces name displayed on posts to reset
-    }
-
-    setUpdated(false); // reset update state if it was set
 
     async function loadUser() {
       const current = await findUser(id);
@@ -78,34 +75,20 @@ function Profile() {
     }
 
     loadUser();
-    loadPosts();
+    if (user !== null) {
+      loadPosts();
+    }
 
     if (reactions.length === 0) {
       checkForReactions();
     }
-  }, [posts, updated]);
+  }, [posts]);
 
-  // the field is stored here to make it easier to clear the values when the modal is closed,
-  // either by closing it manually or when an update is successful
-
-  const [showEdit, setShowEdit] = useState(false); // state for profile edit modal
-  const [showDelete, setShowDelete] = useState(false); // state for profile delete modal
-
-  const toggleEdit = () => {
-    // toggle the edit state
-    // it also clears the fields in case the user opens it again
-    setShowEdit((current) => !current);
-  };
-
-  const toggleDelete = () => {
-    //toggle delete state, clear password in case it was entered before
-    setShowDelete((current) => !current);
-  };
-
-  const getDate = () => {
-    var date = new Date(user.createdAt);
-    return date.toLocaleDateString();
-  };
+  useEffect(() => {
+    if (user !== null) {
+      setName(user.username);
+    }
+  }, [update]);
 
   const handlePageClick = (data) => {
     setPage(data.selected);
@@ -135,54 +118,22 @@ function Profile() {
         </div>
       ) : (
         <div>
-          <Card border="secondary" className="profile">
-            <ProfileEditor
-              show={showEdit}
-              toggle={toggleEdit}
-              user={user}
-              setUpdated={setUpdated}
-            />
-
-            {
-              <ProfileDeleter
-                show={showDelete}
-                toggle={toggleDelete}
-                user={user}
-              />
-            }
-            <PersonCircle size={"100"} className="image"></PersonCircle>
-
-            <div className="information">
-              <h1>{user.username}'s Profile</h1>
-              <p>{user.email}</p>
-              <hr />
-              <p>Joined: {getDate()}</p>
-            </div>
-
-            {isThisMyAccount && ( // only show edit and delete when its the logged in account
-              <div className="edit">
-                <Button onClick={toggleEdit} variant="primary" type="submit">
-                  <PencilSquare size={"20"}></PencilSquare> Edit
-                </Button>
-
-                <Button onClick={toggleDelete} variant="danger" type="submit">
-                  <Trash size={"20"}></Trash> Delete
-                </Button>
-              </div>
-            )}
-          </Card>
-
+          <ProfileCard
+            user={user}
+            update={setUpdate}
+            isThisMyAccount={isThisMyAccount}
+          />
           <hr />
 
-          <h3>Posts by {user.username}</h3>
+          <h3>Posts by {name}</h3>
 
-          {posts.length === 0 ? (
+          {userPosts.length === 0 ? (
             <div className="d-flex justify-content-center">
               <h5 className="text-muted">No posts found</h5>
             </div>
           ) : (
             <div>
-              {posts.length > pageSize && ( // only show page indicator when required
+              {userPosts.length > pageSize && ( // only show page indicator when required
                 <ReactPaginate
                   onPageChange={handlePageClick}
                   pageCount={pageCount}
@@ -207,7 +158,7 @@ function Profile() {
                     key={x.id}
                     post={x}
                     allowDelete={false}
-                    name={user.username}
+                    name={name}
                     toggleReplies={null}
                     onProfile={true}
                   />
