@@ -1,14 +1,11 @@
 import "./css/Profile.css";
-import Button from "react-bootstrap/Button";
 
-import { PencilSquare, PersonCircle, Trash } from "react-bootstrap-icons";
-import { useContext, useEffect, useLayoutEffect, useState } from "react";
-import ProfileEditor from "./ProfileEditor";
-import ProfileDeleter from "./ProfileDeleter";
+import { useContext, useEffect, useState } from "react";
+
 import PostCard from "./PostCard";
-import Card from "react-bootstrap/Card";
+
 import { useParams } from "react-router-dom";
-import { findUser, getPostsByUser } from "../data/dbrepository";
+import { findUser } from "../data/dbrepository";
 import UserContext from "../contexts/UserContext";
 import PlaceholderPost from "./PlaceholderPost";
 import Spinner from "react-bootstrap/Spinner";
@@ -27,7 +24,7 @@ function Profile() {
   const { checkForPosts } = useContext(PostContext);
   const { posts } = useContext(PostContext);
 
-  const [update, setUpdate] = useState(false);
+  const [update, setUpdate] = useState(false)
 
   const [userPosts, setUserPosts] = useState([]);
 
@@ -51,6 +48,8 @@ function Profile() {
 
     setIsThisMyAccount(false); // make sure theres no way to trick react into leaving this as true when changing page
 
+
+
     async function loadUser() {
       const current = await findUser(id);
 
@@ -68,6 +67,8 @@ function Profile() {
       setIsLoading(false);
     }
 
+
+
     async function loadPosts() {
       const current = findPostsByUser(posts, user.id);
 
@@ -79,16 +80,20 @@ function Profile() {
       loadPosts();
     }
 
+
     if (reactions.length === 0) {
       checkForReactions();
     }
   }, [posts]);
 
+
   useEffect(() => {
     if (user !== null) {
-      setName(user.username);
+      setName(user.username)
     }
-  }, [update]);
+
+  }, [user])
+
 
   const handlePageClick = (data) => {
     setPage(data.selected);
@@ -118,11 +123,7 @@ function Profile() {
         </div>
       ) : (
         <div>
-          <ProfileCard
-            user={user}
-            update={setUpdate}
-            isThisMyAccount={isThisMyAccount}
-          />
+          <ProfileCard user={user} update={setUpdate} isThisMyAccount={isThisMyAccount} />
           <hr />
 
           <h3>Posts by {name}</h3>
