@@ -26,12 +26,18 @@ function Thread(props) {
   const [name, setName] = useState("")
 
   useEffect(() => {
-    var user = users.find((user) => user.id === post.userId);
-    setName(user.username)
+    var user = users.find((user) => user.id === Number(post.userId));
+
+    if (user !== undefined) {
+      setName(user.username)
+    } else {
+      setName("[unknown]")
+    }
+
 
     const temp = getRepliesToFromLocal(posts, post.id);
 
-    setReplies(temp);
+    setReplies(temp.reverse());
 
     setShowSelf(true);
     setShowReplies(true);
@@ -39,9 +45,6 @@ function Thread(props) {
   }, [post.id]);
 
   useEffect(() => {
-    
-
-
     if (newChild) {
       // add a new reply
       setReplies([...replies, newChild]);
@@ -52,6 +55,7 @@ function Thread(props) {
     }
   }, [newChild, replies]);
 
+ 
   return (
     <Collapse in={showSelf}>
       <Stack className={!showReplies & props.main ? "topPostBottom" : ""}>

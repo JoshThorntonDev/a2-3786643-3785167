@@ -32,9 +32,6 @@ function Posts() {
   const { currentUser } = useContext(UserContext);
   const [showModal, setShowModal] = useState(false);
 
-  const [sort, setSort] = useState(false);
-  const [newest, setNewest] = useState(true);
-
   const { reactions } = useContext(ReactionContext);
   const { checkForReactions } = useContext(ReactionContext);
 
@@ -74,7 +71,6 @@ function Posts() {
       setTimeout(() => {
         // in case the db responds extremely quickly, prevent loading animation from looking bad
         setIsLoading(false);
-        setSort(true);
       }, 300);
     }
 
@@ -86,23 +82,16 @@ function Posts() {
       var tempTopPosts = getTopLevelPosts(posts);
 
       setTopPosts(tempTopPosts);
-      setNewest(true)
+
 
       setTimeout(() => {
         // in case the db responds extremely quickly, prevent loading animation from looking bad
         setIsLoading(false);
-        setSort(true);
       }, 300);
     }
   }, [posts]);
 
 
-
-  const toggleSort = () => {
-    setNewest((current) => !current)
-    setTopPosts(topPosts.reverse());
-
-  }
 
   const toggleModal = () => {
     // toggle the edit state
@@ -177,17 +166,7 @@ function Posts() {
                   breakClassName="page-link"
                   activeClassName="active"
                 />
-                <div>
-                  <div>Sorting By:<br></br> {newest ? ("Newest") : ("Oldest")}</div>
 
-                    <Button
-                      variant="dark"
-                      onClick={toggleSort}
-                    >
-                      Change
-                    </Button>
-
-                </div>
               </div>
               {postsToDisplay.map((x) => (
                 <div key={x.id} className="topPost">
