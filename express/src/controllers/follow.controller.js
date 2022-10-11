@@ -13,17 +13,17 @@ exports.all = async (req, res) => {
 exports.allFollowing = async (req, res) => {
   const following = await db.follow.findAll({
     where: {
-      follower: req.params.id,
+      userId: req.params.id,
     },
   });
   res.json(following);
 };
 
-// Select the ids of every user a specific user is following. (For sorting posts)
+// Select the ids of every user that is following the specified user (For seeing who is following you)
 exports.allFollowers = async (req, res) => {
   const followers = await db.follow.findAll({
     where: {
-      following: req.params.id,
+      followingId: req.params.id,
     },
   });
   res.json(followers);
@@ -32,8 +32,8 @@ exports.allFollowers = async (req, res) => {
 // Create a follow relation in the database.
 exports.create = async (req, res) => {
   const follow = await db.follow.create({
-    following: req.body.following,
-    follower: req.body.follower,
+    followingId: req.body.followingId,
+    userId: req.body.userId,
   });
 
   res.json(follow);
