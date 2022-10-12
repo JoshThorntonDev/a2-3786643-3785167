@@ -16,6 +16,7 @@ import Spinner from "react-bootstrap/Spinner";
 //replyId and depth: only needed when in reply mode. integers that specify the depth and ID of the parent post being replied to.
 //user: ID of currently logged in user
 //post: only needed for edit mode. contains fields of the existing post's content so that it can be displayed in the PostCreator
+//default: optional prop that can be used to hand the ReactQuill content element of the form a default value (this is used during things like testing when we can't write in the form)
 
 // this component can create and edit posts. By default, it will only create, but setting type to "EDIT" will put it in editing mode
 function PostCreator(props) {
@@ -186,13 +187,26 @@ function PostCreator(props) {
               {props.type === "EDIT" ? "Update your" : "Enter your"} post here
             </Form.Label>
 
-            <ReactQuill
+            {!props.default ? (
+              //If no default value, render the standard, editable field
+              <ReactQuill
               theme="snow"
               autoFocus
               value={fields.content}
               ref={inputRef}
               onChange={handleContentUpdate}
             />
+            ) : (
+              //If default value provided, pass it to the field
+              <ReactQuill
+              theme="snow"
+              autoFocus
+              defaultValue={props.default}
+              ref={inputRef}
+              onChange={handleContentUpdate}
+            />
+            )}
+            
 
             {getContentLength() <= MAX_LENGTH ? ( // change indicator text to red when exceeded
               <Form.Text muted className="float-end">
