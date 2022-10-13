@@ -17,6 +17,7 @@ db.sequelize = new Sequelize(config.DB, config.USER, config.PASSWORD, {
 db.user = require("./models/user.js")(db.sequelize, DataTypes);
 db.post = require("./models/post.js")(db.sequelize, DataTypes);
 db.reaction = require("./models/reaction.js")(db.sequelize, DataTypes);
+db.follow = require("./models/follow.js")(db.sequelize, DataTypes);
 
 // Relate tables
 
@@ -25,6 +26,9 @@ db.user.hasMany(db.post, {
     allowNull: true
   }
 })
+
+db.user.belongsToMany(db.user, {through: 'follow', as:'following'})
+
 
 db.post.hasOne(db.post, {
   foreignKey: "replyId"
