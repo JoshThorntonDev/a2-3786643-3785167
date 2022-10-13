@@ -60,7 +60,7 @@ async function editUser(user) {
 }
 
 async function getUsers() {
-  const response = await axios.put(API_HOST + `/${USER_KEY}`);
+  const response = await axios.get(API_HOST + `/${USER_KEY}`);
 
   return response.data;
 }
