@@ -13,6 +13,7 @@ import ProfileEditor from "./ProfileEditor";
 import ProfileDeleter from "./ProfileDeleter";
 import Card from "react-bootstrap/Card";
 import { useNavigate } from "react-router-dom";
+import FollowButton from "./FollowButton";
 
 function ProfileCard(props) {
   const [showEdit, setShowEdit] = useState(false); // state for profile edit modal
@@ -65,22 +66,30 @@ function ProfileCard(props) {
         <p>Joined: {getDate()}</p>
       </div>
 
-      {props.isThisMyAccount && ( // only show edit and delete when its the logged in account
-        <div className="edit">
-          <Button onClick={toggleEdit} variant="primary" type="submit">
-            <PencilSquare size={"20"}></PencilSquare> Edit
-          </Button>
+      {
+        props.isThisMyAccount ? (
+          <div className="edit">
+            <Button onClick={toggleEdit} variant="primary" type="submit">
+              <PencilSquare size={"20"}></PencilSquare> Edit
+            </Button>
 
-          <Button onClick={toggleDelete} variant="danger" type="submit">
-            <Trash size={"20"}></Trash> Delete
-          </Button>
-        </div>
-      )}
+            <Button onClick={toggleDelete} variant="danger" type="submit">
+              <Trash size={"20"}></Trash> Delete
+            </Button>
+          </div>
+        ) : (
+          <div>
+            {!props.listed && (
+              <div className="edit">
+                <FollowButton />
+              </div>
+            )}
+          </div>
+        ) // only show edit and delete when its the logged in account
+      }
       {props.listed && ( // only show buttons when profile is being listed
         <div className="edit">
-          <Button variant="primary" type="submit">
-            <PersonPlusFill size={20} /> Follow
-          </Button>
+          <FollowButton />
 
           <Button
             onClick={() => {
