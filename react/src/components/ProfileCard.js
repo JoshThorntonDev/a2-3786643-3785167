@@ -1,15 +1,19 @@
 import "./css/Profile.css";
 import Button from "react-bootstrap/Button";
 
-import { PencilSquare, PersonCircle, Trash } from "react-bootstrap-icons";
+import {
+  PencilSquare,
+  PersonCircle,
+  PersonPlusFill,
+  PersonVideo2,
+  Trash,
+} from "react-bootstrap-icons";
 import { useState } from "react";
 import ProfileEditor from "./ProfileEditor";
 import ProfileDeleter from "./ProfileDeleter";
 import Card from "react-bootstrap/Card";
 
-
 function ProfileCard(props) {
-
   const [showEdit, setShowEdit] = useState(false); // state for profile edit modal
   const [showDelete, setShowDelete] = useState(false); // state for profile delete modal
 
@@ -29,7 +33,6 @@ function ProfileCard(props) {
     return date.toLocaleDateString();
   };
 
-
   return (
     <Card border="secondary" className="profile">
       <ProfileEditor
@@ -39,11 +42,21 @@ function ProfileCard(props) {
         setUser={props.setUser}
       />
 
-      {<ProfileDeleter show={showDelete} toggle={toggleDelete} user={props.user} />}
+      {
+        <ProfileDeleter
+          show={showDelete}
+          toggle={toggleDelete}
+          user={props.user}
+        />
+      }
       <PersonCircle size={"100"} className="image"></PersonCircle>
 
       <div className="information">
-        <h1>{props.user.username}'s Profile</h1>
+        {props.listed ? (
+          <h1>{props.user.username}</h1>
+        ) : (
+          <h1>{props.user.username}'s Profile</h1>
+        )}
         <p>{props.user.email}</p>
         <hr />
         <p>Joined: {getDate()}</p>
@@ -57,6 +70,17 @@ function ProfileCard(props) {
 
           <Button onClick={toggleDelete} variant="danger" type="submit">
             <Trash size={"20"}></Trash> Delete
+          </Button>
+        </div>
+      )}
+      {props.listed && ( // only show buttons when profile is being listed
+        <div className="edit">
+          <Button variant="primary" type="submit">
+            <PersonPlusFill size={20} /> Follow
+          </Button>
+
+          <Button variant="success" type="submit">
+            <PersonVideo2 size={20} /> Profile
           </Button>
         </div>
       )}
