@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import Spinner from "react-bootstrap/Spinner";
-import { defaultProps } from "react-quill";
 import { getUsers } from "../data/dbrepository";
 import PlaceholderPost from "./PlaceholderPost";
 import UserList from "./UserList";

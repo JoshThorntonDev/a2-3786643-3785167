@@ -42,7 +42,7 @@ function Posts() {
 
   useEffect(() => {
     async function loadPosts() {
-      await checkForReactions() // ensure we have the latest copy of reactions
+      await checkForReactions(); // ensure we have the latest copy of reactions
       const currentPosts = await getPosts();
 
       if (sortNewest) {
@@ -84,11 +84,7 @@ function Posts() {
         </Button>
       </div>
       <br></br>
-      <PostCreator
-        show={showModal}
-        toggle={toggleModal}
-        user={currentUser}
-      />
+      <PostCreator show={showModal} toggle={toggleModal} user={currentUser} />
 
       <div>
         {isLoading ? (
@@ -111,6 +107,17 @@ function Posts() {
         ) : (
           <div>
             <div className="d-flex justify-content-between">
+              <Form>
+                <Form.Group>
+                  <Form.Label>
+                    <strong>Posts to display:</strong>
+                  </Form.Label>
+                  <Form.Select>
+                    <option>Following</option>
+                    <option>All Posts</option>
+                  </Form.Select>
+                </Form.Group>
+              </Form>
               <ReactPaginate
                 onPageChange={handlePageClick}
                 pageCount={pageCount}
