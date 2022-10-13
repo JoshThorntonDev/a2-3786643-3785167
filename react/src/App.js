@@ -12,6 +12,7 @@ import UserContext from "./contexts/UserContext";
 import ReactionContext from "./contexts/ReactionContext";
 import { useState } from "react";
 import { getReactions } from "./data/dbrepository";
+import AllUsersList from "./components/AllUsersList";
 
 function App() {
   const [currentUser, setCurrentUser] = useState(
@@ -47,6 +48,8 @@ function App() {
                 <Route path="/register" element={<Register />} />
 
                 <Route path="/profile/:id" element={<Profile />} />
+                <Route path="/profiles" element={<AllUsersList />} />
+
                 <Route path="/posts" element={<Posts />} />
 
                 <Route path="*" element={<Landing />} />
