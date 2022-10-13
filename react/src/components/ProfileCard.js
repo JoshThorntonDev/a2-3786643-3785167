@@ -81,7 +81,7 @@ function ProfileCard(props) {
           <div>
             {!props.listed && (
               <div className="edit">
-                <FollowButton />
+                <FollowButton userId={props.user.id}/>
               </div>
             )}
           </div>
