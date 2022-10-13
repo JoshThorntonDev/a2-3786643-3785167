@@ -9,14 +9,14 @@ function FollowButton(props) {
   const { currentUser } = useContext(UserContext);
 
   const followUser = async () => {
-    console.log(currentUser + " followed " + props.userId);
 
+    //Store the id of the user to be followed, and the current user
     const follow = {
       followingId: props.userId,
       userId: currentUser
     };
-    console.log(follow);
 
+    //Call createFollow method which saves the follow details to db
     await createFollow(follow);
   };
 
