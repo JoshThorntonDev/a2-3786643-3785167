@@ -1,14 +1,16 @@
 import ProfileCard from "./ProfileCard";
 import ReactPaginate from "react-paginate";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import UserContext from "../contexts/UserContext";
 
 function UserList(props) {
+  const { currentUser } = useContext(UserContext);
+
   const [page, setPage] = useState(0);
 
   const handlePageClick = (data) => {
     setPage(data.selected);
   };
-
 
   const pageSize = 6; // number of profiles to display per page
   const pageCount = Math.ceil(props.users.length / pageSize); // finds the number of pages needed to fit all profiles
@@ -34,8 +36,14 @@ function UserList(props) {
         activeClassName="active"
       />
       {profilesToDisplay.map((user) => (
-        <div key={user.id}>
-          <ProfileCard user={user} listed={true}/>
+        <div>
+          {user.id !== Number(currentUser) ? ( // dont list current user
+            <div key={user.id}>
+              <ProfileCard user={user} listed={true} />
+            </div>
+          ) : (
+            <div></div>
+          )}
         </div>
       ))}
     </div>
