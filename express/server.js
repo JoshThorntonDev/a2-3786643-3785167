@@ -25,6 +25,7 @@ app.get("/", (req, res) => {
 require("./src/routes/user.routes.js")(express, app);
 require("./src/routes/post.routes.js")(express, app);
 require("./src/routes/reaction.routes.js")(express, app);
+require("./src/routes/follow.routes.js")(express, app);
 
 //// Set port, listen for requests.
 const PORT = 4000;
