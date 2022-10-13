@@ -21,5 +21,5 @@ module.exports = (express, app) => {
   router.delete("/:id", controller.delete);
 
   // Add routes to server.
-  app.use("/api/follow", router);
+  app.use("/api/follows", router);
 };
