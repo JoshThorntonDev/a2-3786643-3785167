@@ -27,6 +27,9 @@ beforeEach(() => {
 //This test checks all the input elements of the login component, and then
 //clicks the submit button and makes sure the form was submitted successfully
 test("Login form", () => {
+    //Assert that login form has rendered correctly by checking the heading
+    expect(screen.getByText("Sign In")).toBeInTheDocument();
+
     //Get email and password form input elements
     const email = screen.getByPlaceholderText("email@example.com");
     const password = screen.getByPlaceholderText("Password here");

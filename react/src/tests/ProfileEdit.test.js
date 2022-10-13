@@ -28,6 +28,9 @@ beforeAll( () => {
 //This test checks all the inputs of the Edit Profile form, ensures that the values
 //are updated correctly, and ensures that the form can be submitted once form has been filled out
 test("Profile Name Change Form", () => {
+    //Assert that ProfileEditor form has rendered correctly by checking the heading
+    expect(screen.getByText("Profile Editor")).toBeInTheDocument();
+
     //Get username edit field and update it
     const name = screen.getByPlaceholderText('Test User')
     fireEvent.change(name, { target: { value: "New Name" } });

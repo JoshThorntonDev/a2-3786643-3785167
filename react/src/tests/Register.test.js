@@ -29,6 +29,9 @@ beforeEach(() => {
 //This test checks all the inputs of the registration form, clicks
 //the submit button, and ensures that the form was submitted successfully
 test("Register Form", () => {
+    //Assert that register form has rendered correctly by checking the heading
+    expect(screen.getByText("Sign Up")).toBeInTheDocument();
+
     //Get username, email and password input elements
     const username = screen.getByPlaceholderText("name");
     const email = screen.getByPlaceholderText("email");

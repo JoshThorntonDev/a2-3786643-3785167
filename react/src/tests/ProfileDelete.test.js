@@ -30,6 +30,9 @@ beforeAll( () => {
 //This test checks the inputs of the ProfileDeleter form, clicks the
 //submit button, and asserts that the form was submitted successfully
 test("Delete User", () => {
+    //Assert that ProfileDeleter form has rendered correctly by checking the heading
+    expect(screen.getByText("Deleting Test User's Profile")).toBeInTheDocument();
+
     //Get password verification field and fill it in
     const password = screen.getByPlaceholderText('Enter your password here')
     fireEvent.change(password, { target: { value: "password1!" } });
