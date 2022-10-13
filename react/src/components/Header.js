@@ -25,6 +25,7 @@ function Header() {
         <Navbar.Collapse className="justify-content-end">
           {currentUser && (
             <div>
+
               <Button
                 variant="success"
                 onClick={() => {
@@ -34,6 +35,16 @@ function Header() {
                 }}
               >
                 Feed
+              </Button>
+              <Button
+                variant="warning"
+                onClick={() => {
+                  navigate("/profiles", {
+                    replace: false,
+                  });
+                }}
+              >
+                Users
               </Button>
               <Button
                 variant="primary"
