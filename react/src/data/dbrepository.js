@@ -59,6 +59,12 @@ async function editUser(user) {
   return response.data;
 }
 
+async function getUsers() {
+  const response = await axios.put(API_HOST + `/${USER_KEY}`);
+
+  return response.data;
+}
+
 // --- Follow Methods -----------------------------------------------------------------------------------
 
 async function getFollows() {
@@ -178,6 +184,7 @@ export {
   findUserByEmail,
   deleteUser,
   editUser,
+  getUsers,
   getFollows,
   findFollowedUsers,
   findFollowingUsers,
