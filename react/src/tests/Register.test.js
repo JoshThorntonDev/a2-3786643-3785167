@@ -1,4 +1,4 @@
-//Tests for register page
+//Tests for register component
 
 import {render, screen, fireEvent } from "@testing-library/react";
 import Register from "../components/Register";
@@ -13,6 +13,7 @@ const login = (id) => {
     localStorage.setItem("currentUser", id);
 };
 
+//Render the register component
 beforeEach(() => {
     const utils = render(
     <UserContext.Provider value={{ login, NAME_LENGTH }}>
@@ -25,6 +26,8 @@ beforeEach(() => {
 });
 
 //Test the registration form
+//This test checks all the inputs of the registration form, clicks
+//the submit button, and ensures that the form was submitted successfully
 test("Register Form", () => {
     //Get username, email and password input elements
     const username = screen.getByPlaceholderText("name");
@@ -46,11 +49,15 @@ test("Register Form", () => {
     //Simulate click on submit button
     fireEvent.click(button);
 
-    //Assert that "Creating" appears in the document after form is submitted
+    //Assert that "Creating" appears, indicating that handleSubmit was called
     expect(screen.getByText("Creating")).toBeInTheDocument();    
 });
 
 //Test the validate function used in the registration page
+//This test runs the validate function various times, passing a user object
+//with invalid details to make sure it picks up on the errors such as 
+//missing information or weak password. Finally, it passes in a valid user
+//and ensures that no error message is returned, as it has passed validation
 test("Validate Function", () => {
     //Create an invalid user (missing name and email, invalid password)
     const user = {
@@ -80,7 +87,7 @@ test("Validate Function", () => {
     //Give the user a valid password
     user.password = "testpass1!";
 
-    //Expect validate to return no error message as user is valid
+    //Expect validate to return no error message as user information is valid
     validateMsg = validate(user, NAME_LENGTH);
     expect(validateMsg).toBe("");
 });

@@ -1,4 +1,4 @@
-//Tests for login page
+//Tests for login component
 
 import {render, screen, fireEvent } from "@testing-library/react";
 import Login from "../components/Login.js";
@@ -11,6 +11,7 @@ const login = (id) => {
     localStorage.setItem("currentUser", id);
 };
 
+//Render the Login component
 beforeEach(() => {
     const utils = render(
         <UserContext.Provider value={{ login }}>
@@ -23,6 +24,8 @@ beforeEach(() => {
 });
 
 //Test the user login form
+//This test checks all the input elements of the login component, and then
+//clicks the submit button and makes sure the form was submitted successfully
 test("Login form", () => {
     //Get email and password form input elements
     const email = screen.getByPlaceholderText("email@example.com");
@@ -41,6 +44,6 @@ test("Login form", () => {
     //Simulate click on submit button
     fireEvent.click(button);
 
-    //Assert that "Loading" appears in the document after form is submitted
+    //Assert that "Loading" message appears, indicating the attemptLogin function was called
     expect(screen.getByText("Loading")).toBeInTheDocument(); 
 });

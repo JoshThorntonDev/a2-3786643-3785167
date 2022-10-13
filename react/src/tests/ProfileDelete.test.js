@@ -12,6 +12,7 @@ const user = {
     email: "testuser@email.com",
 }
 
+//Render ProfileDeleter component
 beforeAll( () => {
     const utils = render(
     <UserContext.Provider value={{ NAME_LENGTH }}>
@@ -26,6 +27,8 @@ beforeAll( () => {
     container = utils.container;
 });
 //Test ProfileDelter form
+//This test checks the inputs of the ProfileDeleter form, clicks the
+//submit button, and asserts that the form was submitted successfully
 test("Delete User", () => {
     //Get password verification field and fill it in
     const password = screen.getByPlaceholderText('Enter your password here')
@@ -39,6 +42,6 @@ test("Delete User", () => {
     //Simulate a click on delete button
     fireEvent.click(button)
 
-    //Expect "Deleting" button to appear after submitting
+    //Expect "Deleting" button to appear after submitting, indicating that attemptSave has been called
     expect(screen.getByText("Deleting")).toBeInTheDocument();
 });
