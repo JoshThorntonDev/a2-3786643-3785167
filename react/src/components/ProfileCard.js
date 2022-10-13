@@ -89,7 +89,9 @@ function ProfileCard(props) {
       }
       {props.listed && ( // only show buttons when profile is being listed
         <div className="edit">
-          <FollowButton />
+          <FollowButton
+            userId={props.user.id}
+          />
 
           <Button
             onClick={() => {
