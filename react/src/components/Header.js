@@ -5,6 +5,7 @@ import Container from "react-bootstrap/Container";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import UserContext from "../contexts/UserContext";
+import { DoorClosed, PeopleFill, PersonVideo2, ViewList } from "react-bootstrap-icons";
 
 function Header() {
   const navigate = useNavigate();
@@ -34,17 +35,17 @@ function Header() {
                   });
                 }}
               >
-                Feed
+                <ViewList size={20}/> Feed
               </Button>
               <Button
-                variant="warning"
+                variant="light"
                 onClick={() => {
                   navigate("/profiles", {
                     replace: false,
                   });
                 }}
               >
-                Users
+                <PeopleFill size={20} /> Users
               </Button>
               <Button
                 variant="primary"
@@ -54,7 +55,7 @@ function Header() {
                   });
                 }}
               >
-                My Profile
+                <PersonVideo2 size={20}/> My Profile
               </Button>
             </div>
           )}
@@ -69,7 +70,7 @@ function Header() {
                 });
               }}
             >
-              Logout
+              <DoorClosed size={20}/> Logout
             </Button>
           ) : (
             <div>

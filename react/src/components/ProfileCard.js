@@ -12,10 +12,13 @@ import { useState } from "react";
 import ProfileEditor from "./ProfileEditor";
 import ProfileDeleter from "./ProfileDeleter";
 import Card from "react-bootstrap/Card";
+import { useNavigate } from "react-router-dom";
 
 function ProfileCard(props) {
   const [showEdit, setShowEdit] = useState(false); // state for profile edit modal
   const [showDelete, setShowDelete] = useState(false); // state for profile delete modal
+
+  const navigate = useNavigate();
 
   const toggleEdit = () => {
     // toggle the edit state
@@ -79,7 +82,15 @@ function ProfileCard(props) {
             <PersonPlusFill size={20} /> Follow
           </Button>
 
-          <Button variant="success" type="submit">
+          <Button
+            onClick={() => {
+              navigate(`/profile/${props.user.id}`, {
+                replace: false,
+              });
+            }}
+            variant="success"
+            type="submit"
+          >
             <PersonVideo2 size={20} /> Profile
           </Button>
         </div>
