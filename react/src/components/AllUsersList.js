@@ -5,6 +5,8 @@ import PlaceholderPost from "./PlaceholderPost";
 import UserList from "./UserList";
 import UserContext from "../contexts/UserContext";
 import "./css/Profile.css";
+import Form from "react-bootstrap/Form";
+import ReactPaginate from "react-paginate";
 
 function AllUsersList() {
   const [allUsers, setAllUsers] = useState([]);
@@ -15,10 +17,10 @@ function AllUsersList() {
 
   const changeShowType = (type) => {
     setShowType(type);
+    setIsLoading(true);
   };
 
   useEffect(() => {
-    setIsLoading(true);
     async function getAllUsers() {
       const users = await getUsers();
 
@@ -47,11 +49,12 @@ function AllUsersList() {
           const temp = await findUser(user.followingId);
           usersToSet.push(temp);
         });
+        setAllUsers(usersToSet);
       }
 
-      setAllUsers(usersToSet);
-
-      setIsLoading(false);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 100);
     }
 
     if (showType === "all") {
@@ -61,9 +64,18 @@ function AllUsersList() {
     if (showType === "following") {
       getFollowedUsers();
     }
-
-    setIsLoading(false);
   }, [showType, currentUser]);
+
+  const [page, setPage] = useState(0);
+
+  const handlePageClick = (data) => {
+    setPage(data.selected);
+  };
+
+  const pageSize = 6; // number of profiles to display per page
+  const pageCount = Math.ceil(allUsers.length / pageSize); // finds the number of pages needed to fit all profiles
+  const offset = page * pageSize; // keeps track of where the first profile of each page is
+  const profilesToDisplay = allUsers.slice(offset, offset + pageSize); // selects only the profiles on the current page
 
   return (
     <div>
@@ -71,8 +83,37 @@ function AllUsersList() {
       <p>
         Here, you can find new users to follow, or see who you're currently
         following.
-      </p>
+      </p>{" "}
+      <div className="d-flex justify-content-between">
+        <ReactPaginate
+          onPageChange={handlePageClick}
+          pageCount={pageCount}
+          marginPagesDisplayed={2}
+          pageRangeDisplayed={5}
+          previousLabel="Previous"
+          nextLabel="Next"
+          breakLabel="..."
+          containerClassName="pagination"
+          pageClassName="page-item"
+          pageLinkClassName="page-link"
+          previousLinkClassName="page-link"
+          nextLinkClassName="page-link"
+          breakClassName="page-link"
+          activeClassName="active"
+        />
 
+        <Form>
+          <Form.Group>
+            <Form.Label>
+              <strong>Show:</strong>
+            </Form.Label>
+            <Form.Select onChange={(e) => changeShowType(e.target.value)}>
+              <option value="all">All Users</option>
+              <option value="following">Followed Users</option>
+            </Form.Select>
+          </Form.Group>
+        </Form>
+      </div>
       <div>
         {isLoading ? (
           <div className="fade-in d-flex justify-content-center">
@@ -90,11 +131,7 @@ function AllUsersList() {
             </div>
           </div>
         ) : (
-          <UserList
-            showType={showType}
-            change={changeShowType}
-            users={allUsers}
-          ></UserList>
+          <UserList profilesToDisplay={profilesToDisplay}></UserList>
         )}
       </div>
     </div>
