@@ -3,7 +3,7 @@ import Button from "react-bootstrap/Button";
 import Navbar from "react-bootstrap/Navbar";
 import Container from "react-bootstrap/Container";
 import { useNavigate } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import UserContext from "../contexts/UserContext";
 import {
   DoorClosed,
@@ -12,17 +12,30 @@ import {
   ViewList,
 } from "react-bootstrap-icons";
 import React, { useState } from "react";
-
+import { useLocation } from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 
 function Header() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const loggedOutPaths = ['/', '/login', '/register'] // urls that logged out users are allowed to access
+
   const { currentUser, logout } = useContext(UserContext);
 
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+  // check if user should be allowed on this page
+  useEffect(() => {
+    if (!currentUser) {
+      if (!loggedOutPaths.includes(location.pathname)) {
+        navigate("/login");
+      }
+    }
+  })
 
   return (
     <Navbar className="headerNav" bg="dark" variant="dark">
