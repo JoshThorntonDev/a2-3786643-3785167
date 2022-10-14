@@ -1,4 +1,4 @@
-import { getPosts } from "../data/dbrepository";
+import { findFollowedUsers, getPosts } from "../data/dbrepository";
 import Button from "react-bootstrap/Button";
 import { useContext, useEffect, useState } from "react";
 import "./css/Posts.css";
@@ -26,13 +26,7 @@ function Posts() {
   const { reactions } = useContext(ReactionContext);
   const { checkForReactions } = useContext(ReactionContext);
 
-  /*const [post, setPost] = useState({
-    userId: currentUser,
-    content: "",
-    image: "",
-    replyId: null,
-    depth: 0,
-  }); */
+  const [showType, setShowType] = useState('following')
 
   useEffect(() => {
     if (reactions.length === 0) {
@@ -43,13 +37,27 @@ function Posts() {
   useEffect(() => {
     async function loadPosts() {
       await checkForReactions(); // ensure we have the latest copy of reactions
-      const currentPosts = await getPosts();
 
-      if (sortNewest) {
-        setPosts(currentPosts);
-      } else {
-        setPosts(currentPosts.reverse());
+
+      var currentPosts = await getPosts();
+
+      if (!sortNewest) {
+        currentPosts = currentPosts.reverse()
       }
+
+      if (showType === 'following') {
+        var follows = await findFollowedUsers(Number(currentUser))
+
+        var ids = []
+        follows.forEach(follow => {
+          ids.push(follow.followingId)
+        });
+        console.log(ids)
+
+        currentPosts = currentPosts.filter((post) => ids.includes(post.userId));
+      }
+
+      setPosts(currentPosts)
 
       setTimeout(() => {
         // in case the db responds extremely quickly, prevent loading animation from looking bad
@@ -58,7 +66,7 @@ function Posts() {
     }
 
     loadPosts();
-  }, [showModal, sortNewest]); // if modal or sort order gets toggled, reload the posts
+  }, [showModal, sortNewest, showType]); // if modal or sort order gets toggled, reload the posts
 
   const toggleModal = () => {
     // toggle the edit state
@@ -87,34 +95,15 @@ function Posts() {
       <PostCreator show={showModal} toggle={toggleModal} user={currentUser} />
 
       <div>
-        {isLoading ? (
-          <div className="d-flex justify-content-center">
-            <div>
-              <Spinner animation="border" role="status">
-                <span className="visually-hidden">Loading...</span>
-              </Spinner>{" "}
-              Loading posts
-              <br></br>
-              <PlaceholderPost />
-              <br></br>
-              <PlaceholderPost />
-              <br></br>
-              <PlaceholderPost />
-            </div>
-          </div>
-        ) : posts.length === 0 ? (
-          <span className="text-muted">No posts have been submitted.</span>
-        ) : (
-          <div>
-            <div className="d-flex justify-content-between">
-              <Form onChange={(e) => console.log(e.target.value)}>
+      <div className="d-flex justify-content-between">
+              <Form onChange={(e) => setShowType(e.target.value)}>
                 <Form.Group>
                   <Form.Label>
-                    <strong>Posts to display:</strong>
+                    <strong>Display posts from:</strong>
                   </Form.Label>
                   <Form.Select>
-                    <option value="following">Following</option>
-                    <option value="all">All Posts</option>
+                    <option value="following">Followed Users</option>
+                    <option value="all">Everyone</option>
                   </Form.Select>
                 </Form.Group>
               </Form>
@@ -150,6 +139,26 @@ function Posts() {
                 </Form>
               </div>
             </div>
+        {isLoading ? (
+          <div className="d-flex justify-content-center">
+            <div>
+              <Spinner animation="border" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </Spinner>{" "}
+              Loading posts
+              <br></br>
+              <PlaceholderPost />
+              <br></br>
+              <PlaceholderPost />
+              <br></br>
+              <PlaceholderPost />
+            </div>
+          </div>
+        ) : posts.length === 0 ? (
+          <div className="text-muted text-center">No posts were found.</div>
+        ) : (
+          <div>
+
             {postsToDisplay.map((x) => (
               <div key={x.id} className="topPost">
                 <Thread post={x} main={true} />
