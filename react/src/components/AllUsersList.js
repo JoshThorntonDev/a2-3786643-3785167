@@ -1,21 +1,34 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import Spinner from "react-bootstrap/Spinner";
-import { getUsers } from "../data/dbrepository";
+import { getFollows, getUsers } from "../data/dbrepository";
 import PlaceholderPost from "./PlaceholderPost";
 import UserList from "./UserList";
+import UserContext from "../contexts/UserContext";
 
 function AllUsersList() {
   const [allUsers, setAllUsers] = useState([]);
+  const [allFollows, setAllFollows] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { currentUser } = useContext(UserContext);
 
   useEffect(() => {
+
     async function getAllUsers() {
       const users = await getUsers();
+      const follows = await getFollows()
+
       if (users !== null) {
         var usersToSet = users.filter((user) => user.id > 100); 
         // dont display users with id under 100, reserved for admin use and special cases
 
         setAllUsers(usersToSet);
+      }
+
+      if (follows !== null) {
+        var followsToSet = follows.filter((follow) => follow.userId === Number(currentUser)); 
+
+
+        setAllFollows(followsToSet);
       }
 
       setTimeout(() => {

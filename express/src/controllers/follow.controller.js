@@ -9,20 +9,9 @@ exports.all = async (req, res) => {
   res.json(follow);
 };
 
-// Select one follow from the database.
-exports.one = async (req, res) => {
-  const follow = await db.follow.findOne({
-    where: {
-      userId: req.body.userId,
-      followingId: req.body.followingId,
-    },
-  });
-  res.json(follow);
-};
-
 // Select the ids of every user a specific user is following. (For sorting posts)
 exports.allFollowing = async (req, res) => {
-  const following = await db.follow.findOne({
+  const following = await db.follow.findAll({
     where: {
       userId: req.params.id,
     },

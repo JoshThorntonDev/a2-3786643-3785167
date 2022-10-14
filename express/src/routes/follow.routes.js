@@ -8,9 +8,6 @@ module.exports = (express, app) => {
   // Select all follow relations.
   router.get("/", controller.all);
 
-  // Select all follow relations.
-  router.get("/one", controller.all);
-
   // Select the ids of every user a specific user is following. (For sorting posts)
   router.get("/user/:id", controller.allFollowing);
 

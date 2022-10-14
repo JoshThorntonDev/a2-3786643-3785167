@@ -2,7 +2,7 @@ import Button from "react-bootstrap/Button";
 import { PersonPlusFill, PersonDashFill } from "react-bootstrap-icons";
 import { useContext, useEffect, useState } from "react";
 import UserContext from "../contexts/UserContext";
-import { createFollow, deleteFollow } from "../data/dbrepository.js";
+import { createFollow, deleteFollow, findFollowedUsers, getFollows } from "../data/dbrepository.js";
 
 function FollowButton(props) {
   const { currentUser } = useContext(UserContext);
@@ -18,18 +18,20 @@ function FollowButton(props) {
 
     //Call createFollow method which saves the follow details to db
     await createFollow(follow);
+
+    setFollowing(true)
   };
 
   const unfollowUser = async () => {
+    const follows = await findFollowedUsers(Number(currentUser))
 
-    const follow = {
-      followingId: props.userId,
-      userId: currentUser,
-    };
+    // find the follow that relates to the current user and this particular button
+    var temp = follows.find(
+      (follow) => follow.userId === Number(currentUser) && follow.followingId === props.userId
+    );
 
-
-    await deleteFollow(follow);
-
+    await deleteFollow(temp.id);
+      setFollowing(false)
   };
 
 

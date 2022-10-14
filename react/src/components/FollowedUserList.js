@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import Spinner from "react-bootstrap/Spinner";
-import { getUsers } from "../data/dbrepository";
 import PlaceholderPost from "./PlaceholderPost";
 import UserList from "./UserList";
 

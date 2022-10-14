@@ -36,9 +36,9 @@ function UserList(props) {
         activeClassName="active"
       />
       {profilesToDisplay.map((user) => (
-        <div>
+        <div key={user.id}>
           {user.id !== Number(currentUser) ? ( // dont list current user
-            <div key={user.id}>
+            <div>
               <ProfileCard user={user} listed={true} />
             </div>
           ) : (
