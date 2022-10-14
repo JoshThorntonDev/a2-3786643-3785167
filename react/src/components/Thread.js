@@ -43,7 +43,7 @@ function Thread(props) {
       }
       
     }
-  }, [newChild, replies]);
+  }, [newChild, replies, props.main]);
   
 
   return (

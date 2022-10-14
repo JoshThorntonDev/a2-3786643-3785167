@@ -4,7 +4,6 @@ import Button from "react-bootstrap/Button";
 import {
   PencilSquare,
   PersonCircle,
-  PersonPlusFill,
   PersonVideo2,
   Trash,
 } from "react-bootstrap-icons";

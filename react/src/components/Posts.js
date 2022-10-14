@@ -58,10 +58,7 @@ function Posts() {
 
       setPosts(currentPosts);
 
-      setTimeout(() => {
-        // in case the db responds extremely quickly, prevent loading animation from looking bad
-        setIsLoading(false);
-      }, 300);
+      setIsLoading(false);
     }
 
     loadPosts();
@@ -142,7 +139,7 @@ function Posts() {
           </div>
         </div>
         {isLoading ? (
-          <div className="d-flex justify-content-center">
+          <div className="fade-in d-flex justify-content-center">
             <div>
               <Spinner animation="border" role="status">
                 <span className="visually-hidden">Loading...</span>

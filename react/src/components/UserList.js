@@ -65,7 +65,7 @@ function UserList(props) {
         </div>
       ) : (
         <div className="text-muted text-center">
-          No followed user profiles were found
+          No user profiles were found
         </div>
       )}
     </div>

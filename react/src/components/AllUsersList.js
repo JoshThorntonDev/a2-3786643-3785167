@@ -1,14 +1,10 @@
 import { useEffect, useState, useContext } from "react";
 import Spinner from "react-bootstrap/Spinner";
-import {
-  findFollowedUsers,
-  findUser,
-  getFollows,
-  getUsers,
-} from "../data/dbrepository";
+import { findFollowedUsers, findUser, getUsers } from "../data/dbrepository";
 import PlaceholderPost from "./PlaceholderPost";
 import UserList from "./UserList";
 import UserContext from "../contexts/UserContext";
+import "./css/Profile.css";
 
 function AllUsersList() {
   const [allUsers, setAllUsers] = useState([]);
@@ -38,10 +34,7 @@ function AllUsersList() {
         setAllUsers(usersToSet);
       }
 
-      setTimeout(() => {
-        // in case the db responds extremely quickly, prevent loading animation from looking bad
-        setIsLoading(false);
-      }, 300);
+      setIsLoading(false);
     }
 
     async function getFollowedUsers() {
@@ -58,10 +51,7 @@ function AllUsersList() {
 
       setAllUsers(usersToSet);
 
-      setTimeout(() => {
-        // in case the db responds extremely quickly, prevent loading animation from looking bad
-        setIsLoading(false);
-      }, 300);
+      setIsLoading(false);
     }
 
     if (showType === "all") {
@@ -72,11 +62,8 @@ function AllUsersList() {
       getFollowedUsers();
     }
 
-    setTimeout(() => {
-      // in case the db responds extremely quickly, prevent loading animation from looking bad
-      setIsLoading(false);
-    }, 100);
-  }, [showType]);
+    setIsLoading(false);
+  }, [showType, currentUser]);
 
   return (
     <div>
@@ -88,7 +75,7 @@ function AllUsersList() {
 
       <div>
         {isLoading ? (
-          <div className="d-flex justify-content-center">
+          <div className="fade-in d-flex justify-content-center">
             <div>
               <Spinner animation="border" role="status">
                 <span className="visually-hidden">Loading...</span>

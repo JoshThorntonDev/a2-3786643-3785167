@@ -69,6 +69,9 @@ function Profile() {
     if (reactions.length === 0) {
       checkForReactions();
     }
+
+    // this removes the warning that checkForReactions isnt a dependency, because adding it would cause an infinite loop
+    // eslint-disable-next-line
   }, [id, updated]);
 
 
@@ -86,7 +89,7 @@ function Profile() {
   return (
     <div>
       {isLoading ? (
-        <div className="d-flex justify-content-center">
+        <div className="fade-in d-flex justify-content-center">
           <div>
             <Spinner animation="border" role="status">
               <span className="visually-hidden">Loading...</span>
