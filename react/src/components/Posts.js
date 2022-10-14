@@ -26,7 +26,7 @@ function Posts() {
   const { reactions } = useContext(ReactionContext);
   const { checkForReactions } = useContext(ReactionContext);
 
-  const [showType, setShowType] = useState('following')
+  const [showType, setShowType] = useState("all");
 
   useEffect(() => {
     if (reactions.length === 0) {
@@ -38,26 +38,25 @@ function Posts() {
     async function loadPosts() {
       await checkForReactions(); // ensure we have the latest copy of reactions
 
-
       var currentPosts = await getPosts();
 
       if (!sortNewest) {
-        currentPosts = currentPosts.reverse()
+        currentPosts = currentPosts.reverse();
       }
 
-      if (showType === 'following') {
-        var follows = await findFollowedUsers(Number(currentUser))
+      if (showType === "following") {
+        var follows = await findFollowedUsers(Number(currentUser));
 
-        var ids = []
-        follows.forEach(follow => {
-          ids.push(follow.followingId)
+        var ids = [];
+        follows.forEach((follow) => {
+          ids.push(follow.followingId);
         });
-        console.log(ids)
+        console.log(ids);
 
         currentPosts = currentPosts.filter((post) => ids.includes(post.userId));
       }
 
-      setPosts(currentPosts)
+      setPosts(currentPosts);
 
       setTimeout(() => {
         // in case the db responds extremely quickly, prevent loading animation from looking bad
@@ -95,50 +94,53 @@ function Posts() {
       <PostCreator show={showModal} toggle={toggleModal} user={currentUser} />
 
       <div>
-      <div className="d-flex justify-content-between">
-              <Form onChange={(e) => setShowType(e.target.value)}>
-                <Form.Group>
-                  <Form.Label>
-                    <strong>Display posts from:</strong>
-                  </Form.Label>
-                  <Form.Select>
-                    <option value="following">Followed Users</option>
-                    <option value="all">Everyone</option>
-                  </Form.Select>
-                </Form.Group>
-              </Form>
-              <ReactPaginate
-                onPageChange={handlePageClick}
-                pageCount={pageCount}
-                marginPagesDisplayed={2}
-                pageRangeDisplayed={5}
-                previousLabel="Previous"
-                nextLabel="Next"
-                breakLabel="..."
-                containerClassName="pagination"
-                pageClassName="page-item"
-                pageLinkClassName="page-link"
-                previousLinkClassName="page-link"
-                nextLinkClassName="page-link"
-                breakClassName="page-link"
-                activeClassName="active"
-              />
-              <div>
-                <Form>
-                  <Form.Group>
-                    <Form.Label>
-                      <strong>Sort by:</strong>
-                    </Form.Label>
-                    <Form.Select
-                      onChange={(e) => setSortNewest((current) => !current)}
-                    >
-                      <option>Newest First</option>
-                      <option>Oldest First</option>
-                    </Form.Select>
-                  </Form.Group>
-                </Form>
-              </div>
-            </div>
+        <div className="d-flex justify-content-between">
+          <Form onChange={(e) => setShowType(e.target.value)}>
+            <Form.Group>
+              <Form.Label>
+                <strong>Display posts from:</strong>
+              </Form.Label>
+              <Form.Select>
+                <option value="all">Everyone</option>
+                <option value="following">Followed Users</option>
+              </Form.Select>
+            </Form.Group>
+          </Form>
+          {posts.length !== 0 && (
+            <ReactPaginate
+              onPageChange={handlePageClick}
+              pageCount={pageCount}
+              marginPagesDisplayed={2}
+              pageRangeDisplayed={5}
+              previousLabel="Previous"
+              nextLabel="Next"
+              breakLabel="..."
+              containerClassName="pagination"
+              pageClassName="page-item"
+              pageLinkClassName="page-link"
+              previousLinkClassName="page-link"
+              nextLinkClassName="page-link"
+              breakClassName="page-link"
+              activeClassName="active"
+            />
+          )}
+
+          <div>
+            <Form>
+              <Form.Group>
+                <Form.Label>
+                  <strong>Sort by:</strong>
+                </Form.Label>
+                <Form.Select
+                  onChange={(e) => setSortNewest((current) => !current)}
+                >
+                  <option>Newest First</option>
+                  <option>Oldest First</option>
+                </Form.Select>
+              </Form.Group>
+            </Form>
+          </div>
+        </div>
         {isLoading ? (
           <div className="d-flex justify-content-center">
             <div>
@@ -158,7 +160,6 @@ function Posts() {
           <div className="text-muted text-center">No posts were found.</div>
         ) : (
           <div>
-
             {postsToDisplay.map((x) => (
               <div key={x.id} className="topPost">
                 <Thread post={x} main={true} />
