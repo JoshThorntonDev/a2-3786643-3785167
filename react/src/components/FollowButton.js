@@ -6,7 +6,6 @@ import {
   createFollow,
   deleteFollow,
   findFollowedUsers,
-  getFollows,
 } from "../data/dbrepository.js";
 
 
@@ -68,8 +67,7 @@ function FollowButton(props) {
     <div>
       {following === undefined ? (
         <Button variant="outline-secondary" disabled>
-          {" "} 
-          <PersonPlusFill size={20} /> {" "}
+          &nbsp;
         </Button>
       ) : (
         <div>

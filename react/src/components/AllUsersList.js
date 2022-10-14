@@ -12,7 +12,7 @@ import UserContext from "../contexts/UserContext";
 
 function AllUsersList() {
   const [allUsers, setAllUsers] = useState([]);
-  const [allFollows, setAllFollows] = useState([]);
+  const [setAllFollows] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const { currentUser } = useContext(UserContext);
   const [showType, setShowType] = useState("all"); // show type can be 'all' or 'following'
@@ -22,7 +22,7 @@ function AllUsersList() {
   };
 
   useEffect(() => {
-    setIsLoading(true)
+    setIsLoading(true);
     async function getAllUsers() {
       const users = await getUsers();
       const follows = await getFollows();
@@ -30,6 +30,11 @@ function AllUsersList() {
       if (users !== null) {
         var usersToSet = users.filter((user) => user.id > 100);
         // dont display users with id under 100, reserved for admin use and special cases
+
+        // dont display the currently logged in user
+        usersToSet = usersToSet.filter(
+          (user) => user.id !== Number(currentUser)
+        );
 
         setAllUsers(usersToSet);
       }
@@ -83,6 +88,11 @@ function AllUsersList() {
     if (showType === "following") {
       getFollowedUsers();
     }
+
+    setTimeout(() => {
+      // in case the db responds extremely quickly, prevent loading animation from looking bad
+      setIsLoading(false);
+    }, 100);
   }, [showType]);
 
   return (
@@ -110,7 +120,11 @@ function AllUsersList() {
             </div>
           </div>
         ) : (
-          <UserList showType={showType} change={changeShowType} users={allUsers}></UserList>
+          <UserList
+            showType={showType}
+            change={changeShowType}
+            users={allUsers}
+          ></UserList>
         )}
       </div>
     </div>
