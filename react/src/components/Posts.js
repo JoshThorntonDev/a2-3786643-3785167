@@ -154,7 +154,7 @@ function Posts() {
             </div>
           </div>
         ) : posts.length === 0 ? (
-          <div className="text-muted text-center">No posts were found.</div>
+          <div className="fade-in text-muted text-center"><h4>No posts were found.</h4></div>
         ) : (
           <div>
             {postsToDisplay.map((x) => (

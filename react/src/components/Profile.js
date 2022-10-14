@@ -112,7 +112,7 @@ function Profile() {
 
           {posts.length === 0 ? (
             <div className="d-flex justify-content-center">
-              <h5 className="text-muted">No posts found</h5>
+              <h4 className="fade-in text-muted">No posts found</h4>
             </div>
           ) : (
             <div>
