@@ -89,6 +89,18 @@ async function findFollowingUsers(id) {
   return response.data;
 }
 
+async function getFollow(userId, followingId) {
+
+  const follow = {
+    userId: userId,
+    followingId: followingId,
+  };
+
+  const response = await axios.put(API_HOST + `/${FOLLOW_KEY}/one`, follow);
+
+  return response;
+}
+
 async function createFollow(follow) {
   const response = await axios.post(API_HOST + `/${FOLLOW_KEY}`, follow);
   return response.data;
@@ -186,6 +198,7 @@ export {
   editUser,
   getUsers,
   getFollows,
+  getFollow,
   findFollowedUsers,
   findFollowingUsers,
   createFollow,
