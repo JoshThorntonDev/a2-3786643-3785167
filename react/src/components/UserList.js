@@ -2,6 +2,7 @@ import ProfileCard from "./ProfileCard";
 import ReactPaginate from "react-paginate";
 import { useContext, useState } from "react";
 import UserContext from "../contexts/UserContext";
+import Form from "react-bootstrap/Form";
 
 function UserList(props) {
   const { currentUser } = useContext(UserContext);
@@ -19,33 +20,53 @@ function UserList(props) {
 
   return (
     <div>
-      <ReactPaginate
-        onPageChange={handlePageClick}
-        pageCount={pageCount}
-        marginPagesDisplayed={2}
-        pageRangeDisplayed={5}
-        previousLabel="Previous"
-        nextLabel="Next"
-        breakLabel="..."
-        containerClassName="pagination"
-        pageClassName="page-item"
-        pageLinkClassName="page-link"
-        previousLinkClassName="page-link"
-        nextLinkClassName="page-link"
-        breakClassName="page-link"
-        activeClassName="active"
-      />
-      {profilesToDisplay.map((user) => (
-        <div key={user.id}>
-          {user.id !== Number(currentUser) ? ( // dont list current user
-            <div>
-              <ProfileCard user={user} listed={true} />
+      <div className="d-flex justify-content-between">
+        <ReactPaginate
+          onPageChange={handlePageClick}
+          pageCount={pageCount}
+          marginPagesDisplayed={2}
+          pageRangeDisplayed={5}
+          previousLabel="Previous"
+          nextLabel="Next"
+          breakLabel="..."
+          containerClassName="pagination"
+          pageClassName="page-item"
+          pageLinkClassName="page-link"
+          previousLinkClassName="page-link"
+          nextLinkClassName="page-link"
+          breakClassName="page-link"
+          activeClassName="active"
+        />
+        <Form>
+          <Form.Group>
+            <Form.Label>
+              <strong>Show:</strong>
+            </Form.Label>
+            <Form.Select onChange={(e) => props.change(e.target.value)}>
+              <option selected={props.showType === 'all'}  value="all">All Users</option>
+              <option selected={props.showType === 'following'} value="following">Followed Users</option>
+            </Form.Select>
+          </Form.Group>
+        </Form>
+      </div>
+      {profilesToDisplay.length !== 0 ? (
+        <div>
+          {" "}
+          {profilesToDisplay.map((user) => (
+            <div key={user.id}>
+              {user.id !== Number(currentUser) ? ( // dont list current user
+                <div>
+                  <ProfileCard user={user} listed={true} />
+                </div>
+              ) : (
+                <div></div>
+              )}
             </div>
-          ) : (
-            <div></div>
-          )}
+          ))}
         </div>
-      ))}
+      ) : (
+        <span className="text-muted">No followed user profiles were found</span>
+      )}
     </div>
   );
 }
