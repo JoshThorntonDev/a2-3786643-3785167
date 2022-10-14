@@ -6,7 +6,8 @@ import axios from "axios";
 const API_HOST = "http://localhost:4000/api";
 const USER_KEY = "users";
 const POST_KEY = "posts";
-const REACTION_KEY = "reactions"
+const REACTION_KEY = "reactions";
+const FOLLOW_KEY = "follows";
 
 // --- User Methods ---------------------------------------------------------------------------------------
 async function verifyUser(email, password) {
@@ -39,14 +40,14 @@ async function findUserByEmail(email) {
 }
 
 async function deleteUser(user) {
+  var posts = await getPostsByUser(user.id);
 
-  var posts = await getPostsByUser(user.id)
-
-  posts.forEach(post => { // keep posts made by user that is being deleted, otherwise replies will break
-    deletePost(post)
+  posts.forEach((post) => {
+    // keep posts made by user that is being deleted, otherwise replies will break
+    deletePost(post);
   });
 
-  deleteUserReactions(user.id)
+  deleteUserReactions(user.id);
   const response = await axios.delete(API_HOST + `/${USER_KEY}/${user.id}`);
 
   return response.data;
@@ -54,6 +55,48 @@ async function deleteUser(user) {
 
 async function editUser(user) {
   const response = await axios.put(API_HOST + `/${USER_KEY}`, user);
+
+  return response.data;
+}
+
+async function getUsers() {
+  const response = await axios.get(API_HOST + `/${USER_KEY}`);
+
+  return response.data;
+}
+
+// --- Follow Methods -----------------------------------------------------------------------------------
+
+async function getFollows() {
+  const response = await axios.get(API_HOST + `/${FOLLOW_KEY}`);
+
+  return response.data;
+}
+
+// Select the ids of every user a specific user is following. (For sorting posts)
+async function findFollowedUsers(id) {
+  const response = await axios.get(API_HOST + `/${FOLLOW_KEY}/user/${id}`);
+
+  return response.data;
+}
+
+// Select the ids of every user that is following the specified user (For seeing who is following you)
+async function findFollowingUsers(id) {
+  const response = await axios.get(
+    API_HOST + `/${FOLLOW_KEY}/user/followers/${id}`
+  );
+
+  return response.data;
+}
+
+
+async function createFollow(follow) {
+  const response = await axios.post(API_HOST + `/${FOLLOW_KEY}`, follow);
+  return response.data;
+}
+
+async function deleteFollow(id) {
+  const response = await axios.delete(API_HOST + `/${FOLLOW_KEY}/${id}`);
 
   return response.data;
 }
@@ -83,8 +126,8 @@ async function deletePost(postToDelete) {
   post.content = "[deleted]";
   post.image = "";
   post.userId = 1;
-  // id 1 is a special user that holds all deleted posts, this makes it much easier to render deleted posts,
-  // as they normally look for the name of who posted them
+  // id 1 is a special user that holds ALL deleted posts, this makes it much easier to render deleted posts,
+  // as the code that displays user name can remain unchanged
 
   const response = await axios.put(API_HOST + `/${POST_KEY}/`, post);
 
@@ -101,7 +144,6 @@ async function getPostsByUser(id) {
 
   return response.data;
 }
-
 
 // --- Reaction Methods -----------------------------------------------------------------------------------
 
@@ -123,20 +165,18 @@ async function updateReaction(reaction) {
 }
 
 async function deleteReaction(reaction) {
-
-  const response = await axios.delete(API_HOST + `/${REACTION_KEY}/${reaction.id}`);
+  const response = await axios.delete(
+    API_HOST + `/${REACTION_KEY}/${reaction.id}`
+  );
 
   return response;
-
 }
 
 async function deleteUserReactions(id) {
-
   const response = await axios.delete(API_HOST + `/${REACTION_KEY}/user/${id}`);
 
   return response;
 }
-
 
 export {
   verifyUser,
@@ -145,6 +185,12 @@ export {
   findUserByEmail,
   deleteUser,
   editUser,
+  getUsers,
+  getFollows,
+  findFollowedUsers,
+  findFollowingUsers,
+  createFollow,
+  deleteFollow,
   createPost,
   getPosts,
   updatePost,
@@ -154,7 +200,5 @@ export {
   getReactions,
   createReaction,
   updateReaction,
-  deleteReaction
-
-
+  deleteReaction,
 };

@@ -1,4 +1,4 @@
-import { getPosts } from "../data/dbrepository";
+import { findFollowedUsers, getPosts } from "../data/dbrepository";
 import Button from "react-bootstrap/Button";
 import { useContext, useEffect, useState } from "react";
 import "./css/Posts.css";
@@ -26,13 +26,7 @@ function Posts() {
   const { reactions } = useContext(ReactionContext);
   const { checkForReactions } = useContext(ReactionContext);
 
-  /*const [post, setPost] = useState({
-    userId: currentUser,
-    content: "",
-    image: "",
-    replyId: null,
-    depth: 0,
-  }); */
+  const [showType, setShowType] = useState("all");
 
   useEffect(() => {
     if (reactions.length === 0) {
@@ -42,14 +36,27 @@ function Posts() {
 
   useEffect(() => {
     async function loadPosts() {
-      await checkForReactions() // ensure we have the latest copy of reactions
-      const currentPosts = await getPosts();
+      await checkForReactions(); // ensure we have the latest copy of reactions
 
-      if (sortNewest) {
-        setPosts(currentPosts);
-      } else {
-        setPosts(currentPosts.reverse());
+      var currentPosts = await getPosts();
+
+      if (!sortNewest) {
+        currentPosts = currentPosts.reverse();
       }
+
+      if (showType === "following") {
+        var follows = await findFollowedUsers(Number(currentUser));
+
+        var ids = [];
+        follows.forEach((follow) => {
+          ids.push(follow.followingId);
+        });
+        console.log(ids);
+
+        currentPosts = currentPosts.filter((post) => ids.includes(post.userId));
+      }
+
+      setPosts(currentPosts);
 
       setTimeout(() => {
         // in case the db responds extremely quickly, prevent loading animation from looking bad
@@ -58,7 +65,7 @@ function Posts() {
     }
 
     loadPosts();
-  }, [showModal, sortNewest]); // if modal or sort order gets toggled, reload the posts
+  }, [showModal, sortNewest, showType]); // if modal or sort order gets toggled, reload the posts
 
   const toggleModal = () => {
     // toggle the edit state
@@ -84,13 +91,56 @@ function Posts() {
         </Button>
       </div>
       <br></br>
-      <PostCreator
-        show={showModal}
-        toggle={toggleModal}
-        user={currentUser}
-      />
+      <PostCreator show={showModal} toggle={toggleModal} user={currentUser} />
 
       <div>
+        <div className="d-flex justify-content-between">
+          <Form onChange={(e) => setShowType(e.target.value)}>
+            <Form.Group>
+              <Form.Label>
+                <strong>Display posts from:</strong>
+              </Form.Label>
+              <Form.Select>
+                <option value="all">Everyone</option>
+                <option value="following">Followed Users</option>
+              </Form.Select>
+            </Form.Group>
+          </Form>
+          {posts.length !== 0 && (
+            <ReactPaginate
+              onPageChange={handlePageClick}
+              pageCount={pageCount}
+              marginPagesDisplayed={2}
+              pageRangeDisplayed={5}
+              previousLabel="Previous"
+              nextLabel="Next"
+              breakLabel="..."
+              containerClassName="pagination"
+              pageClassName="page-item"
+              pageLinkClassName="page-link"
+              previousLinkClassName="page-link"
+              nextLinkClassName="page-link"
+              breakClassName="page-link"
+              activeClassName="active"
+            />
+          )}
+
+          <div>
+            <Form>
+              <Form.Group>
+                <Form.Label>
+                  <strong>Sort by:</strong>
+                </Form.Label>
+                <Form.Select
+                  onChange={(e) => setSortNewest((current) => !current)}
+                >
+                  <option>Newest First</option>
+                  <option>Oldest First</option>
+                </Form.Select>
+              </Form.Group>
+            </Form>
+          </div>
+        </div>
         {isLoading ? (
           <div className="d-flex justify-content-center">
             <div>
@@ -107,42 +157,9 @@ function Posts() {
             </div>
           </div>
         ) : posts.length === 0 ? (
-          <span className="text-muted">No posts have been submitted.</span>
+          <div className="text-muted text-center">No posts were found.</div>
         ) : (
           <div>
-            <div className="d-flex justify-content-between">
-              <ReactPaginate
-                onPageChange={handlePageClick}
-                pageCount={pageCount}
-                marginPagesDisplayed={2}
-                pageRangeDisplayed={5}
-                previousLabel="Previous"
-                nextLabel="Next"
-                breakLabel="..."
-                containerClassName="pagination"
-                pageClassName="page-item"
-                pageLinkClassName="page-link"
-                previousLinkClassName="page-link"
-                nextLinkClassName="page-link"
-                breakClassName="page-link"
-                activeClassName="active"
-              />
-              <div>
-                <Form>
-                  <Form.Group>
-                    <Form.Label>
-                      <strong>Sort by:</strong>
-                    </Form.Label>
-                    <Form.Select
-                      onChange={(e) => setSortNewest((current) => !current)}
-                    >
-                      <option>Newest First</option>
-                      <option>Oldest First</option>
-                    </Form.Select>
-                  </Form.Group>
-                </Form>
-              </div>
-            </div>
             {postsToDisplay.map((x) => (
               <div key={x.id} className="topPost">
                 <Thread post={x} main={true} />

@@ -9,6 +9,8 @@ let container;
 const currentUser = 2;
 
 //Test for the form of the PostCreator component
+//This test checks the PostCreator form has rendered properly and can be submitted
+//after filling out the fields
 test("Test Post Creator form", () => {
     //Render the PostCreator component
     //NOTE: passes in a prop "default" to provide the PostCreator a default
@@ -43,6 +45,8 @@ test("Test Post Creator form", () => {
 });
 
 //Tests the form of the PostDeleter component
+//This test checks the password verification form when deleting a post, ensuring
+//that password can be entered correctly and that the form can be submitted
 test("Test Post Deleter form", () => {
     //Render the PostDeleter component
     const utils = render(
