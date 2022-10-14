@@ -113,8 +113,8 @@ function Posts() {
                     <strong>Posts to display:</strong>
                   </Form.Label>
                   <Form.Select>
-                    <option>Following</option>
-                    <option>All Posts</option>
+                    <option value="following">Following</option>
+                    <option value="all">All Posts</option>
                   </Form.Select>
                 </Form.Group>
               </Form>
