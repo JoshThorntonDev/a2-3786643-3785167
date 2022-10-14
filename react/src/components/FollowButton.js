@@ -30,6 +30,8 @@ function FollowButton(props) {
         )
       ) {
         setFollowing(true);
+      } else {
+        setFollowing(false);
       }
     }
     checkFollowing();
