@@ -7,7 +7,22 @@ import { createFollow, deleteFollow, findFollowedUsers, getFollows } from "../da
 function FollowButton(props) {
   const { currentUser } = useContext(UserContext);
 
-  const [following, setFollowing] = useState(props.default);
+  const [following, setFollowing] = useState();
+
+  useEffect(() => {
+    //Check if the currentUser is following the user whose card is being rendered
+    async function checkFollowing() {
+      const follows = await findFollowedUsers(Number(currentUser));
+
+      //if the user's id is found, set following to true
+      if(follows.find(
+        (follow) => follow.userId === Number(currentUser) && follow.followingId === props.userId
+      )) {
+        setFollowing(true);
+      }
+    }
+    checkFollowing();
+  }, []);
 
   const followUser = async () => {
     //Store the id of the user to be followed, and the current user
