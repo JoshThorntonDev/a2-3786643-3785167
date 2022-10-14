@@ -64,10 +64,18 @@ function PostDeleter(props) {
       setTimeout(() => {
         props.toggle();
         setShow(false);
+
         setMessage("");
 
-        props.setName("[deleted]"); // set locally stored name
         props.setEdit(false); // hide edit/delete buttons on post
+
+        props.setPostValue({
+          content: "[deleted]",
+          image: "",
+        });
+
+        props.setName("[deleted]"); // set locally stored name
+
         setSaving(false);
       }, 1000);
     }

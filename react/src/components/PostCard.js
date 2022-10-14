@@ -304,6 +304,7 @@ function PostCard(props) {
         show={showDelete}
         toggle={toggleDelete}
         setName={setName}
+        setPostValue={setPostValue}
         setEdit={setAllowEdit}
       />
     </Stack>
