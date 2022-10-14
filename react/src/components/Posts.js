@@ -107,7 +107,7 @@ function Posts() {
         ) : (
           <div>
             <div className="d-flex justify-content-between">
-              <Form>
+              <Form onChange={(e) => console.log(e.target.value)}>
                 <Form.Group>
                   <Form.Label>
                     <strong>Posts to display:</strong>

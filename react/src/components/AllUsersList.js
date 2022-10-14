@@ -12,7 +12,7 @@ import UserContext from "../contexts/UserContext";
 
 function AllUsersList() {
   const [allUsers, setAllUsers] = useState([]);
-  const [setAllFollows] = useState([]);
+
   const [isLoading, setIsLoading] = useState(true);
   const { currentUser } = useContext(UserContext);
   const [showType, setShowType] = useState("all"); // show type can be 'all' or 'following'
@@ -25,7 +25,6 @@ function AllUsersList() {
     setIsLoading(true);
     async function getAllUsers() {
       const users = await getUsers();
-      const follows = await getFollows();
 
       if (users !== null) {
         var usersToSet = users.filter((user) => user.id > 100);
@@ -37,14 +36,6 @@ function AllUsersList() {
         );
 
         setAllUsers(usersToSet);
-      }
-
-      if (follows !== null) {
-        var followsToSet = follows.filter(
-          (follow) => follow.userId === Number(currentUser)
-        );
-
-        setAllFollows(followsToSet);
       }
 
       setTimeout(() => {
@@ -66,14 +57,6 @@ function AllUsersList() {
       }
 
       setAllUsers(usersToSet);
-
-      if (users !== null) {
-        var followsToSet = users.filter(
-          (user) => user.userId === Number(currentUser)
-        );
-
-        setAllFollows(followsToSet);
-      }
 
       setTimeout(() => {
         // in case the db responds extremely quickly, prevent loading animation from looking bad

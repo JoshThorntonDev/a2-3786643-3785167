@@ -44,16 +44,12 @@ function UserList(props) {
             <Form.Label>
               <strong>Show:</strong>
             </Form.Label>
-            <Form.Select onChange={(e) => props.change(e.target.value)}>
-              <option selected={props.showType === "all"} value="all">
-                All Users
-              </option>
-              <option
-                selected={props.showType === "following"}
-                value="following"
-              >
-                Followed Users
-              </option>
+            <Form.Select
+              defaultValue={props.showType}
+              onChange={(e) => props.change(e.target.value)}
+            >
+              <option value="all">All Users</option>
+              <option value="following">Followed Users</option>
             </Form.Select>
           </Form.Group>
         </Form>
@@ -68,7 +64,9 @@ function UserList(props) {
           ))}
         </div>
       ) : (
-        <div className="text-muted text-center">No followed user profiles were found</div>
+        <div className="text-muted text-center">
+          No followed user profiles were found
+        </div>
       )}
     </div>
   );
