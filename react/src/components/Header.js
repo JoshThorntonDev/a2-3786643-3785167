@@ -5,11 +5,24 @@ import Container from "react-bootstrap/Container";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import UserContext from "../contexts/UserContext";
-import { DoorClosed, PeopleFill, PersonVideo2, ViewList } from "react-bootstrap-icons";
+import {
+  DoorClosed,
+  PeopleFill,
+  PersonVideo2,
+  ViewList,
+} from "react-bootstrap-icons";
+import React, { useState } from "react";
+
+import Modal from "react-bootstrap/Modal";
 
 function Header() {
   const navigate = useNavigate();
   const { currentUser, logout } = useContext(UserContext);
+
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
   return (
     <Navbar className="headerNav" bg="dark" variant="dark">
@@ -26,7 +39,6 @@ function Header() {
         <Navbar.Collapse className="justify-content-end">
           {currentUser && (
             <div>
-
               <Button
                 variant="success"
                 onClick={() => {
@@ -35,7 +47,7 @@ function Header() {
                   });
                 }}
               >
-                <ViewList size={20}/> Feed
+                <ViewList size={20} /> Feed
               </Button>
               <Button
                 variant="light"
@@ -55,22 +67,14 @@ function Header() {
                   });
                 }}
               >
-                <PersonVideo2 size={20}/> My Profile
+                <PersonVideo2 size={20} /> My Profile
               </Button>
             </div>
           )}
 
           {currentUser ? (
-            <Button
-              variant="secondary"
-              onClick={() => {
-                logout();
-                navigate("/", {
-                  replace: true,
-                });
-              }}
-            >
-              <DoorClosed size={20}/> Logout
+            <Button variant="secondary" onClick={handleShow}>
+              <DoorClosed size={20} /> Logout
             </Button>
           ) : (
             <div>
@@ -98,6 +102,29 @@ function Header() {
           )}
         </Navbar.Collapse>
       </Container>
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm logout</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to logout?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button
+            variant="primary"
+            onClick={() => {
+              handleClose();
+              logout();
+              navigate("/", {
+                replace: true,
+              });
+            }}
+          >
+            Logout
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Navbar>
   );
 }
