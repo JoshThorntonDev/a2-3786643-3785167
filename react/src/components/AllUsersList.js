@@ -15,10 +15,10 @@ function AllUsersList() {
 
   const changeShowType = (type) => {
     setShowType(type);
+    setIsLoading(true);
   };
 
   useEffect(() => {
-    setIsLoading(true);
     async function getAllUsers() {
       const users = await getUsers();
 
@@ -47,11 +47,12 @@ function AllUsersList() {
           const temp = await findUser(user.followingId);
           usersToSet.push(temp);
         });
+        setAllUsers(usersToSet);
       }
-
-      setAllUsers(usersToSet);
-
-      setIsLoading(false);
+      
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 100);
     }
 
     if (showType === "all") {
@@ -61,8 +62,6 @@ function AllUsersList() {
     if (showType === "following") {
       getFollowedUsers();
     }
-
-    setIsLoading(false);
   }, [showType, currentUser]);
 
   return (

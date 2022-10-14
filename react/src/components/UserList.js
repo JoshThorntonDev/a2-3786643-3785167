@@ -1,6 +1,6 @@
 import ProfileCard from "./ProfileCard";
 import ReactPaginate from "react-paginate";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Form from "react-bootstrap/Form";
 
 function UserList(props) {
@@ -14,6 +14,10 @@ function UserList(props) {
   const pageCount = Math.ceil(props.users.length / pageSize); // finds the number of pages needed to fit all profiles
   const offset = page * pageSize; // keeps track of where the first profile of each page is
   const profilesToDisplay = props.users.slice(offset, offset + pageSize); // selects only the profiles on the current page
+
+  useEffect(() => {
+    console.log(props)
+  })
 
   return (
     <div>
