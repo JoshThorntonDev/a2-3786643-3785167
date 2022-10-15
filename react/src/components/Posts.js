@@ -34,6 +34,11 @@ function Posts() {
     }
   }, []);
 
+  const changeShowType = (type) => {
+    setShowType(type);
+    setPage(0)
+  }
+
   useEffect(() => {
     async function loadPosts() {
       await checkForReactions(); // ensure we have the latest copy of reactions
@@ -93,7 +98,7 @@ function Posts() {
 
       <div>
         <div className="d-flex justify-content-between">
-          <Form onChange={(e) => setShowType(e.target.value)}>
+          <Form onChange={(e) => changeShowType(e.target.value)}>
             <Form.Group>
               <Form.Label>
                 <strong>Display posts from:</strong>
