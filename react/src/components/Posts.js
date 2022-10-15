@@ -45,6 +45,8 @@ function Posts() {
       }
 
       if (showType === "following") {
+        //if user has selected to only view posts from users they follow, filter posts by
+        //user ids that they follow
         var follows = await findFollowedUsers(Number(currentUser));
 
         var ids = [];

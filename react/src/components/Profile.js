@@ -12,7 +12,7 @@ import ReactionContext from "../contexts/ReactionContext";
 import ProfileCard from "./ProfileCard";
 
 function Profile() {
-  const { id } = useParams();
+  const { id } = useParams(); //tracks which profile is being viewed based on the URL params
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const { currentUser } = useContext(UserContext);
@@ -41,9 +41,12 @@ function Profile() {
     setUpdated(false); // reset update state if it was set
 
     async function loadUser() {
+      //get user details from db
       const current = await findUser(id);
 
+
       if (current === null) {
+        //redirect if user doesn't exist
         navigate(`/`, { replace: true });
       }
 
@@ -58,6 +61,7 @@ function Profile() {
     }
 
     async function loadPosts() {
+      //get all the user's posts from db
       const current = await getPostsByUser(id);
 
       setPosts(current);

@@ -9,7 +9,6 @@ import {
 } from "../data/dbrepository.js";
 
 
-
 function FollowButton(props) {
   const { currentUser } = useContext(UserContext);
 
@@ -18,9 +17,10 @@ function FollowButton(props) {
   useEffect(() => {
     //Check if the currentUser is following the user whose card is being rendered
     async function checkFollowing() {
+      //get all users being followed by current user
       const follows = await findFollowedUsers(Number(currentUser));
 
-      //if the user's id is found, set following to true
+      //if the user being rendered's id is found, set following to true
       if (
         follows.find(
           (follow) =>
