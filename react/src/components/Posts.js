@@ -53,7 +53,6 @@ function Posts() {
         follows.forEach((follow) => {
           ids.push(follow.followingId);
         });
-        console.log(ids);
 
         currentPosts = currentPosts.filter((post) => ids.includes(post.userId));
       }
