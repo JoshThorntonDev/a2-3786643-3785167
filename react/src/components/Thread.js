@@ -26,7 +26,11 @@ function Thread(props) {
     }
 
     getReplies();
-    setShowSelf(true);
+
+    setTimeout(() => { // prevents the collapse animation stuttering because the height of the page changes as more posts render
+      setShowSelf(true);
+    }, 300)
+
     setShowReplies(true);
   }, [post.id]);
 
