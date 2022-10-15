@@ -2,10 +2,11 @@ import Collapse from "react-bootstrap/Collapse";
 import ProfileCard from "./ProfileCard";
 
 function UserList(props) {
+  console.log(props.profilesToDisplay)
   return (
     <div>
       <Collapse appear in>
-        {props.profilesToDisplay !== 0 ? (
+        {props.profilesToDisplay.length !== 0 ? (
           <div>
             {" "}
             {props.profilesToDisplay.map((user) => (
