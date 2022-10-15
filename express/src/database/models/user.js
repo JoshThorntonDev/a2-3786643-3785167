@@ -20,4 +20,6 @@ module.exports = (sequelize, DataTypes) =>
             type: DataTypes.STRING(40),
             allowNull: false
         }   
+    }, {
+        initialAutoIncrement: 100,
     });

@@ -12,7 +12,7 @@ function Thread(props) {
 
   const [showReplies, setShowReplies] = useState(false); // dont show replies by default
 
-  const [showSelf, setShowSelf] = useState(false);
+  const [showSelf, setShowSelf] = useState(false); // responsible for the opening animation, get set to true permanently after initial render
 
   const toggleReplies = () => {
     setShowReplies((current) => !current);
