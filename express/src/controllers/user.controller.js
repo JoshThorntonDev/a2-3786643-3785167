@@ -58,7 +58,7 @@ exports.delete = async (req, res) => {
   });
 }
 
-
+//update details of a user
 exports.update = async (req, res) => {
   // adapted from lec 9 ex 1
 

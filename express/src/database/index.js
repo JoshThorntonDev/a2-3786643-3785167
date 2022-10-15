@@ -56,7 +56,7 @@ db.sync = async () => {
   await seedData();
 };
 
-//Seed database with initial users
+//Seed database with initial data
 async function seedData() {
 
   const userId1 = 837;
@@ -65,7 +65,7 @@ async function seedData() {
   const userCount = await db.user.count();
   const postCount = await db.post.count();
 
-  //Only seed table when it's empty
+  //Only seed users table when it's empty
   if (userCount === 0) {
     const argon2 = require("argon2");
     let hash = await argon2.hash((Math.random() + Math.random()).toString(), { type: argon2.argon2id });
@@ -104,7 +104,7 @@ async function seedData() {
 
   }
 
-  //Only seed table when it's empty
+  //Only seed posts table when it's empty
   if (postCount === 0) {
     await db.post.create({
       content: "this is the first post, <h1>which does not have an image</h1>",
