@@ -58,12 +58,12 @@ db.sync = async () => {
 
 //Seed database with initial data
 async function seedData() {
+  const userIds = [101, 105, 106, 107];
 
-  const userId1 = 837;
-  const userId2 = 2843;
 
   const userCount = await db.user.count();
   const postCount = await db.post.count();
+  const reactionCount = await db.reaction.count();
 
   //Only seed users table when it's empty
   if (userCount === 0) {
@@ -87,7 +87,7 @@ async function seedData() {
 
     hash = await argon2.hash("password1!", { type: argon2.argon2id });
     await db.user.create({
-      id: userId1,
+      id: userIds[0],
       email: "first@email.com",
       password_hash: hash,
       username: "First User",
@@ -95,10 +95,26 @@ async function seedData() {
 
     hash = await argon2.hash("password1!", { type: argon2.argon2id });
     await db.user.create({
-      id: userId2,
+      id: userIds[1],
       email: "second@email.com",
       password_hash: hash,
       username: "Second User",
+    });
+
+    hash = await argon2.hash("password1!", { type: argon2.argon2id });
+    await db.user.create({
+      id: userIds[2],
+      email: "third@email.com",
+      password_hash: hash,
+      username: "Third User",
+    });
+
+    hash = await argon2.hash("password1!", { type: argon2.argon2id });
+    await db.user.create({
+      id: userIds[3],
+      email: "fourth@email.com",
+      password_hash: hash,
+      username: "Fourth User",
     });
 
 
@@ -107,14 +123,52 @@ async function seedData() {
   //Only seed posts table when it's empty
   if (postCount === 0) {
     await db.post.create({
-      content: "this is the first post, <h1>which does not have an image</h1>",
-      userId: userId1
+      content: "this is the first post, <h1>which does not have an image,</h1> and is on the second page",
+      userId: userIds[0]
     });
     await db.post.create({
       content: "this is the second post, which has an image",
       image:
         "https://media.discordapp.net/attachments/552276917559099418/826662994230116362/53u0wr.jpg",
-      userId: userId2
+      userId: userIds[1]
+    });
+    await db.post.create({
+      content: "<h1>I like pianos</h1>",
+      image: "https://media.discordapp.net/attachments/771937771802984448/1022468258781204552/unknown.png?width=347&height=468",
+      userId: userIds[2]
+    });
+    await db.post.create({
+      content: "I don't see how that is relevant...",
+      depth: 1,
+      replyId: 3,
+      userId: userIds[3]
+    });
+
+    await db.post.create({
+      content: "Let's get started on the project we were talking about",
+      userId: userIds[3]
+    });
+
+    await db.post.create({
+      content: "<h2>Another post</h2>",
+      userId: userIds[3]
+    });
+    await db.post.create({
+      content: "<h2>The post after this will cause a second page to be created</h2>",
+      userId: userIds[3]
+    });
+    await db.post.create({
+      content: "ta da!",
+      userId: userIds[0]
+    });
+  }
+
+
+  if (reactionCount === 0) {
+    await db.reaction.create({
+      type: "dislike",
+      postId: 3,
+      userId: userIds[3]
     });
   }
 }
