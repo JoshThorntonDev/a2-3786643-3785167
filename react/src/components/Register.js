@@ -5,7 +5,7 @@ import Spinner from "react-bootstrap/Spinner";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Card from "react-bootstrap/Card";
 import AnimatedAlert from "./AnimatedAlert";
-import { findUserByEmail, createUser } from "../data/dbrepository.js";
+import { findUserByEmail, findUserByName, createUser } from "../data/dbrepository.js";
 import { validate } from "./RegisterValidation.js";
 
 //react components
@@ -54,6 +54,13 @@ function Register() {
     if ((await findUserByEmail(user.email)) !== null) {
       setError(true);
       setMessage("Sorry, that email is already in use");
+      setLoading(false);
+      return;
+    }
+
+    if ((await findUserByName(user.username)) !== null) {
+      setError(true);
+      setMessage("Sorry, that username is already in use");
       setLoading(false);
       return;
     }

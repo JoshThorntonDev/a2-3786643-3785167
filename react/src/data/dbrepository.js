@@ -39,6 +39,14 @@ async function findUserByEmail(email) {
   return response.data;
 }
 
+async function findUserByName(username) {
+  const response = await axios.get(
+    API_HOST + `/${USER_KEY}/selectname/${username}`
+  );
+
+  return response.data;
+}
+
 async function deleteUser(user) {
   var posts = await getPostsByUser(user.id);
 
@@ -183,6 +191,7 @@ export {
   findUser,
   createUser,
   findUserByEmail,
+  findUserByName,
   deleteUser,
   editUser,
   getUsers,
