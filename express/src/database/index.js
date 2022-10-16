@@ -157,10 +157,6 @@ async function seedData() {
       content: "<h2>The post after this will cause a second page to be created</h2>",
       userId: userIds[3]
     });
-    await db.post.create({
-      content: "ta da!",
-      userId: userIds[0]
-    });
   }
 
 
