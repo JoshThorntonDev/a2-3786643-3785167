@@ -129,12 +129,12 @@ async function seedData() {
     await db.post.create({
       content: "this is the second post, which has an image",
       image:
-        "https://media.discordapp.net/attachments/552276917559099418/826662994230116362/53u0wr.jpg",
+        "https://images.unsplash.com/photo-1488372759477-a7f4aa078cb6?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1740&q=80",
       userId: userIds[1]
     });
     await db.post.create({
       content: "<h1>I like pianos</h1>",
-      image: "https://media.discordapp.net/attachments/771937771802984448/1022468258781204552/unknown.png?width=347&height=468",
+      image: "https://images.unsplash.com/photo-1512733596533-7b00ccf8ebaf?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2064&q=80",
       userId: userIds[2]
     });
     await db.post.create({
