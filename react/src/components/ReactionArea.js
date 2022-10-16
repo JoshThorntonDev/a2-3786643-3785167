@@ -27,6 +27,7 @@ function ReactionArea(props) {
 
   const handleChange = async (e) => {
     var type = e.currentTarget.value;
+    var res; // stores result of db queries
 
     const reaction = {
       // create a reaction object, ensure ids arent strings
@@ -62,7 +63,7 @@ function ReactionArea(props) {
         setLikes(likes + 1);
         setValue(type);
 
-        var res = await createReaction(reaction);
+        res = await createReaction(reaction);
         setCurrentId(res.id);
 
         break;
@@ -77,7 +78,7 @@ function ReactionArea(props) {
         setDislikes(dislikes + 1);
         setValue(type);
 
-        var res = await createReaction(reaction);
+        res = await createReaction(reaction);
         setCurrentId(res.id); // store id of new reaction in state in case user want to remove it
 
         break;
