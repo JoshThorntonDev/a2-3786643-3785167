@@ -16,6 +16,8 @@ Landing page images are sourced from https://unsplash.com/images
 
 Some code is adapted from Further Web Programming lectorial and practical course materials, such as the starter Express code (specific references mentioned in code comments)
 
+All assignment tasks up to and including DI have been completed.
+
 inital create react app instructions left for reference:
 # Getting Started with Create React App
 
