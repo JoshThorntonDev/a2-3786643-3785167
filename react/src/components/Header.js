@@ -16,14 +16,14 @@ import { useLocation } from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 
 function Header() {
-  const navigate = useNavigate();
-  const location = useLocation();
+  const navigate = useNavigate(); 
+  const location = useLocation(); // lets us see what the current url is
 
   const loggedOutPaths = ['/', '/login', '/register'] // urls that logged out users are allowed to access
 
   const { currentUser, logout } = useContext(UserContext);
 
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState(false); // whether the logout modal should be shown
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);

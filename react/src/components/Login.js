@@ -34,6 +34,7 @@ function Login() {
     setError(false); // clear error in case user has set it already
     e.preventDefault(); // prevent form from submitting automatically
 
+    //Check for user in db with submitted email and password
     const user = await verifyUser(email, password);
 
     if (user === null) {
@@ -72,7 +73,7 @@ function Login() {
 
         <AnimatedAlert
           variant="success"
-          message={"Welcome back " + username + "! We're redirecting you now"}
+          message={"Welcome, " + username + "! We're redirecting you now"}
           display={show}
           setDisplay={setShow}
         />

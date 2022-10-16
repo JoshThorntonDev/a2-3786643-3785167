@@ -34,6 +34,11 @@ function Posts() {
     }
   }, []);
 
+  const changeShowType = (type) => {
+    setShowType(type);
+    setPage(0)
+  }
+
   useEffect(() => {
     async function loadPosts() {
       await checkForReactions(); // ensure we have the latest copy of reactions
@@ -45,13 +50,14 @@ function Posts() {
       }
 
       if (showType === "following") {
+        //if user has selected to only view posts from users they follow, filter posts by
+        //user ids that they follow
         var follows = await findFollowedUsers(Number(currentUser));
 
         var ids = [];
         follows.forEach((follow) => {
           ids.push(follow.followingId);
         });
-        console.log(ids);
 
         currentPosts = currentPosts.filter((post) => ids.includes(post.userId));
       }
@@ -92,7 +98,7 @@ function Posts() {
 
       <div>
         <div className="d-flex justify-content-between">
-          <Form onChange={(e) => setShowType(e.target.value)}>
+          <Form onChange={(e) => changeShowType(e.target.value)}>
             <Form.Group>
               <Form.Label>
                 <strong>Display posts from:</strong>

@@ -47,8 +47,10 @@ function ProfileDeleter(props) {
     setError(false); // reset error state
     event.preventDefault(); // prevent form from submitting
 
+    //verify details of user being deleted
     const deleteTarget = await verifyUser(props.user.email, fields.password);
 
+    //if password is incorrect
     if (deleteTarget === null) {
       setMessage("Sorry, your password was incorrect");
       setError(true);

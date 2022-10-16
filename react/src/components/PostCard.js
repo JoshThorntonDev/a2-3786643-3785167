@@ -31,7 +31,9 @@ function PostCard(props) {
 
   const { reactions } = useContext(ReactionContext);
 
-  const [localReactions] = useState({
+  const REPLY_DEPTH = 10; // sets max reply depth
+
+  const [localReactions] = useState({ // each post stores a copy of its reactions locally so it is easier to add/remove reactions client-side
     numLikes: 0,
     numDislikes: 0,
     default: "",
@@ -47,8 +49,6 @@ function PostCard(props) {
 
   const [allowEdit, setAllowEdit] = useState(false);
 
-  const REPLY_DEPTH = 10; // sets max reply depth
-
   const toggleEdit = () => {
     // toggle the edit state
     setShowEdit((current) => !current);
@@ -60,7 +60,7 @@ function PostCard(props) {
   };
 
   const [reply, setReply] = useState();
-  const [depth, setDepth] = useState(0);
+  const [depth, setDepth] = useState(0); // assume that the depth (indentation) of a post is 0, ie not a reply
 
   const toggleReply = (depth, replyId) => {
     //toggle the reply state and set the replyId and depth of the post being replied to
@@ -95,10 +95,12 @@ function PostCard(props) {
       if (postReacts[0] === undefined) {
         return;
       }
+
+      // this pattern can be adapted to accomodate additional reaction types, eg "heart" or "angry"
       var likes = postReacts.filter((x) => x.type === "like");
       var dislikes = postReacts.filter((x) => x.type === "dislike");
 
-      var needToSetDefault = postReacts.find(
+      var needToSetDefault = postReacts.find( // determines which, if either, of the two buttons needs to be visually selected when post loads
         (x) => x.userId.toString() === currentUser.toString()
       );
 

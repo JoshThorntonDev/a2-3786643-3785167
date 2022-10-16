@@ -22,12 +22,11 @@ function ProfileCard(props) {
 
   const toggleEdit = () => {
     // toggle the edit state
-    // it also clears the fields in case the user opens it again
     setShowEdit((current) => !current);
   };
 
   const toggleDelete = () => {
-    //toggle delete state, clear password in case it was entered before
+    //toggle delete state
     setShowDelete((current) => !current);
   };
 
@@ -66,7 +65,7 @@ function ProfileCard(props) {
       </div>
 
       {
-        props.isThisMyAccount ? (
+        props.isThisMyAccount ? ( //only show profile management buttons if the user is viewing their own profile
           <div className="edit">
             <Button onClick={toggleEdit} variant="primary" type="submit">
               <PencilSquare size={"20"}></PencilSquare> Edit
@@ -76,7 +75,7 @@ function ProfileCard(props) {
               <Trash size={"20"}></Trash> Delete
             </Button>
           </div>
-        ) : (
+        ) : ( //show follow button if viewing another user's account
           <div>
             {!props.listed && (
               <div className="edit">
