@@ -73,7 +73,7 @@ function Login() {
 
         <AnimatedAlert
           variant="success"
-          message={"Welcome back " + username + "! We're redirecting you now"}
+          message={"Welcome, " + username + "! We're redirecting you now"}
           display={show}
           setDisplay={setShow}
         />
