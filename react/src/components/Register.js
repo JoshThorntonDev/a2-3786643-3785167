@@ -58,6 +58,7 @@ function Register() {
       return;
     }
 
+    //Ensure that username is unique
     if ((await findUserByName(user.username)) !== null) {
       setError(true);
       setMessage("Sorry, that username is already in use");

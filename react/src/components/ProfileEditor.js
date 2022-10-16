@@ -5,7 +5,7 @@ import { CheckCircleFill } from "react-bootstrap-icons";
 import Button from "react-bootstrap/Button";
 import AnimatedAlert from "./AnimatedAlert";
 import UserContext from "../contexts/UserContext";
-import { editUser, verifyUser } from "../data/dbrepository";
+import { editUser, verifyUser, findUserByName } from "../data/dbrepository";
 import Spinner from "react-bootstrap/Spinner";
 
 // this function renders a modal containing a form that can edit user information
@@ -65,6 +65,15 @@ function ProfileEditor(props) {
 
     if (fields.name === "") {
       setMessage("Sorry, blank names are not permitted");
+      setError(true);
+      nameRef.current.focus();
+      setSaving(false);
+      return;
+    }
+
+    //Ensure username is unique
+    if ((await findUserByName(fields.name)) !== null) {
+      setMessage("Sorry, that username is already in use");
       setError(true);
       nameRef.current.focus();
       setSaving(false);
